@@ -5,13 +5,12 @@ exports.handler = async function (event, context) {
   try {
     const { email } = JSON.parse(event.body);
 
-    // Log the received email
-    console.log('Received email:', email);
-
+    // Access the environment variable directly
     const apiKey = process.env.API_KEY;
 
-    // Log the API key (for debugging)
-    console.log('API Key:', apiKey);
+    if (!apiKey) {
+      throw new Error('API_KEY is not defined');
+    }
 
     const url = 'https://api.sendgrid.com/v3/marketing/contacts';
     const listId = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'; // Replace with your list ID
