@@ -426,7 +426,39 @@
 </div>
 </div>
 
+!-- Include this script at the end of your HTML body -->
+<script>
+	async function submitForm(event) {
+		event.preventDefault();
 
+		const email = document.querySelector('#r1c0m2i3').value;
+		const url = '/.netlify/functions/submitForm'; // Updated to use a relative path
+		const listId = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963';
+
+		const data = {
+			contacts: [{ email: email }],
+			list_ids: [listId]
+		};
+
+		const options = {
+			method: 'POST', // Updated to use POST method for Netlify functions
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		};
+
+		try {
+			const response = await fetch(url, options);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			console.log('Email submitted successfully');
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
+	}
+</script>
 
 </body>
 </html>
