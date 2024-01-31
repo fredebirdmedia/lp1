@@ -481,8 +481,11 @@
 		const url = '/.netlify/functions/submitForm'; // Point to your serverless function
 		const data = {
 			email: email,
-			telephone: telephone,
-			firstname: first_name
+			country: "CA"
+			 custom_fields: {
+				firstname: first_name,
+				telephone: telephone
+			}
 		};
 
 		const options = {
