@@ -38,7 +38,7 @@ exports.handler = async function (event, context) {
 };
 
     const options = {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ exports.handler = async function (event, context) {
     // Log before making the request
     console.log('Making Axios request with the following options:', options);
 
-    const response = await axios.put(url, {}, options);
+    const response = await axios.post(url, {}, options);
 
     // Log after a successful response
     console.log('Axios request successful. Response:', response.data);
