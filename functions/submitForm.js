@@ -26,13 +26,9 @@ exports.handler = async function (event, context) {
     const data = {
  contacts: [
       {
-        email: email,
-        phone_number: phone_number,
+        email: email
+        phone_number: phone_number
         first_name: first_name
-         custom_fields: {
-            lp: Kingm,
-            
-          }
         
       }
     ],
