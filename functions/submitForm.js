@@ -27,11 +27,8 @@ exports.handler = async function (event, context) {
  contacts: [
       {
         email: email,
-        country: "CA",
-      
         phone_number: phone_number,
-        first_name: first_name,
-        
+        first_name: first_name
         
       }
     ],
