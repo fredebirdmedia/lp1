@@ -27,8 +27,8 @@ exports.handler = async function (event, context) {
  contacts: [
       {
         email: email
-        phone_number: phone_number
-        first_name: first_name
+        phone_number: "phone_number"
+        first_name: "first_name"
         
       }
     ],
