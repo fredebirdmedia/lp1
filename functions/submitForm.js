@@ -23,14 +23,17 @@ exports.handler = async function (event, context) {
     const listId = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'; // Replace with your list ID
 
     const data = {
-  contacts: [
-    {
-      email: email,
-      country: "CA",
-      phone_number: phone_number,
-      first_name: first_name
-    }
-  ],
+ contacts: [
+      {
+        email: email,
+        country: "CA",
+        custom_fields: {
+          phone_number: phone_number,
+          first_name: first_name,
+          country: "CA"
+        }
+      }
+    ],
   list_ids: [listId]
 };
 
