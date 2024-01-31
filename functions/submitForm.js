@@ -11,7 +11,6 @@ exports.handler = async function (event, context) {
     }
 
     const { email, phone_number, first_name } = JSON.parse(event.body);
-    console.log('Received data:', { email, phone_number, first_name });
 
 
     // Access the environment variable directly
@@ -30,7 +29,7 @@ exports.handler = async function (event, context) {
         email: email,
         country: "CA",
         custom_fields: {
-          phone_number: phone_number,
+          _rf10_T: phone_number,
           first_name: first_name,
           country: "CA"
         }
@@ -52,7 +51,6 @@ exports.handler = async function (event, context) {
     console.log('Making Axios request with the following options:', options);
 
     const response = await axios.post(url, {}, options);
-    console.log('SendGrid API response:', response.data);
 
 
     // Log after a successful response
