@@ -2,6 +2,14 @@ const axios = require('axios');
 
 exports.handler = async function (event, context) {
   try {
+    if (event.httpMethod !== 'POST') {
+      // Ensure that only POST requests are processed
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: 'Method Not Allowed' })
+      };
+    }
+
     const { email, telephone, firstname } = JSON.parse(event.body);
 
     // Access the environment variable directly
@@ -31,13 +39,14 @@ exports.handler = async function (event, context) {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
-      }
+      },
+      data: data // Include the data field in the axios request
     };
 
     // Log before making the request
     console.log('Making Axios request with the following options:', options);
 
-    const response = await axios.put(url, data, options);
+    const response = await axios.put(url, {}, options); // Pass an empty object as the second argument
 
     // Log after a successful response
     console.log('Axios request successful. Response:', response.data);
