@@ -10,7 +10,7 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const { email, telephone, firstname } = JSON.parse(event.body);
+    const { email, phone_number, first_name } = JSON.parse(event.body);
 
     // Access the environment variable directly
     const apiKey = process.env.API_KEY;
@@ -46,7 +46,7 @@ exports.handler = async function (event, context) {
     // Log before making the request
     console.log('Making Axios request with the following options:', options);
 
-    const response = await axios.put(url, {}, options); // Pass an empty object as the second argument
+  const response = await axios.put(url, data, options);
 
     // Log after a successful response
     console.log('Axios request successful. Response:', response.data);
