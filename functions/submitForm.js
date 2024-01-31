@@ -28,11 +28,11 @@ exports.handler = async function (event, context) {
       {
         email: email,
         country: "CA",
-        custom_fields: {
-          _rf10_T: phone_number,
-          first_name: first_name,
-          country: "CA"
-        }
+      
+        phone_number: phone_number,
+        first_name: first_name,
+        
+        
       }
     ],
   list_ids: [listId]
