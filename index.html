@@ -478,13 +478,20 @@
 		const phone_number = document.querySelector('#r1c0m2i2').value;
 		const first_name = document.querySelector('#r1c0m2i3').value;
 
-		const url = `/.netlify/functions/submitForm?email=${encodeURIComponent(email)}&phone_number=${encodeURIComponent(phone_number)}&first_name=${encodeURIComponent(first_name)}`;
+		const url = '/.netlify/functions/submitForm'; // Point to your serverless function
+		const data = {
+			email: email,
+			first_name: first_name,
+			phone_number: phone_number
+			
+		};
 
 		const options = {
-			method: 'POST',
+			method: 'POST', // Use POST method to send data to the serverless function
 			headers: {
 				'Content-Type': 'application/json'
-			}
+			},
+			body: JSON.stringify(data)
 		};
 
 		try {
