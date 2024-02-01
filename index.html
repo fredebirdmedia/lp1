@@ -382,9 +382,7 @@
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r1c0m2i1"><label for="r1c0m2i1">Email (Required)</label><input id="r1c0m2i1" name="email" required="" type="text" /></div>
 							</div>
-							<div class="bee-form-row">
-								<div class="bee-field bee-field-r1c0m2i2"><label for="r1c0m2i2">Telephone (Optional)</label><input id="r1c0m2i2" name="phone_number" type="tel" /></div>
-							</div>
+			
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r1c0m2i3"><label for="r1c0m2i3">Name (Optional)</label><input id="r1c0m2i3" name="first_name" type="text" /></div>
 							</div>
@@ -475,14 +473,12 @@
 		event.preventDefault();
 
 		const email = document.querySelector('#r1c0m2i1').value;
-		const phone_number = document.querySelector('#r1c0m2i2').value;
 		const first_name = document.querySelector('#r1c0m2i3').value;
 
 		const url = '/.netlify/functions/submitForm'; // Point to your serverless function
 		const data = {
 			email: email,
-			first_name: first_name,
-			phone_number: phone_number
+			first_name: first_name
 			
 		};
 

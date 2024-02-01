@@ -10,7 +10,7 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const { email, phone_number, first_name } = JSON.parse(event.body);
+    const { email, first_name } = JSON.parse(event.body);
 
 
     // Access the environment variable directly
@@ -27,7 +27,6 @@ exports.handler = async function (event, context) {
  contacts: [
       {
         first_name: first_name
-        phone_number: phone_number
         email: email
         
         
