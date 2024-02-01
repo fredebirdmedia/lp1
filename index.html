@@ -479,7 +479,6 @@
 		const data = {
 			email: email,
 			first_name: first_name
-			
 		};
 
 		const options = {
@@ -498,6 +497,9 @@
 			}
 
 			console.log('Email submitted successfully');
+
+			// Redirect to the external URL after successful form submission
+			window.location.href = 'https://google.com'; // Replace 'https://example.com' with your desired external URL
 		} catch (error) {
 			console.error('An error occurred:', error);
 		}
