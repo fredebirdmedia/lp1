@@ -28,8 +28,7 @@ exports.handler = async function (event, context) {
       {
         email: email,
         first_name: first_name
-        
-        
+      
         
         
       }
