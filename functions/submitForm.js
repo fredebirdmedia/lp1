@@ -26,7 +26,7 @@ exports.handler = async function (event, context) {
     const data = {
  contacts: [
       {
-        first_name: first_name
+        first_name: first_name,
         email: email
         
         

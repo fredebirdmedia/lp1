@@ -490,19 +490,20 @@
 		};
 
 		try {
-			const response = await fetch(url, options);
+		 const response = await fetch(url, options);
 
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
+		 if (!response.ok) {
+			 const errorResponse = await response.json(); // Parse the response body as JSON
+			 throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
+		 }
 
-			console.log('Email submitted successfully');
+		 console.log('Email submitted successfully');
 
-			// Redirect to the external URL after successful form submission
-			window.location.href = 'https://google.com'; // Replace 'https://example.com' with your desired external URL
-		} catch (error) {
-			console.error('An error occurred:', error);
-		}
+		 // Redirect to the external URL after successful form submission
+		 window.location.href = 'https://example.com'; // Replace 'https://example.com' with your desired external URL
+	 } catch (error) {
+		 console.error('An error occurred:', error.message);
+	 }
 	}
 
 </script>
