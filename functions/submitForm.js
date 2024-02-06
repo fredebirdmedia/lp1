@@ -48,7 +48,7 @@ exports.handler = async function (event, context) {
     // Log before making the request
     console.log('Making Axios request with the following options:', options);
 
-    const response = await axios.post(url, {}, options);
+    const response = await axios.post(url, data, options);
 
     console.log('Axios response:', response);
 
