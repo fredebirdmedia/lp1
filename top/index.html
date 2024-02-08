@@ -749,13 +749,12 @@
     event.preventDefault();
 
     const email = document.querySelector('#r7c0m1i3').value;
-    const first_name = document.querySelector('#r1c0m2i3').value;
 
     const url = '/.netlify/functions/submitForm'; // Point to your serverless function
 
     const data = {
       email: email,
-      first_name: first_name
+     
     }
 
       ;
