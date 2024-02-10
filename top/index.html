@@ -50,16 +50,8 @@
 			position: relative
 		}
 
-		.bee-row-1 .bee-row-content,
-		.bee-row-2 .bee-row-content {
-			background-color: #252d32;
-			background-repeat: no-repeat;
-			color: #000000
-		}
-
 		.bee-page-container,
 		.bee-row-1,
-		.bee-row-1 .bee-row-content,
 		.bee-row-2,
 		.bee-row-2 .bee-row-content,
 		.bee-row-3,
@@ -78,13 +70,13 @@
 		}
 
 		.bee-page-container {
-			background-image: url("https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/blurry-gradient-haikei.svg");
+			background-image: none;
 			background-position: top left;
-			background-size: cover
+			background-size: auto
 		}
 
 		.bee-row-2 .bee-col-1 .bee-block-1 a,
-		.bee-row-5 .bee-col-1 .bee-block-1 a,
+		.bee-row-5 .bee-col-1 .bee-block-2 a,
 		a {
 			color: #ffffff
 		}
@@ -167,8 +159,14 @@
 			overflow-wrap: anywhere
 		}
 
-		.bee-row-1 .bee-row-content {
-			border-radius: 25px 25px 0 0
+		.bee-row-1 .bee-row-content,
+		.bee-row-3 .bee-row-content,
+		.bee-row-4 .bee-row-content,
+		.bee-row-6 .bee-row-content {
+			background-color: #252d32;
+			background-repeat: no-repeat;
+			border-radius: 0;
+			color: #000000
 		}
 
 		.bee-row-1 .bee-col-1,
@@ -191,11 +189,13 @@
 		}
 
 		.bee-row-2 .bee-row-content {
-			background-position: top center
+			background-color: #252d32;
+			background-position: top center;
+			color: #000000
 		}
 
 		.bee-row-2 .bee-col-1 .bee-block-1,
-		.bee-row-5 .bee-col-1 .bee-block-1 {
+		.bee-row-5 .bee-col-1 .bee-block-2 {
 			padding-bottom: 10px;
 			padding-left: 25px;
 			padding-right: 25px
@@ -207,34 +207,16 @@
 			padding: 10px
 		}
 
-		.bee-row-3 .bee-row-content,
-		.bee-row-4 .bee-row-content,
-		.bee-row-6 .bee-row-content {
-			background-color: #252d32;
-			background-repeat: no-repeat;
-			border-radius: 0;
-			color: #000000
-		}
-
 		.bee-row-3 .bee-col-1,
 		.bee-row-3 .bee-col-2 {
 			background-color: #ebf0eb;
+			border-bottom: 5px solid #252d32;
+			border-left: 10px solid #252d32;
+			border-right: 10px solid #252d32;
+			border-top: 5px solid #252d32;
 			padding-top: 20px;
+			display: flex;
 			flex-direction: column;
-			display: flex
-		}
-
-		.bee-row-3 .bee-col-1 {
-			border-bottom: 0 solid #ff0000;
-			border-left: 0 solid #ff0000;
-			border-right: 0px solid #ff0000;
-			border-top: 0 solid #ff0000;
-			padding-left: 10px;
-			justify-content: center
-		}
-
-		.bee-row-3 .bee-col-2 {
-			padding-right: 10px;
 			justify-content: center
 		}
 
@@ -251,17 +233,17 @@
 		}
 
 		.bee-row-4 .bee-col-1 .bee-block-1,
-		.bee-row-4 .bee-col-2 .bee-block-1,
-		.bee-row-5 .bee-col-1 .bee-block-3 {
+		.bee-row-4 .bee-col-2 .bee-block-1 {
 			padding: 10px;
-			text-align: center;
-			width: 100%
+			text-align: center
 		}
 
 		.bee-row-4 .bee-col-1 .bee-block-2,
-		.bee-row-4 .bee-col-2 .bee-block-2 {
+		.bee-row-4 .bee-col-2 .bee-block-2,
+		.bee-row-5 .bee-col-1 .bee-block-4 {
 			padding: 10px;
-			text-align: center
+			text-align: center;
+			width: 100%
 		}
 
 		.bee-row-5 {
@@ -318,18 +300,18 @@
 
 		.bee-row-2 .bee-col-1 .bee-block-1 {
 			color: #ffffff;
-			font-size: 37px;
+			font-size: 30px;
 			font-weight: 700;
 			line-height: 150%;
 			text-align: center
 		}
 
 		.bee-row-2 .bee-col-1 .bee-block-1 p:not(:last-child),
-		.bee-row-5 .bee-col-1 .bee-block-1 p:not(:last-child) {
+		.bee-row-5 .bee-col-1 .bee-block-2 p:not(:last-child) {
 			margin-bottom: undefined
 		}
 
-		.bee-row-5 .bee-col-1 .bee-block-1 {
+		.bee-row-5 .bee-col-1 .bee-block-2 {
 			color: #ffffff;
 			font-size: 23px;
 			font-weight: 700;
@@ -372,18 +354,19 @@
 				display: block
 			}
 
-			.bee-row-1 .bee-col-1 .bee-block-1 {
-				padding: 5px 0 0 !important
+			.bee-row-1 .bee-col-2 .bee-block-1 {
+				padding: 0 5px 0 0 !important
 			}
 
 			.bee-row-1 .bee-col-1 .bee-block-1 img,
-			.bee-row-1 .bee-col-2 .bee-block-1 img {
+			.bee-row-1 .bee-col-2 .bee-block-1 img,
+			.bee-row-3 .bee-col-1 .bee-block-1 img {
 				float: none !important;
 				margin: 0 auto !important
 			}
 
-			.bee-row-1 .bee-col-2 .bee-block-1 {
-				padding: 0 5px 0 0 !important
+			.bee-row-1 .bee-col-1 .bee-block-1 {
+				padding: 5px 0 0 !important
 			}
 
 			.bee-row-2 .bee-col-1 .bee-block-1 {
@@ -391,32 +374,36 @@
 				font-size: 20px !important
 			}
 
-			.bee-row-4 .bee-col-1 .bee-block-2 .bee-button-content,
-			.bee-row-4 .bee-col-2 .bee-block-2 .bee-button-content {
+			.bee-row-4 .bee-col-1 .bee-block-2 h1,
+			.bee-row-4 .bee-col-2 .bee-block-2 h1 {
+				font-size: 16px !important
+			}
+
+			.bee-row-3 .bee-col-1 .bee-block-1 {
+				padding: 0 !important
+			}
+
+			.bee-row-4 .bee-col-1 .bee-block-1 .bee-button-content,
+			.bee-row-4 .bee-col-2 .bee-block-1 .bee-button-content {
 				font-size: initial !important;
 				line-height: normal !important;
 				text-align: center !important
 			}
 
-			.bee-row-4 .bee-col-1 .bee-block-2 a,
-			.bee-row-4 .bee-col-1 .bee-block-2 span,
-			.bee-row-4 .bee-col-2 .bee-block-2 a,
-			.bee-row-4 .bee-col-2 .bee-block-2 span {
+			.bee-row-4 .bee-col-1 .bee-block-1 a,
+			.bee-row-4 .bee-col-1 .bee-block-1 span,
+			.bee-row-4 .bee-col-2 .bee-block-1 a,
+			.bee-row-4 .bee-col-2 .bee-block-1 span {
 				text-align: center !important;
 				font-size: 16px !important;
 				line-height: auto !important
 			}
 
-			.bee-row-4 .bee-col-1 .bee-block-1 h1,
-			.bee-row-4 .bee-col-2 .bee-block-1 h1 {
-				font-size: 16px !important
-			}
-
-			.bee-row-5 .bee-col-1 .bee-block-3 h1 {
+			.bee-row-5 .bee-col-1 .bee-block-4 h1 {
 				font-size: 18px !important
 			}
 
-			.bee-row-5 .bee-col-1 .bee-block-1 {
+			.bee-row-5 .bee-col-1 .bee-block-2 {
 				padding: 10px 25px 0 !important;
 				font-size: 18px !important
 			}
@@ -477,45 +464,51 @@
 		<div class="bee-row bee-row-4">
 			<div class="bee-row-content no_stack">
 				<div class="bee-col bee-col-1 bee-col-w6">
-					<div class="bee-block bee-block-1 bee-heading">
-						<h1
-							style="color:#ffffff;direction:ltr;font-family:'Oswald','Arial';font-size:20px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
-							<span class="tinyMce-placeholder">C$1600 BONUS + 10 FREE GAMES</span> </h1>
-					</div>
-					<div class="bee-block bee-block-2 bee-button"><a class="bee-button-content"
+					<div class="bee-block bee-block-1 bee-button"><a class="bee-button-content"
 							href="https://www.jackpotcitycasino.com/canada/?s=bfp23700&amp;a=bfpadid181340"
 							style="font-size: 20px; background-color: #50a397; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 4px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #ffffff; direction: ltr; font-family: inherit; font-weight: 400; max-width: 100%; padding-bottom: 5px; padding-left: 20px; padding-right: 20px; padding-top: 5px; width: auto; display: inline-block;"
 							target="_blank"><span style="word-break: break-word; font-size: 20px; line-height: 200%;">Register
 								Now</span></a></div>
-				</div>
-				<div class="bee-col bee-col-2 bee-col-w6">
-					<div class="bee-block bee-block-1 bee-heading">
+					<div class="bee-block bee-block-2 bee-heading">
 						<h1
 							style="color:#ffffff;direction:ltr;font-family:'Oswald','Arial';font-size:20px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
-							<span class="tinyMce-placeholder">C$1000 BONUS + 10 FREE GAMES</span> </h1>
+							<span class="tinyMce-placeholder">C$1600 BONUS + 10 FREE GAMES</span> </h1>
 					</div>
-					<div class="bee-block bee-block-2 bee-button" id="module_995e4cfb-722a-4fae-8c3c-ed9594c98b61"><a
+				</div>
+				<div class="bee-col bee-col-2 bee-col-w6">
+					<div class="bee-block bee-block-1 bee-button" id="module_995e4cfb-722a-4fae-8c3c-ed9594c98b61"><a
 							class="bee-button-content" href="https://www.spincasino.com/ca/?s=bfp23700&amp;a=bfpadid181340"
 							style="font-size: 20px; background-color: #50a397; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 4px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #ffffff; direction: ltr; font-family: inherit; font-weight: 400; max-width: 100%; padding-bottom: 5px; padding-left: 20px; padding-right: 20px; padding-top: 5px; width: auto; display: inline-block;"
 							target="_blank"><span style="word-break: break-word; font-size: 20px; line-height: 200%;">Register
 								Now</span></a></div>
+					<div class="bee-block bee-block-2 bee-heading">
+						<h1
+							style="color:#ffffff;direction:ltr;font-family:'Oswald','Arial';font-size:20px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
+							<span class="tinyMce-placeholder">C$1000 BONUS + 10 FREE GAMES</span> </h1>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="bee-row bee-row-5">
 			<div class="bee-row-content">
 				<div class="bee-col bee-col-1 bee-col-w12">
-					<div class="bee-block bee-block-1 bee-paragraph">
-						<p style="word-break: break-word;">You get 10 free chances to win C$ 1,000,000🎰</p>
-					</div>
-					<div class="bee-block bee-block-2 bee-spacer">
+					<div class="bee-block bee-block-1 bee-spacer">
 						<div class="spacer" style="height:30px;"></div>
 					</div>
-					<div class="bee-block bee-block-3 bee-heading">
+					<div class="bee-block bee-block-2 bee-paragraph">
+						<p style="word-break: break-word;">You get 10 free chances to win C$ 1,000,000🎰</p>
+					</div>
+					<div class="bee-block bee-block-3 bee-spacer">
+						<div class="spacer" style="height:30px;"></div>
+					</div>
+					<div class="bee-block bee-block-4 bee-heading">
 						<h1
 							style="color:#ffffff;direction:ltr;font-family:'Oswald','Arial';font-size:23px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
 							<span class="tinyMce-placeholder">Licensed in Ontario for quick, secure deposits and payouts⚖️</span>
 						</h1>
+					</div>
+					<div class="bee-block bee-block-5 bee-spacer">
+						<div class="spacer" style="height:30px;"></div>
 					</div>
 				</div>
 			</div>
