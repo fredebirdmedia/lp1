@@ -278,16 +278,6 @@
 			text-align: center
 		}
 
-		.bee-row-3 .bee-col-1 .bee-block-4 {
-			color: #ffffff;
-			direction: ltr;
-			font-size: 12px;
-			font-weight: 400;
-			letter-spacing: 0;
-			line-height: 120%;
-			text-align: center
-		}
-
 		.bee-row-4 .bee-col-1 .bee-block-1 .bee-icon-image {
 			padding: 5px
 		}
@@ -298,6 +288,16 @@
 
 		.bee-row-4 .bee-col-1 .bee-block-1 .bee-icon::not(.bee-icon-last) .bee-content {
 			margin-right: 0
+		}
+
+		.bee-row-3 .bee-col-1 .bee-block-4 {
+			color: #ffffff;
+			direction: ltr;
+			font-size: 12px;
+			font-weight: 400;
+			letter-spacing: 0;
+			line-height: 120%;
+			text-align: center
 		}
 
 		.bee-row-3 .bee-col-1 .bee-block-3 form {
@@ -449,8 +449,8 @@
 						<p>🍁Freespin offers 2024</p>
 						<p>🍁Always up to date</p>
 					</div>
-					<form accept-charset="UTF-8" action="/.netlify/functions/submitForm" autocomplete="on" enctype="multipart/form-data"
-						method="post" onsubmit="submitForm(event)" target="_self">
+					<div class="bee-block bee-block-3 bee-form">
+						<form accept-charset="UTF-8" action="ACTION_PLACEHOLDER" autocomplete="on" enctype="multipart/form-data" method="post" target="_self">
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r2c0m2i1"><label for="r2c0m2i1">Email</label><input id="r2c0m2i1" name="email" required="" type="text" /></div>
 							</div>
@@ -549,7 +549,7 @@
   async function submitForm(event) {
     event.preventDefault();
 
-    const email = document.querySelector('#r2c0m2i1').value;
+    const email = document.querySelector('#r1c0m2i1').value;
     const first_name = document.querySelector('#r1c0m2i3').value;
 
     const url = '/.netlify/functions/submitForm'; // Point to your serverless function
@@ -595,7 +595,7 @@
       console.log('Email submitted successfully');
 
       // Redirect to the external URL after successful form submission
-      window.location.href = 'https://media.luckydaysaffiliates.com/redirect.aspx?pid=11978&bid=1476&redirectURL=https://www.luckydays.com/'; // Replace 'https://example.com' with your desired external URL
+      window.location.href = 'https://justcasino.info/k5400067a'; // Replace 'https://example.com' with your desired external URL
     }
 
     catch (error) {
