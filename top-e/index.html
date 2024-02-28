@@ -247,6 +247,8 @@
 		.bee-row-30 .bee-row-content,
 		.bee-row-33 .bee-row-content,
 		.bee-row-35 .bee-row-content,
+		.bee-row-37 .bee-row-content,
+		.bee-row-38 .bee-row-content,
 		.bee-row-39 .bee-row-content,
 		.bee-row-5 .bee-row-content {
 			background-repeat: no-repeat;
@@ -315,6 +317,7 @@
 		}
 
 		.bee-row-2 .bee-row-content,
+		.bee-row-36 .bee-row-content,
 		.bee-row-40 .bee-row-content,
 		.bee-row-6 .bee-row-content {
 			background-color: #000000;
@@ -390,6 +393,9 @@
 		.bee-row-16 .bee-row-content,
 		.bee-row-17 .bee-row-content,
 		.bee-row-18 .bee-row-content,
+		.bee-row-23 .bee-row-content,
+		.bee-row-25 .bee-row-content,
+		.bee-row-26 .bee-row-content,
 		.bee-row-31 .bee-row-content,
 		.bee-row-32 .bee-row-content,
 		.bee-row-34 .bee-row-content,
@@ -399,6 +405,13 @@
 			background-color: #324154;
 			background-repeat: no-repeat;
 			border-radius: 0;
+			color: #000000
+		}
+
+		.bee-row-41 .bee-row-content,
+		.bee-row-42 .bee-row-content {
+			border-radius: 0 0 25px 25px;
+			background-repeat: no-repeat;
 			color: #000000
 		}
 
@@ -507,25 +520,6 @@
 		.bee-row-9 .bee-col-1 .bee-block-1 {
 			padding: 10px;
 			text-align: center
-		}
-
-		.bee-row-23 .bee-row-content,
-		.bee-row-25 .bee-row-content,
-		.bee-row-26 .bee-row-content,
-		.bee-row-36 .bee-row-content,
-		.bee-row-37 .bee-row-content,
-		.bee-row-38 .bee-row-content {
-			background-color: #2c2929;
-			background-repeat: no-repeat;
-			border-radius: 0;
-			color: #000000
-		}
-
-		.bee-row-41 .bee-row-content,
-		.bee-row-42 .bee-row-content {
-			border-radius: 0 0 25px 25px;
-			background-repeat: no-repeat;
-			color: #000000
 		}
 
 		.bee-row-39 .bee-col-1,
@@ -693,6 +687,27 @@
 			margin-right: 10px
 		}
 
+		.bee-row-41 .bee-col-1 .bee-block-1,
+		.bee-row-42 .bee-col-1 .bee-block-1 {
+			color: #ffffff;
+			direction: ltr;
+			font-size: 14px;
+			font-weight: 400;
+			letter-spacing: 0;
+			line-height: 150%;
+			text-align: center
+		}
+
+		.bee-row-41 .bee-col-1 .bee-block-1 a,
+		.bee-row-42 .bee-col-1 .bee-block-1 a {
+			color: #7747FF
+		}
+
+		.bee-row-41 .bee-col-1 .bee-block-1 p:not(:last-child),
+		.bee-row-42 .bee-col-1 .bee-block-1 p:not(:last-child) {
+			margin-bottom: 16px
+		}
+
 		.bee-row-40 .bee-col-1 .bee-block-1 .bee-icon::not(.bee-icon-last) .bee-content {
 			margin-right: 10px
 		}
@@ -727,6 +742,11 @@
 				padding: 15px 0 5px !important
 			}
 
+			.bee-row-1 .bee-col-2 .bee-block-1,
+			.bee-row-2 .bee-col-2 .bee-block-1 {
+				padding: 0 5px 0 0 !important
+			}
+
 			.bee-row-1 .bee-col-1 .bee-block-1 img,
 			.bee-row-1 .bee-col-2 .bee-block-1 img,
 			.bee-row-2 .bee-col-1 .bee-block-1 img,
@@ -734,11 +754,6 @@
 			.bee-row-7 .bee-col-1 .bee-block-1 img {
 				float: none !important;
 				margin: 0 auto !important
-			}
-
-			.bee-row-1 .bee-col-2 .bee-block-1,
-			.bee-row-2 .bee-col-2 .bee-block-1 {
-				padding: 0 5px 0 0 !important
 			}
 
 			.bee-row-3 .bee-col-1 .bee-block-2 {
@@ -750,6 +765,11 @@
 			.bee-row-4 .bee-col-1 .bee-block-3 {
 				padding: 10px 25px 0 !important;
 				font-size: 16px !important
+			}
+
+			.bee-row-4 .bee-col-1 .bee-block-2 {
+				padding: 0 25px !important;
+				font-size: 29px !important
 			}
 
 			.bee-row-10 .bee-col-2 .bee-block-1 h1,
@@ -803,11 +823,6 @@
 			.bee-row-8 .bee-col-2 .bee-block-1 h1,
 			.bee-row-8 .bee-col-2 .bee-block-2 h1 {
 				font-size: 16px !important
-			}
-
-			.bee-row-4 .bee-col-1 .bee-block-2 {
-				padding: 0 25px !important;
-				font-size: 29px !important
 			}
 
 			.bee-row-10 .bee-col-4 .bee-block-1 .bee-button-content,
@@ -872,27 +887,6 @@
 			.bee-row-40 .bee-col-1 .bee-block-1 {
 				padding: 0 0 5px !important
 			}
-		}
-
-		.bee-row-41 .bee-col-1 .bee-block-1,
-		.bee-row-42 .bee-col-1 .bee-block-1 {
-			color: #ffffff;
-			direction: ltr;
-			font-size: 14px;
-			font-weight: 400;
-			letter-spacing: 0;
-			line-height: 150%;
-			text-align: center
-		}
-
-		.bee-row-41 .bee-col-1 .bee-block-1 a,
-		.bee-row-42 .bee-col-1 .bee-block-1 a {
-			color: #7747FF
-		}
-
-		.bee-row-41 .bee-col-1 .bee-block-1 p:not(:last-child),
-		.bee-row-42 .bee-col-1 .bee-block-1 p:not(:last-child) {
-			margin-bottom: 16px
 		}
 	</style>
 </head>
