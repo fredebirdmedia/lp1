@@ -464,7 +464,7 @@
               </div>
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r1c0m2i2"><label for="r1c0m2i2">Telephone (Optional)</label><input
-                    id="r1c0m2i2" name="telephone" type="tel" /></div>
+                    id="r1c0m2i2" name="phone_number" type="tel" /></div>
               </div>
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r1c0m2i4">
@@ -570,7 +570,7 @@
     async function submitForm(event) {
       event.preventDefault();
 
-      const email = document.querySelector('#r2c0m2i1').value;
+      const email = document.querySelector('#r1c0m2i1').value;
       const phone_number = document.querySelector('#r1c0m2i2').value;
 
       const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
