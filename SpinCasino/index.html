@@ -464,7 +464,7 @@
 								<div class="bee-field bee-field-r2c0m3i1"><label for="r2c0m3i1">Email</label><input id="r2c0m3i1" name="email" required="" type="text" /></div>
 							</div>
 							<div class="bee-form-row">
-								<div class="bee-field bee-field-r2c0m3i2"><label for="r2c0m3i2">Telephone (Optional)</label><input id="r2c0m3i2" name="telephone" type="tel" /></div>
+								<div class="bee-field bee-field-r2c0m3i2"><label for="r2c0m3i2">Telephone (Optional)</label><input id="r2c0m3i2" name="telephone" type="tel" placeholder="+1"/></div>
 							</div>
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r2c0m3i4">
@@ -484,66 +484,62 @@
 	</div>
 
 	<!-- Custom Script -->
-	<script> // Retrieve the API key from the environment variable
-
-  async function submitForm(event) {
-    event.preventDefault();
-
-    const email = document.querySelector('#r2c0m3i1').value;
-    const phone_number = document.querySelector('#r2c0m3i2').value;
-
-    const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
-
-    const data = {
-      email: email,
-      phone_number: phone_number
-    }
-
-      ;
-
-    const options = {
-
-      method: 'POST',
-      // Use POST method to send data to the serverless function
-      headers: {
-        'Content-Type': 'application/json'
-      }
-
-      ,
-      body: JSON.stringify(data)
-    }
-
-      ;
-
-    try {
-      const response = await fetch(url, options);
-
-      if (!response.ok) {
-        const errorResponse = await response.json(); // Parse the response body as JSON
-
-        throw new Error(`HTTP error ! status: $ {
-        response.status
-      }
-
-      , message: $ {
-        errorResponse.message
-      }
-
-      `);
-      }
-
-      console.log('Email submitted successfully');
-
-      // Redirect to the external URL after successful form submission
-      window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272'; // Replace 'https://example.com' with your desired external URL
-    }
-
-    catch (error) {
-      console.error('An error occurred:', error.message);
-    }
-  }
-
-</script>
+	<script>
+	  async function submitForm(event) {
+	    event.preventDefault();
+	
+	    const email = document.querySelector('#r2c0m3i1').value;
+	    let phone_number = document.querySelector('#r2c0m3i2').value;
+	
+	    // Add Canadian country code if it's not already included
+	    if (!phone_number.startsWith('+1') && phone_number.trim() !== '') {
+	      phone_number = '+1' + phone_number;
+	    }
+	
+	    // Verify that the phone number is in Canadian format
+	    const phoneRegex = /^\+1[2-9]\d{9}$/;
+	    if (!phoneRegex.test(phone_number)) {
+	      alert('Please enter a valid Canadian phone number.');
+	      return;
+	    }
+	
+	    // Email validation using regular expression
+	    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	    if (!emailRegex.test(email)) {
+	      alert('Please enter a valid email address.');
+	      return;
+	    }
+	
+	    const url = '/.netlify/functions/submitFormm';
+	
+	    const data = {
+	      email: email,
+	      phone_number: phone_number
+	    };
+	
+	    const options = {
+	      method: 'POST',
+	      headers: {
+	        'Content-Type': 'application/json'
+	      },
+	      body: JSON.stringify(data)
+	    };
+	
+	    try {
+	      const response = await fetch(url, options);
+	
+	      if (!response.ok) {
+	        const errorResponse = await response.json();
+	        throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorResponse.message}`);
+	      }
+	
+	      console.log('Email submitted successfully');
+	      window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272';
+	    } catch (error) {
+	      console.error('An error occurred:', error.message);
+	    }
+	  }
+	</script>
 </body>
 
 </html>
