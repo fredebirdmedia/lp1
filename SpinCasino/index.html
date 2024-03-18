@@ -491,24 +491,25 @@
 	    const email = document.querySelector('#r2c0m3i1').value;
 	    let phone_number = document.querySelector('#r2c0m3i2').value;
 	
-	    // Add Canadian country code if it's not already included
-	    if (!phone_number.startsWith('+1') && phone_number.trim() !== '') {
-	      phone_number = '+1' + phone_number;
-	    }
-	
-	    // Verify that the phone number is in Canadian format
-	    const phoneRegex = /^\+1[2-9]\d{9}$/;
-	    if (!phoneRegex.test(phone_number)) {
-	      alert('Please enter a valid Canadian phone number.');
-	      return;
-	    }
-	
 	    // Email validation using regular expression
-	    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	    if (!emailRegex.test(email)) {
-	      alert('Please enter a valid email address.');
-	      return;
-	    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    // Validate phone number only if provided
+    if (phone_number.trim() !== '') {
+      // Allow submission if only the country code "+1" is provided
+      if (phone_number.trim() !== '+1') {
+        // Verify that the phone number is in Canadian format
+        const phoneRegex = /^\+1[2-9]\d{9}$/;
+        if (!phoneRegex.test(phone_number)) {
+          alert('Please enter a valid Canadian phone number.');
+          return;
+        }
+      }
+    }
 	
 	    const url = '/.netlify/functions/submitFormm';
 	
