@@ -571,6 +571,27 @@
       const email = document.querySelector('#r1c0m2i1').value;
       const phone_number = document.querySelector('#r1c0m2i2').value;
 
+
+	    	    // Add Canadian country code if it's not already included
+	    if (!phone_number.startsWith('+1') && phone_number.trim() !== '') {
+	      phone_number = '+1' + phone_number;
+	    }
+	
+	    // Verify that the phone number is in Canadian format
+	    const phoneRegex = /^\+1[2-9]\d{9}$/;
+	    if (!phoneRegex.test(phone_number)) {
+	      alert('Please enter a valid Canadian phone number.');
+	      return;
+	    }
+	
+	    // Email validation using regular expression
+	    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	    if (!emailRegex.test(email)) {
+	      alert('Please enter a valid email address.');
+	      return;
+	    }
+		    
+
       const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
 
       const data = {
