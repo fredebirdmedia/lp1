@@ -68,7 +68,7 @@ exports.handler = async function (event, context) {
     if (phone_number) {
       const simpleTextingData = {
         contactPhone: phone_number,
-        lists: [{
+        listIds: [{
           //id: '65d60667f82cb04ba121461f',
           name: 'CA'
         }]
