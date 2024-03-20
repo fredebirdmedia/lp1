@@ -21,12 +21,12 @@
   <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=628585812403182&ev=PageView&noscript=1" /></noscript>
 
-        <!-- End Meta Pixel Code -->
-      
+  <!-- End Meta Pixel Code -->
 
 
-<!-- New code-->
- <!-- Include the CSS file for intl-tel-input -->
+
+  <!-- New code-->
+  <!-- Include the CSS file for intl-tel-input -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
   <!-- Include the JavaScript files for intl-tel-input -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
@@ -40,7 +40,7 @@
         initialCountry: "ca", // Set the initial country to Canada
         separateDialCode: true, // Display the country dial code in a separate input
         onlyCountries: ["ca"], // Restrict to Canada
-        customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+        customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
           return "+" + selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
         },
         customContainer: "intl-tel-input"
@@ -48,30 +48,27 @@
     });
   </script>
   <style>
-    .flag-container {
-      position: relative;
-    }
 
-    .iti__flag-container {
-      width: auto;
-    }
+.intl-tel-input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
 
-    .iti__flag {
-      width: 20px;
-      height: auto;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: 0;
-    }
+.intl-tel-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
 
-    .intl-tel-input {
-      padding-left: 30px;
-    }
   </style>
 
 
-<!-- New code-->
+  <!-- New code-->
 
 
   <title></title>
@@ -505,28 +502,27 @@
             <p>🍁Always up to date</p>
           </div>
           <div class="bee-block bee-block-3 bee-form">
-            <form accept-charset="UTF-8" action="/.netlify/functions/submitFormm" autocomplete="on" enctype="multipart/form-data"
-    method="post" onsubmit="submitForm(event)" target="_self">
-    <div class="bee-form-row">
-      <div class="bee-field bee-field-r1c0m2i1"><label for="r1c0m2i1">Email</label><input id="r1c0m2i1" name="email"
-          required="" type="text" /></div>
-    </div>
-    <div class="bee-form-row">
-      <div class="bee-field bee-field-r1c0m2i2 flag-container">
-        <label for="r1c0m2i2">Telephone (Optional)</label>
-        <div class="iti__flag-container">
-          <div class="iti__flag iti__ca"></div>
-        </div>
-        <input id="r1c0m2i2" name="phone_number" type="tel" value="+1" class="intl-tel-input" />
-      </div>
-    </div>
-    <div class="bee-form-row">
-      <div class="bee-field bee-field-r1c0m2i4">
-        <div class="bee-button-container"><button id="r1c0m2i4" name="submit" type="submit" value="SIGN UP">SIGN
-            UP</button></div>
-      </div>
-    </div>
-  </form>
+            <form accept-charset="UTF-8" action="/.netlify/functions/submitFormm" autocomplete="on"
+              enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self">
+              <div class="bee-form-row">
+                <div class="bee-field bee-field-r1c0m2i1"><label for="r1c0m2i1">Email</label><input id="r1c0m2i1"
+                    name="email" required="" type="text" /></div>
+              </div>
+              <div class="bee-form-row">
+                <div class="bee-field bee-field-r1c0m2i2 flag-container">
+                  <label for="r1c0m2i2">Telephone (Optional)</label>
+                  
+                  <input id="r1c0m2i2" name="phone_number" type="tel" value="+1" class="intl-tel-input" />
+                </div>
+              </div>
+              <div class="bee-form-row">
+                <div class="bee-field bee-field-r1c0m2i4">
+                  <div class="bee-button-container"><button id="r1c0m2i4" name="submit" type="submit"
+                      value="SIGN UP">SIGN
+                      UP</button></div>
+                </div>
+              </div>
+            </form>
           </div>
           <div class="bee-block bee-block-4 bee-paragraph">
             <p>I agree to the <a href="https://casinomary.com/privacy-policy/" rel="noopener"
