@@ -33,14 +33,15 @@ exports.handler = async function (event, context) {
     console.log('SendGrid request successful. Response:', sendgridResponse.data);
 
     // Handling request related to the marketing platform
-       const marketingUrl = 'https://api.mailmailmail.net/v2.0/Profiles';
+        const marketingUrl = 'https://api.mailmailmail.net/v2.0/Profiles';
     const marketingApiKey = process.env.APIMP_KEY;
     const marketingApiUsername = 'blackbirdmedia_dk_casinomary';
 
     const marketingData = {
       listid: '117460', // Adding the list ID
       email_address: email,
-      mobile_number: phone_number
+      mobile_number: phone_number,
+      data_fields: [/* Add your data fields here */] // Add any additional data fields as needed
     };
 
     const marketingOptions = {
