@@ -615,77 +615,64 @@
   </div>
 
   <!-- Custom Script -->
-  <script> // Retrieve the API key from the environment variable
+<script>
+  // Retrieve the API key from the environment variable
+  async function submitForm(event) {
+    event.preventDefault();
 
-    async function submitForm(event) {
-      event.preventDefault();
+    const email = document.querySelector('#r1c0m2i1').value;
+    const phoneInput = document.querySelector('#r1c0m2i2');
+    const phone_number = phoneInput.value;
 
-      const email = document.querySelector('#r1c0m2i1').value;
-      const phone_number = document.querySelector('#r1c0m2i2').value;
-
-
-      // Email validation using regular expression
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
-        return;
-      }
-
-  
-
-
-      const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
-
-      const data = {
-        email: email,
-        phone_number: phone_number
-      }
-
-        ;
-
-      const options = {
-
-        method: 'POST',
-        // Use POST method to send data to the serverless function
-        headers: {
-          'Content-Type': 'application/json'
-        }
-
-        ,
-        body: JSON.stringify(data)
-      }
-
-        ;
-
-      try {
-        const response = await fetch(url, options);
-
-        if (!response.ok) {
-          const errorResponse = await response.json(); // Parse the response body as JSON
-
-          throw new Error(`HTTP error ! status: $ {
-					response.status
-				}
-
-				, message: $ {
-					errorResponse.message
-				}
-
-				`);
-        }
-
-        console.log('Email submitted successfully');
-
-        // Redirect to the external URL after successful form submission
-        window.location.href = 'https://justcasino.info/k5400067a'; // Replace 'https://example.com' with your desired external URL
-      }
-
-      catch (error) {
-        console.error('An error occurred:', error.message);
-      }
+    // Email validation using regular expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
     }
 
-  </script>
+    // Phone number validation using intl-tel-input library
+    const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+    const isValidPhoneNumber = iti.isValidNumber();
+
+    if (!isValidPhoneNumber) {
+      alert('Please enter a valid phone number.');
+      return;
+    }
+
+    const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
+
+    const data = {
+      email: email,
+      phone_number: phone_number
+    };
+
+    const options = {
+      method: 'POST',
+      // Use POST method to send data to the serverless function
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
+
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        const errorResponse = await response.json(); // Parse the response body as JSON
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
+      }
+
+      console.log('Email submitted successfully');
+
+      // Redirect to the external URL after successful form submission
+      window.location.href = 'https://justcasino.info/k5400067a'; // Replace 'https://example.com' with your desired external URL
+    } catch (error) {
+      console.error('An error occurred:', error.message);
+    }
+  }
+</script>
 </body>
 
 </html>
