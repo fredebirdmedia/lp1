@@ -50,7 +50,7 @@ exports.handler = async function (event, context) {
     };
 
     const marketingOptions = {
-      method: 'PUT', // Use PUT method for marketing platform
+      method: 'POST', // Reverted to POST method for marketing platform
       headers: {
         'Content-Type': 'application/json',
         'X-Api-Username': marketingApiUsername,
@@ -61,7 +61,7 @@ exports.handler = async function (event, context) {
 
     console.log('Making Axios request to Marketing Platform with the following options:', marketingOptions);
 
-    const marketingResponse = await axios.put(marketingUrl, marketingOptions.data, { headers: marketingOptions.headers });
+    const marketingResponse = await axios.post(marketingUrl, marketingOptions.data, { headers: marketingOptions.headers });
 
     console.log('Marketing Platform request successful. Response:', marketingResponse.data);
 
