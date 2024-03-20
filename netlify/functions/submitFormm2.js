@@ -53,8 +53,8 @@ exports.handler = async function (event, context) {
       method: 'POST', // Reverted to POST method for marketing platform
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Username': marketingApiUsername,
-        'X-Api-Token': marketingApiKey
+        'username': marketingApiUsername,
+        'token': marketingApiKey
       },
       data: JSON.stringify(marketingData)
     };
