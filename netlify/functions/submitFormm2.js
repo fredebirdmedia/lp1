@@ -74,7 +74,7 @@ exports.handler = async function (event, context) {
 
     return {
       statusCode: error.response?.status || 500,
-      body: JSON.stringify({ error: 'An error occurred while updating the email and phone number' })
+      body: JSON.stringify({ error: error.response?.data?.message || 'An error occurred while updating the email and phone number' })
     };
   }
 };
