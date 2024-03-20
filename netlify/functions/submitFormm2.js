@@ -36,7 +36,7 @@ exports.handler = async function (event, context) {
     const marketingUrl = 'https://api.mailmailmail.net/v2.0/Profiles';
     const marketingListId = '117460'; // Replace with your marketing platform list ID
 
-   const marketingApiKey = process.env.APIMP_KEY;
+    const marketingApiKey = process.env.APIMP_KEY;
     const marketingApiUsername = 'blackbirdmedia_dk_casinomary';
 
     const marketingData = {
@@ -50,7 +50,7 @@ exports.handler = async function (event, context) {
     };
 
     const marketingOptions = {
-      method: 'POST', // Use appropriate method for your marketing platform API
+      method: 'PUT', // Use PUT method for marketing platform
       headers: {
         'Content-Type': 'application/json',
         'X-Api-Username': marketingApiUsername,
@@ -61,7 +61,7 @@ exports.handler = async function (event, context) {
 
     console.log('Making Axios request to Marketing Platform with the following options:', marketingOptions);
 
-    const marketingResponse = await axios.post(marketingUrl, marketingOptions.data, { headers: marketingOptions.headers });
+    const marketingResponse = await axios.put(marketingUrl, marketingOptions.data, { headers: marketingOptions.headers });
 
     console.log('Marketing Platform request successful. Response:', marketingResponse.data);
 
