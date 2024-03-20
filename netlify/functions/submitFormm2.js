@@ -5,7 +5,7 @@ exports.handler = async function (event, context) {
     const { email, phone_number } = JSON.parse(event.body);
 
     // Handling request related to SendGrid
-    const apiKey = process.env.SENDGRID_API_KEY;
+    const apiKey = process.env.API_KEY;
     const sendgridUrl = 'https://api.sendgrid.com/v3/marketing/contacts';
     const sendgridListId = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'; // Replace with your SendGrid list ID
 
