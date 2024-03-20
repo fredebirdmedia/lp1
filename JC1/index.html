@@ -26,22 +26,49 @@
 
 
 <!-- New code-->
-<!-- Include the CSS file for intl-tel-input -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
-<!-- Include the JavaScript files for intl-tel-input -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
-<script>
-  // Initialize intl-tel-input
-  document.addEventListener("DOMContentLoaded", function () {
-    var input = document.querySelector("#r1c0m2i2"); // Select the phone number input field
-    window.intlTelInput(input, {
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
-      initialCountry: "auto", // Automatically detect the user's country
-      separateDialCode: true, // Display the country dial code in a separate input
+ <!-- Include the CSS file for intl-tel-input -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+  <!-- Include the JavaScript files for intl-tel-input -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
+  <script>
+    // Initialize intl-tel-input
+    document.addEventListener("DOMContentLoaded", function () {
+      var input = document.querySelector("#r1c0m2i2"); // Select the phone number input field
+      window.intlTelInput(input, {
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
+        initialCountry: "ca", // Set the initial country to Canada
+        separateDialCode: true, // Display the country dial code in a separate input
+        onlyCountries: ["ca"], // Restrict to Canada
+        customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+          return "+" + selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
+        },
+        customContainer: "intl-tel-input"
+      });
     });
-  });
-</script>
+  </script>
+  <style>
+    .flag-container {
+      position: relative;
+    }
+
+    .iti__flag-container {
+      width: auto;
+    }
+
+    .iti__flag {
+      width: 20px;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 0;
+    }
+
+    .intl-tel-input {
+      padding-left: 30px;
+    }
+  </style>
 
 
 <!-- New code-->
@@ -479,22 +506,27 @@
           </div>
           <div class="bee-block bee-block-3 bee-form">
             <form accept-charset="UTF-8" action="/.netlify/functions/submitFormm" autocomplete="on" enctype="multipart/form-data"
-              method="post" onsubmit="submitForm(event)" target="_self">
-              <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m2i1"><label for="r1c0m2i1">Email</label><input id="r1c0m2i1" name="email"
-                    required="" type="text" /></div>
-              </div>
-              <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m2i2"><label for="r1c0m2i2">Telephone (Optional)</label><input id="r1c0m2i2"
-                    name="phone_number" type="tel" value="+1" class="intl-tel-input" /></div>
-              </div>
-              <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m2i4">
-                  <div class="bee-button-container"><button id="r1c0m2i4" name="submit" type="submit" value="SIGN UP">SIGN
-                      UP</button></div>
-                </div>
-              </div>
-            </form>
+    method="post" onsubmit="submitForm(event)" target="_self">
+    <div class="bee-form-row">
+      <div class="bee-field bee-field-r1c0m2i1"><label for="r1c0m2i1">Email</label><input id="r1c0m2i1" name="email"
+          required="" type="text" /></div>
+    </div>
+    <div class="bee-form-row">
+      <div class="bee-field bee-field-r1c0m2i2 flag-container">
+        <label for="r1c0m2i2">Telephone (Optional)</label>
+        <div class="iti__flag-container">
+          <div class="iti__flag iti__ca"></div>
+        </div>
+        <input id="r1c0m2i2" name="phone_number" type="tel" value="+1" class="intl-tel-input" />
+      </div>
+    </div>
+    <div class="bee-form-row">
+      <div class="bee-field bee-field-r1c0m2i4">
+        <div class="bee-button-container"><button id="r1c0m2i4" name="submit" type="submit" value="SIGN UP">SIGN
+            UP</button></div>
+      </div>
+    </div>
+  </form>
           </div>
           <div class="bee-block bee-block-4 bee-paragraph">
             <p>I agree to the <a href="https://casinomary.com/privacy-policy/" rel="noopener"
