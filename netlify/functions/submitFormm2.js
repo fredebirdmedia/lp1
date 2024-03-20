@@ -45,7 +45,7 @@ exports.handler = async function (event, context) {
       mobile_number: phone_number,
       mobile_prefix: '', // Replace with appropriate value if needed
       data_fields: [], // Add any additional data fields as needed
-      confirmed: false,
+      confirmed: true,
       add_to_autoresponders: false
     };
 
@@ -53,8 +53,8 @@ exports.handler = async function (event, context) {
       method: 'POST', // Reverted to POST method for marketing platform
       headers: {
         'Content-Type': 'application/json',
-        'username': marketingApiUsername,
-        'token': marketingApiKey
+        'apiusername': marketingApiUsername,
+        'Apitoken': marketingApiKey
       },
       data: JSON.stringify(marketingData)
     };
