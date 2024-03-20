@@ -68,8 +68,9 @@ exports.handler = async function (event, context) {
     if (phone_number) {
       const simpleTextingData = {
         contactPhone: phone_number,
-        listIds: [{
-          id: '65d60667f82cb04ba121461f'
+        lists: [{
+          //id: '65d60667f82cb04ba121461f',
+          name: 'CA'
         }]
       };
 
@@ -79,7 +80,7 @@ exports.handler = async function (event, context) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${simpleTextingApiKey}`
         },
-        data: JSON.stringify(simpleTextingData) // Convert object to JSON string
+        data: simpleTextingData
       };
 
       console.log('Making Axios request to SimpleTexting with the following options:', simpleTextingOptions);
