@@ -631,18 +631,7 @@
         return;
       }
 
-      // Validate phone number only if provided
-      if (phone_number.trim() !== '') {
-        // Allow submission if only the country code "+1" is provided
-        if (phone_number.trim() !== '+1') {
-          // Verify that the phone number is in Canadian format
-          const phoneRegex = /^\+1[2-9]\d{9}$/;
-          if (!phoneRegex.test(phone_number)) {
-            alert('Please enter a valid Canadian phone number.');
-            return;
-          }
-        }
-      }
+  
 
 
       const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
