@@ -61,7 +61,7 @@ exports.handler = async function (event, context) {
     console.log('Marketing Platform request successful. Response:', marketingResponse.data);
 
     // Handling request related to SimpleTexting
-    const simpleTextingUrl = 'https://api.simpletexting.com/v1/contacts';
+    const simpleTextingUrl = 'https://api.simpletexting.com/v2/contacts';
     const simpleTextingApiKey = process.env.API_ST;
 
     // Check if phone_number is provided before adding to SimpleTexting
