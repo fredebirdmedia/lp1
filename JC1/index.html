@@ -622,7 +622,7 @@
 
     const email = document.querySelector('#r1c0m2i1').value;
     const phoneInput = document.querySelector('#r1c0m2i2');
-    const phone_number = phoneInput.value;
+    const rawPhoneNumber = phoneInput.value;
 
     // Email validation using regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -640,11 +640,17 @@
       return;
     }
 
+    // Get the formatted phone number including the country code
+    const formattedPhoneNumber = iti.getNumber();
+
+    // Add +1 prefix if not already present
+    const phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
+
     const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
 
     const data = {
       email: email,
-      phone_number: phone_number
+      phone_number: phoneNumberToSend // Send the modified phone number
     };
 
     const options = {
