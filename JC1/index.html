@@ -631,24 +631,20 @@
       return;
     }
 
-    // Phone number validation only if the input field is not empty
-    if (rawPhoneNumber.trim() !== '') {
-      const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-      const isValidPhoneNumber = iti.isValidNumber();
+    // Phone number validation using intl-tel-input library
+    const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+    const isValidPhoneNumber = iti.isValidNumber();
 
-      if (!isValidPhoneNumber) {
-        alert('Please enter a valid phone number.');
-        return;
-      }
-
-      // Get the formatted phone number including the country code
-      const formattedPhoneNumber = iti.getNumber();
-
-      // Add +1 prefix if not already present
-      const phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
-    } else {
-      var phoneNumberToSend = ''; // If phone number is empty, send an empty string
+    if (!isValidPhoneNumber) {
+      alert('Please enter a valid phone number.');
+      return;
     }
+
+    // Get the formatted phone number including the country code
+    const formattedPhoneNumber = iti.getNumber();
+
+    // Add +1 prefix if not already present
+    const phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
 
     const url = '/.netlify/functions/submitFormm2'; // Point to your serverless function
 
@@ -683,7 +679,6 @@
     }
   }
 </script>
-
 
 </body>
 
