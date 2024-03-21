@@ -7,7 +7,7 @@
     !function (f, b, e, v, n, t, s) {
       if (f.fbq) return; n = f.fbq = function () {
         n.callMethod ?
-        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
       };
       if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
       n.queue = []; t = b.createElement(e); t.async = !0;
@@ -20,7 +20,55 @@
   </script>
   <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=628585812403182&ev=PageView&noscript=1" /></noscript>
+
   <!-- End Meta Pixel Code -->
+
+
+
+  <!-- New code-->
+  <!-- Include the CSS file for intl-tel-input -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+  <!-- Include the JavaScript files for intl-tel-input -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
+  <script>
+    // Initialize intl-tel-input
+    document.addEventListener("DOMContentLoaded", function () {
+      var input = document.querySelector("#r1c0m2i2"); // Select the phone number input field
+      window.intlTelInput(input, {
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
+        initialCountry: "ca", // Set the initial country to Canada
+        separateDialCode: true, // Display the country dial code in a separate input
+        onlyCountries: ["ca"], // Restrict to Canada
+        customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
+          return "+" + selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
+        },
+        customContainer: "intl-tel-input"
+      });
+    });
+  </script>
+  <style>
+    .intl-tel-input {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .intl-tel-input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  </style>
+
+
+  <!-- New code-->
+
+
   <title></title>
   <meta content="summary_large_image" name="twitter:card" />
   <meta content="website" property="og:type" />
@@ -425,20 +473,18 @@
               href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
               rel="stylesheet" />
           </div>
-          <div class="bee-block bee-block-2 bee-image"><img alt="Image"
-                class="bee-center bee-fixedwidth"
-                src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/Casino-Mary-full-logo-e1689786214719-2048x498%20%281%29.png"
-                style="max-width:170px;" /></a></div>
+          <div class="bee-block bee-block-2 bee-image"><img alt="Image" class="bee-center bee-fixedwidth"
+              src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/Casino-Mary-full-logo-e1689786214719-2048x498%20%281%29.png"
+              style="max-width:170px;" /></a></div>
           <div class="bee-block bee-block-3 bee-divider">
             <div class="spacer" style="height:10px;"></div>
           </div>
           <div class="bee-block bee-block-4 bee-paragraph">
             <p>The World's Most Trusted Casino Guide presents:</p>
           </div>
-          <div class="bee-block bee-block-5 bee-image"><img alt="Image"
-                class="bee-center bee-fixedwidth"
-                src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/justcasino%20hvid.png"
-                style="max-width:272px;" /></a></div>
+          <div class="bee-block bee-block-5 bee-image"><img alt="Image" class="bee-center bee-fixedwidth"
+              src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/justcasino%20hvid.png"
+              style="max-width:272px;" /></a></div>
         </div>
       </div>
     </div>
@@ -454,20 +500,24 @@
             <p>🍁Always up to date</p>
           </div>
           <div class="bee-block bee-block-3 bee-form">
-            <form accept-charset="UTF-8" action="/.netlify/functions/submitFormm" autocomplete="on" enctype="multipart/form-data"
-              method="post" onsubmit="submitForm(event)" target="_self">
+            <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on"
+              enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r1c0m2i1"><label for="r1c0m2i1">Email</label><input id="r1c0m2i1"
                     name="email" required="" type="text" /></div>
               </div>
               <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m2i2"><label for="r1c0m2i2">Telephone (Optional)</label><input
-                    id="r1c0m2i2" name="phone_number" type="tel" value="+1"/></div>
+                <div class="bee-field bee-field-r1c0m2i2 flag-container">
+                  <label for="r1c0m2i2">Telephone (Optional)</label>
+
+                  <input id="r1c0m2i2" name="phone_number" type="tel" value="+1" class="intl-tel-input" />
+                </div>
               </div>
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r1c0m2i4">
                   <div class="bee-button-container"><button id="r1c0m2i4" name="submit" type="submit"
-                      value="SIGN UP">SIGN UP</button></div>
+                      value="SIGN UP">SIGN
+                      UP</button></div>
                 </div>
               </div>
             </form>
@@ -563,88 +613,77 @@
   </div>
 
   <!-- Custom Script -->
-  <script> // Retrieve the API key from the environment variable
-
+  <script>
+    // Retrieve the API key from the environment variable
     async function submitForm(event) {
       event.preventDefault();
 
       const email = document.querySelector('#r1c0m2i1').value;
-      const phone_number = document.querySelector('#r1c0m2i2').value;
+      const phoneInput = document.querySelector('#r1c0m2i2');
+      const rawPhoneNumber = phoneInput.value;
 
+      // Email validation using regular expression
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
 
-	    	     // Email validation using regular expression
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
+      // Check if phone number is provided
+      if (rawPhoneNumber.trim() !== '') {
+        // Phone number validation using intl-tel-input library
+        const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+        const isValidPhoneNumber = iti.isValidNumber();
 
-    // Validate phone number only if provided
-    if (phone_number.trim() !== '') {
-      // Allow submission if only the country code "+1" is provided
-      if (phone_number.trim() !== '+1') {
-        // Verify that the phone number is in Canadian format
-        const phoneRegex = /^\+1[2-9]\d{9}$/;
-        if (!phoneRegex.test(phone_number)) {
-          alert('Please enter a valid Canadian phone number.');
+        if (!isValidPhoneNumber) {
+          alert('Please enter a valid phone number.');
           return;
         }
-      }
-    }
-		    
 
-      const url = '/.netlify/functions/submitFormm'; // Point to your serverless function
+        // Get the formatted phone number including the country code
+        const formattedPhoneNumber = iti.getNumber();
+
+        // Add +1 prefix if not already present
+        var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
+      } else {
+        // If phone number is empty, send an empty string
+        var phoneNumberToSend = '';
+      }
+
+      const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
 
       const data = {
         email: email,
-        phone_number: phone_number
-      }
-
-        ;
+        phone_number: phoneNumberToSend // Send the modified phone number
+      };
 
       const options = {
-
         method: 'POST',
         // Use POST method to send data to the serverless function
         headers: {
           'Content-Type': 'application/json'
-        }
-
-        ,
+        },
         body: JSON.stringify(data)
-      }
-
-        ;
+      };
 
       try {
         const response = await fetch(url, options);
 
         if (!response.ok) {
           const errorResponse = await response.json(); // Parse the response body as JSON
-
-          throw new Error(`HTTP error ! status: $ {
-					response.status
-				}
-
-				, message: $ {
-					errorResponse.message
-				}
-
-				`);
+          throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
         }
 
         console.log('Email submitted successfully');
 
         // Redirect to the external URL after successful form submission
         window.location.href = 'https://justcasino.info/k5400067a'; // Replace 'https://example.com' with your desired external URL
-      }
-
-      catch (error) {
+      } catch (error) {
         console.error('An error occurred:', error.message);
       }
     }
-
   </script>
+
 </body>
 
 </html>
