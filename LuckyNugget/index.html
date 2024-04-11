@@ -29,7 +29,7 @@
 <script>
   // Initialize intl-tel-input
   document.addEventListener("DOMContentLoaded", function () {
-    var input = document.querySelector("#r1c0m4i2"); // Select the phone number input field
+    var input = document.querySelectorAll("#r1c0m4i2"); // Select the phone number input field
     window.intlTelInput(input, {
       utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
       initialCountry: "ca", // Set the initial country to Canada
