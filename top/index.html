@@ -143,6 +143,7 @@
 
 		.bee-row-1 .bee-row-content,
 		.bee-row-11 .bee-row-content,
+		.bee-row-12 .bee-row-content,
 		.bee-row-13 .bee-row-content,
 		.bee-row-16 .bee-row-content,
 		.bee-row-18 .bee-row-content,
@@ -254,27 +255,6 @@
 			width: 100%
 		}
 
-		.bee-row-11 .bee-col-1,
-		.bee-row-13 .bee-col-1,
-		.bee-row-13 .bee-col-4,
-		.bee-row-14 .bee-col-1,
-		.bee-row-14 .bee-col-3,
-		.bee-row-16 .bee-col-1,
-		.bee-row-19 .bee-col-1,
-		.bee-row-20 .bee-col-1,
-		.bee-row-21 .bee-col-1,
-		.bee-row-22 .bee-col-1,
-		.bee-row-4 .bee-col-1,
-		.bee-row-5 .bee-col-2,
-		.bee-row-6 .bee-col-1,
-		.bee-row-6 .bee-col-4,
-		.bee-row-7 .bee-col-1,
-		.bee-row-7 .bee-col-3,
-		.bee-row-9 .bee-col-1 {
-			padding-bottom: 5px;
-			padding-top: 5px
-		}
-
 		.bee-row-2 .bee-col-2 .bee-block-1 {
 			padding: 10px 10px 20px;
 			text-align: center;
@@ -297,8 +277,27 @@
 			padding-right: 25px
 		}
 
+		.bee-row-11 .bee-col-1,
+		.bee-row-13 .bee-col-1,
+		.bee-row-13 .bee-col-4,
+		.bee-row-14 .bee-col-1,
+		.bee-row-14 .bee-col-3,
+		.bee-row-16 .bee-col-1,
+		.bee-row-19 .bee-col-1,
+		.bee-row-20 .bee-col-1,
+		.bee-row-21 .bee-col-1,
+		.bee-row-22 .bee-col-1,
+		.bee-row-4 .bee-col-1,
+		.bee-row-6 .bee-col-1,
+		.bee-row-6 .bee-col-4,
+		.bee-row-7 .bee-col-1,
+		.bee-row-7 .bee-col-3,
+		.bee-row-9 .bee-col-1 {
+			padding-bottom: 5px;
+			padding-top: 5px
+		}
+
 		.bee-row-11 .bee-col-1 .bee-block-1,
-		.bee-row-12 .bee-col-3 .bee-block-1,
 		.bee-row-16 .bee-col-1 .bee-block-1,
 		.bee-row-21 .bee-col-1 .bee-block-1,
 		.bee-row-22 .bee-col-1 .bee-block-1,
@@ -316,12 +315,15 @@
 			padding: 10px
 		}
 
+		.bee-row-12 .bee-col-2,
 		.bee-row-5 .bee-col-2 {
 			background-color: #f5f5df;
 			border-bottom: 0 solid #000000;
 			border-left: 0 solid #000000;
 			border-right: 0px solid #000000;
 			border-top: 0 solid #000000;
+			padding-bottom: 5px;
+			padding-top: 5px;
 			display: flex;
 			flex-direction: column;
 			justify-content: center
@@ -424,25 +426,6 @@
 			color: #000000
 		}
 
-		.bee-row-12 .bee-col-2,
-		.bee-row-15 .bee-row-content {
-			background-color: #f4f1de
-		}
-
-		.bee-row-12 .bee-row-content {
-			background-repeat: no-repeat;
-			border-radius: 15px 15px 0 0;
-			color: #000000
-		}
-
-		.bee-row-12 .bee-col-2 {
-			padding-bottom: 5px;
-			padding-top: 5px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center
-		}
-
 		.bee-row-13 .bee-col-2,
 		.bee-row-13 .bee-col-3,
 		.bee-row-14 .bee-col-2 {
@@ -462,6 +445,10 @@
 			border-radius: 10px;
 			background-repeat: no-repeat;
 			color: #000000
+		}
+
+		.bee-row-15 .bee-row-content {
+			background-color: #f4f1de
 		}
 
 		.bee-row-17 .bee-row-content {
@@ -508,17 +495,17 @@
 			margin-bottom: undefined
 		}
 
-		.bee-row-2 .bee-col-2 .bee-block-2 {
+		.bee-row-3 .bee-col-1 .bee-block-1 {
 			color: #000000;
-			font-size: 18px;
+			font-size: 39px;
 			font-weight: 700;
 			line-height: 150%;
 			text-align: center
 		}
 
-		.bee-row-3 .bee-col-1 .bee-block-1 {
+		.bee-row-2 .bee-col-2 .bee-block-2 {
 			color: #000000;
-			font-size: 39px;
+			font-size: 18px;
 			font-weight: 700;
 			line-height: 150%;
 			text-align: center
@@ -591,11 +578,11 @@
 			margin-left: 10px
 		}
 
-		.bee-row-20 .bee-col-1 .bee-block-1 .bee-icon::not(.bee-icon-last) .bee-content {
+		.bee-row-18 .bee-col-1 .bee-block-1 .bee-icon::not(.bee-icon-last) .bee-content {
 			margin-right: 10px
 		}
 
-		.bee-row-18 .bee-col-1 .bee-block-1 .bee-icon::not(.bee-icon-last) .bee-content {
+		.bee-row-20 .bee-col-1 .bee-block-1 .bee-icon::not(.bee-icon-last) .bee-content {
 			margin-right: 10px
 		}
 
@@ -618,6 +605,7 @@
 				padding: 0 !important
 			}
 
+			.bee-row-12 .bee-col-2,
 			.bee-row-5 .bee-col-2 {
 				padding: 0 15px !important
 			}
@@ -628,10 +616,6 @@
 
 			.bee-row-6 .bee-col-3 {
 				padding: 5px 5px 5px 0 !important
-			}
-
-			.bee-row-12 .bee-col-2 {
-				padding: 0 35px !important
 			}
 
 			.bee-row-1 .bee-col-3 .bee-block-1,
@@ -646,6 +630,12 @@
 				margin: 0 auto !important
 			}
 
+			.bee-row-1 .bee-col-2 .bee-block-1 {
+				padding: 0 5px !important;
+				text-align: center !important;
+				font-size: 21px !important
+			}
+
 			.bee-row-2 .bee-col-2 .bee-block-1 {
 				padding: 10px 5px !important
 			}
@@ -654,20 +644,14 @@
 				font-size: 15px !important
 			}
 
-			.bee-row-1 .bee-col-2 .bee-block-1 {
-				padding: 0 5px !important;
-				text-align: center !important;
-				font-size: 21px !important
+			.bee-row-3 .bee-col-1 .bee-block-1 {
+				padding: 0 25px !important;
+				font-size: 28px !important
 			}
 
 			.bee-row-2 .bee-col-2 .bee-block-2 {
 				padding: 0 5px 10px !important;
 				font-size: 15px !important
-			}
-
-			.bee-row-3 .bee-col-1 .bee-block-1 {
-				padding: 0 25px !important;
-				font-size: 28px !important
 			}
 
 			.bee-row-5 .bee-col-2 .bee-block-1 {
@@ -719,16 +703,12 @@
 				line-height: auto !important
 			}
 
-			.bee-row-12 .bee-col-3 .bee-block-1 {
-				padding: 60px !important
+			.bee-row-18 .bee-col-1 .bee-block-1 {
+				padding: 0 0 5px !important
 			}
 
 			.bee-row-20 .bee-col-1 .bee-block-1 {
 				padding: 15px 0 5px !important
-			}
-
-			.bee-row-18 .bee-col-1 .bee-block-1 {
-				padding: 0 0 5px !important
 			}
 		}
 	</style>
@@ -983,8 +963,8 @@
 					<div class="bee-block bee-block-1 bee-image" id="module_fb0d5370-b8d2-4ed6-82c0-0c7f25685a28"><a href="https://play.spincasino.ca/spc/ca/wave/4705/?game=wolf_blaze_wowpot&amp;promoid=20545&amp;steps=f&amp;video=t&amp;s=bfp23700&amp;a=bfpadid183511" target="_blank"><img alt="Logo" class="bee-center bee-fixedwidth" src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/New%20Project%20%2824%29.png" style="max-width:156px;" /></a></div>
 				</div>
 				<div class="bee-col bee-col-3 bee-col-w1">
-					<div class="bee-block bee-block-1 bee-divider">
-						<div class="spacer" style="height:1px;"></div>
+					<div class="bee-block bee-block-1 bee-spacer">
+						<div class="spacer" style="height:60px;"></div>
 					</div>
 				</div>
 			</div>
