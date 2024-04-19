@@ -694,7 +694,7 @@
 	</div>
 
 	<!-- Custom Script -->
-	<script>
+<script>
   // Retrieve the API key from the environment variable
   async function submitForm(event) {
     event.preventDefault();
@@ -731,8 +731,6 @@
       var phoneNumberToSend = '';
     }
 
-    const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
-
     const data = {
       email: email,
       phone_number: phoneNumberToSend // Send the modified phone number
@@ -740,13 +738,16 @@
 
     const options = {
       method: 'POST',
-      // Use POST method to send data to the serverless function
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     };
 
+    // Track every form submission attempt
+    sa_event("form_submission_attempt");
+
+    const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
     try {
       const response = await fetch(url, options);
 
@@ -757,8 +758,11 @@
 
       console.log('Email submitted successfully');
 
+      // Track successful form submission
+      sa_event("form_submission_successful");
+
       // Redirect to the external URL after successful form submission
-      window.location.href = 'https://play.spincasino.ca/spc/ca/wave/4705/?game=wolf_blaze_wowpot&promoid=20545&steps=f&video=t&s=bfp23700&a=bfpadid183584'; // Replace 'https://example.com' with your desired external URL
+      window.location.href = 'https://play.spincasino.ca/spc/ca/wave/4705/?game=wolf_blaze_wowpot&promoid=20545&steps=f&video=t&s=bfp23700&a=bfpadid183584'; // Destination URL after successful submission
     } catch (error) {
       console.error('An error occurred:', error.message);
     }
