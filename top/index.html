@@ -2,6 +2,13 @@
 <html lang="en">
 
 <head>
+
+
+ <!-- Simple Analytics Script -->
+  <script>window.gc_event=window.gc_event||function(){var a=[].slice.call(arguments);window.gc_event.q?window.gc_event.q.push(a):window.gc_event.q=[a]};</script>
+  <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
+	
 	<!-- Meta Pixel Code -->
 	<script>
 	!function(f,b,e,v,n,t,s)
@@ -1428,27 +1435,36 @@
 		</div>
 	</div>
 
-	<!-- Simple Analytics Script -->
-	<script>window.sa_event = window.sa_event || function () { var a = [].slice.call(arguments); window.sa_event.q ? window.sa_event.q.push(a) : window.sa_event.q = [a] };</script>
-	<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-	<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
-			referrerpolicy="no-referrer-when-downgrade" /></noscript>
 	
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var links = document.querySelectorAll('a[target="_blank"]');
-    
-    links.forEach(function(link) {
-        link.addEventListener('click', function(event) {
-            // Check if gc_event is defined
-            if (typeof gc_event === 'function') {
-                // Fire gc_event for outbound link click
-                gc_event("outbound_link_click");
-            }
+	
+ <script>
+    (function () {
+      function saLoadedLinkEvents() {
+        document
+          .querySelectorAll("a[target='_blank']")
+          .forEach(function (element) {
+            var href = element.getAttribute("href");
+            if (!href || !window.gc_event || !window.sa_loaded) return;
+
+            element.addEventListener("click", function (event) {
+              event.preventDefault();
+              window.gc_event("outbound_link_click");
+              setTimeout(function() {
+                window.location.href = href;
+              }, 100);
+            });
+          });
+      }
+
+      if (document.readyState === "ready" || document.readyState === "complete") {
+        saLoadedLinkEvents();
+      } else {
+        document.addEventListener("readystatechange", function (event) {
+          if (event.target.readyState === "complete") saLoadedLinkEvents();
         });
-    });
-});
-</script>
+      }
+    })();
+  </script>
 
 </body>
 
