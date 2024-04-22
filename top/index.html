@@ -48,6 +48,12 @@
 			border-top: 0 solid #000000
 		}
 
+		.bee-row-1 .bee-col-2 .bee-block-1,
+		.bee-row-2 .bee-col-1 .bee-block-1 {
+			line-height: 150%;
+			padding-right: 25px
+		}
+
 		body {
 			background-color: transparent;
 			color: #000000;
@@ -105,10 +111,6 @@
 
 		.bee-row-content .bee-col-w6 {
 			flex-basis: 50%
-		}
-
-		.bee-row-content .bee-col-w7 {
-			flex-basis: 58%
 		}
 
 		.bee-row-content .bee-col-w10 {
@@ -223,7 +225,7 @@
 		}
 
 		.bee-row-1 .bee-col-1,
-		.bee-row-1 .bee-col-4,
+		.bee-row-1 .bee-col-3,
 		.bee-row-10 .bee-col-1,
 		.bee-row-10 .bee-col-2,
 		.bee-row-10 .bee-col-4,
@@ -256,7 +258,6 @@
 		}
 
 		.bee-row-1 .bee-col-2,
-		.bee-row-1 .bee-col-3,
 		.bee-row-3 .bee-col-2,
 		.bee-row-3 .bee-col-3 {
 			background-color: #f5efdf;
@@ -269,13 +270,7 @@
 
 		.bee-row-1 .bee-col-2 .bee-block-1 {
 			padding-bottom: 10px;
-			padding-left: 25px;
-			padding-right: 25px
-		}
-
-		.bee-row-1 .bee-col-3 .bee-block-1 {
-			padding-right: 5px;
-			width: 100%
+			padding-left: 25px
 		}
 
 		.bee-row-2 .bee-row-content {
@@ -290,8 +285,15 @@
 		}
 
 		.bee-row-2 .bee-col-1 .bee-block-1 {
-			padding-left: 20px;
-			padding-right: 25px
+			padding-left: 20px
+		}
+
+		.bee-row-3 .bee-col-2 .bee-block-1,
+		.bee-row-8 .bee-col-1 .bee-block-1 {
+			padding-bottom: 20px;
+			padding-right: 10px;
+			text-align: center;
+			width: 100%
 		}
 
 		.bee-row-11 .bee-col-1,
@@ -316,14 +318,6 @@
 		.bee-row-9 .bee-col-1 {
 			padding-bottom: 5px;
 			padding-top: 5px
-		}
-
-		.bee-row-3 .bee-col-2 .bee-block-1,
-		.bee-row-8 .bee-col-1 .bee-block-1 {
-			padding-bottom: 20px;
-			padding-right: 10px;
-			text-align: center;
-			width: 100%
 		}
 
 		.bee-row-11 .bee-col-1 .bee-block-1,
@@ -651,10 +645,12 @@
 
 			.bee-row-1 .bee-col-1,
 			.bee-row-1 .bee-col-3,
-			.bee-row-1 .bee-col-4,
 			.bee-row-14 .bee-col-2,
 			.bee-row-14 .bee-col-3,
-			.bee-row-24 .bee-col-1 .bee-block-1 {
+			.bee-row-24 .bee-col-1 .bee-block-1,
+			.bee-row-3 .bee-col-1,
+			.bee-row-3 .bee-col-3,
+			.bee-row-3 .bee-col-4 {
 				padding: 0 0 5px !important
 			}
 
@@ -667,7 +663,7 @@
 			}
 
 			.bee-row-3 .bee-col-2 {
-				padding: 5px 0 5px 5px !important
+				padding: 0 0 5px 5px !important
 			}
 
 			.bee-row-13 .bee-col-2,
@@ -683,20 +679,25 @@
 				padding: 0 5px 5px 0 !important
 			}
 
+			.bee-row-1 .bee-col-1 .bee-block-1,
 			.bee-row-1 .bee-col-3 .bee-block-1 {
-				padding: 0 5px 0 0 !important
-			}
-
-			.bee-row-1 .bee-col-3 .bee-block-1 img,
-			.bee-row-5 .bee-col-2 .bee-block-1 img {
-				float: none !important;
-				margin: 0 auto !important
+				height: 20px !important
 			}
 
 			.bee-row-1 .bee-col-2 .bee-block-1 {
 				padding: 0 5px !important;
 				text-align: center !important;
-				font-size: 18px !important
+				font-size: 16px !important
+			}
+
+			.bee-row-3 .bee-col-1 .bee-block-1,
+			.bee-row-3 .bee-col-4 .bee-block-1 {
+				height: 50px !important
+			}
+
+			.bee-row-2 .bee-col-1 .bee-block-1 {
+				padding: 0 25px !important;
+				font-size: 28px !important
 			}
 
 			.bee-row-12 .bee-col-1 .bee-block-1 h1,
@@ -710,13 +711,13 @@
 				font-size: 14px !important
 			}
 
-			.bee-row-2 .bee-col-1 .bee-block-1 {
-				padding: 0 25px !important;
-				font-size: 28px !important
-			}
-
 			.bee-row-5 .bee-col-2 .bee-block-1 {
 				padding: 5px 0 0 !important
+			}
+
+			.bee-row-5 .bee-col-2 .bee-block-1 img {
+				float: none !important;
+				margin: 0 auto !important
 			}
 
 			.bee-row-14 .bee-col-2 .bee-block-1,
@@ -785,15 +786,12 @@
 						<div class="spacer" style="height:60px;"></div>
 					</div>
 				</div>
-				<div class="bee-col bee-col-2 bee-col-w7">
+				<div class="bee-col bee-col-2 bee-col-w10">
 					<div class="bee-block bee-block-1 bee-paragraph">
 						<p style="word-break: break-word;">Exclusive Offers Canada</p>
 					</div>
 				</div>
-				<div class="bee-col bee-col-3 bee-col-w3">
-					<div class="bee-block bee-block-1 bee-image bee-desktop_hide"><img alt="" class="bee-center bee-fixedwidth" src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/canada-emoji-2048x2044-f8qnodhb.png" style="max-width:43px;" /></div>
-				</div>
-				<div class="bee-col bee-col-4 bee-col-w1">
+				<div class="bee-col bee-col-3 bee-col-w1">
 					<div class="bee-block bee-block-1 bee-spacer">
 						<div class="spacer" style="height:60px;"></div>
 					</div>
@@ -835,7 +833,7 @@
 			<div class="bee-row-content">
 				<div class="bee-col bee-col-1 bee-col-w12">
 					<div class="bee-block bee-block-1 bee-divider">
-						<div class="spacer" style="height:1px;"></div>
+						<div class="spacer" style="height:10px;"></div>
 					</div>
 				</div>
 			</div>
