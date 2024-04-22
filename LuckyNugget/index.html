@@ -3,22 +3,22 @@
 
 <head>
   <!-- Hotjar Tracking Code for lucky1d -->
-<script>
-    (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:4953686,hjsv:6};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-</script>
+  <script>
+    (function (h, o, t, j, a, r) {
+      h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+      h._hjSettings = { hjid: 4953686, hjsv: 6 };
+      a = o.getElementsByTagName('head')[0];
+      r = o.createElement('script'); r.async = 1;
+      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+      a.appendChild(r);
+    })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+  </script>
   <!-- Meta Pixel Code -->
   <script>
     !function (f, b, e, v, n, t, s) {
       if (f.fbq) return; n = f.fbq = function () {
         n.callMethod ?
-        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
       };
       if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
       n.queue = []; t = b.createElement(e); t.async = !0;
@@ -32,15 +32,15 @@
   <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=628585812403182&ev=PageView&noscript=1" /></noscript>
   <!-- End Meta Pixel Code -->
-<!-- New code-->
-<!-- Include the CSS file for intl-tel-input -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
-<!-- Include the JavaScript files for intl-tel-input -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
-<script>
-  // Initialize intl-tel-input
-  document.addEventListener("DOMContentLoaded", function () {
+  <!-- New code-->
+  <!-- Include the CSS file for intl-tel-input -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+  <!-- Include the JavaScript files for intl-tel-input -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
+  <script>
+    // Initialize intl-tel-input
+    document.addEventListener("DOMContentLoaded", function () {
       var input = document.querySelector("#r2c0m3i2"); // Select the phone number input field
       window.intlTelInput(input, {
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
@@ -53,27 +53,27 @@
         customContainer: "intl-tel-input"
       });
     });
-</script>
-<style>
-  .intl-tel-input {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+  </script>
+  <style>
+    .intl-tel-input {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
-  .intl-tel-input:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-</style>
+    .intl-tel-input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  </style>
 
 
-<!-- New code-->
+  <!-- New code-->
 
 
   <title>Lucky Nugget</title>
@@ -505,8 +505,8 @@
               src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/rcp/7wf/ktg/Untitled%20design%20%284%29.png"
               style="max-width:149px;" /></div>
           <div class="bee-block bee-block-5 bee-form">
-          <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on" enctype="multipart/form-data"
-            method="post" onsubmit="submitForm(event)" target="_self">
+            <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on"
+              enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r0c0m4i1"><label for="r0c0m4i1">Email</label><input id="r2c0m3i1"
                     name="email" required="" type="text" /></div>
@@ -690,6 +690,9 @@
         body: JSON.stringify(data)
       };
 
+      			// Track every form submission attempt
+      sa_event("form_submission_attempt");
+
       try {
         const response = await fetch(url, options);
 
@@ -700,6 +703,9 @@
 
         console.log('Email submitted successfully');
 
+        	// Track successful form submission
+        sa_event("form_submission_successful");
+
         // Redirect to the external URL after successful form submission
         window.location.href = 'https://www.luckynuggetcasino.com/ca/?s=bfp23700&a=bfpadid183480'; // Replace 'https://example.com' with your desired external URL
       } catch (error) {
@@ -707,6 +713,13 @@
       }
     }
   </script>
+  <!-- 100% privacy-first analytics -->
+  <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
+      referrerpolicy="no-referrer-when-downgrade" /></noscript>
+  <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <script async src="https://scripts.simpleanalyticscdn.com/auto-events.js"></script>
+
 </body>
 
 </html>
