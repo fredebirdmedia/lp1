@@ -3,18 +3,11 @@
 
 <head>
 
-		<!-- 100% privacy-first analytics -->
-		<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-		<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
-				referrerpolicy="no-referrer-when-downgrade" /></noscript>
-		<script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+	<!-- 100% privacy-first analytics -->
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>  
 
-		<script>
-			document.getElementById('signupButton').addEventListener('click', function () {
-				sa_event("click_signup");
-			});
-		</script>
-	
+		
 	<!-- Meta Pixel Code -->
 	<script>
 	!function(f,b,e,v,n,t,s)
@@ -1442,7 +1435,16 @@
 	</div>
 
 
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var signupButton = document.getElementById('signupButton');
+        if (signupButton) {
+            signupButton.addEventListener('click', function () {
+                sa_event("click_signup");
+            });
+        }
+    });
+</script>
 
 
 </body>
