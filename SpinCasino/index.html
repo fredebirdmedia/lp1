@@ -2,6 +2,13 @@
 <html lang="en">
 
 <head>
+
+
+ <!-- 100% privacy-first analytics -->
+  <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
+      referrerpolicy="no-referrer-when-downgrade" /></noscript>
+  
   <!-- Meta Pixel Code -->
   <script>
     !function (f, b, e, v, n, t, s) {
@@ -515,7 +522,7 @@
             <p style="word-break: break-word;">70 Bonus Spins At Spin Casino 🎁 Only 1$ Deposit</p>
           </div>
           <div class="bee-block bee-block-2 bee-paragraph">
-            <p style="word-break: break-word;">Five bonuses for you:</p>
+            <p style="word-break: break-word;">Four bonuses for you:</p>
           </div>
           <div class="bee-block bee-block-3 bee-list">
             <ul>
@@ -613,6 +620,10 @@
       body: JSON.stringify(data)
     };
 
+    // Track every form submission attempt
+      sa_event("form_submission_attempt_sc");
+
+
     try {
       const response = await fetch(url, options);
 
@@ -622,7 +633,10 @@
       }
 
       console.log('Email submitted successfully');
-
+      
+   // Track successful form submission
+        sa_event("form_submission_successful_sc");
+      
       // Redirect to the external URL after successful form submission
       window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272'; // Replace 'https://example.com' with your desired external URL
     } catch (error) {
