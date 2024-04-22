@@ -1434,14 +1434,17 @@
 	<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
 			referrerpolicy="no-referrer-when-downgrade" /></noscript>
 	
-	<script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     var links = document.querySelectorAll('a[target="_blank"]');
     
     links.forEach(function(link) {
         link.addEventListener('click', function(event) {
-            // Fire gc_event for outbound link click
-            gc_event("outbound_link_click");
+            // Check if gc_event is defined
+            if (typeof gc_event === 'function') {
+                // Fire gc_event for outbound link click
+                gc_event("outbound_link_click");
+            }
         });
     });
 });
