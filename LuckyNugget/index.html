@@ -691,7 +691,7 @@
       };
 
       			// Track every form submission attempt
-      sa_event("form_submission_attempt");
+      sa_event("form_submission_attempt_ln");
 
       try {
         const response = await fetch(url, options);
@@ -704,7 +704,7 @@
         console.log('Email submitted successfully');
 
         	// Track successful form submission
-        sa_event("form_submission_successful");
+        sa_event("form_submission_successful_ln");
 
         // Redirect to the external URL after successful form submission
         window.location.href = 'https://www.luckynuggetcasino.com/ca/?s=bfp23700&a=bfpadid183480'; // Replace 'https://example.com' with your desired external URL
