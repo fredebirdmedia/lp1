@@ -2021,67 +2021,17 @@
 		</div>
 	</div>
 
-	<!-- Custom Script -->
-	<script> // Retrieve the API key from the environment variable
-
-  async function submitForm(event) {
-    event.preventDefault();
-
-    const email = document.querySelector('#r1c0m2i1').value;
-    const first_name = document.querySelector('#r1c0m2i3').value;
-
-    const url = '/.netlify/functions/submitForm'; // Point to your serverless function
-
-    const data = {
-      email: email,
-      first_name: first_name
-    }
-
-      ;
-
-    const options = {
-
-      method: 'POST',
-      // Use POST method to send data to the serverless function
-      headers: {
-        'Content-Type': 'application/json'
-      }
-
-      ,
-      body: JSON.stringify(data)
-    }
-
-      ;
-
-    try {
-      const response = await fetch(url, options);
-
-      if (!response.ok) {
-        const errorResponse = await response.json(); // Parse the response body as JSON
-
-        throw new Error(`HTTP error ! status: $ {
-					response.status
-				}
-
-				, message: $ {
-					errorResponse.message
-				}
-
-				`);
-      }
-
-      console.log('Email submitted successfully');
-
-      // Redirect to the external URL after successful form submission
-      window.location.href = 'https://justcasino.info/k5400067a'; // Replace 'https://example.com' with your desired external URL
-    }
-
-    catch (error) {
-      console.error('An error occurred:', error.message);
-    }
-  }
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var anchorTags = document.querySelectorAll('a');
+  anchorTags.forEach(function(tag) {
+    tag.addEventListener('click', function() {
+      fbq('track', 'Contact');
+    });
+  });
+});
 </script>
+
 </body>
 
 </html>
