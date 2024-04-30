@@ -1,0 +1,42 @@
+<!-- New code-->
+<!-- Include the CSS file for intl-tel-input -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+<!-- Include the JavaScript files for intl-tel-input -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
+<script>
+  // Initialize intl-tel-input
+  document.addEventListener("DOMContentLoaded", function () {
+    var input = document.querySelectorAll("#r0c0m4i2"); // Select the phone number input field
+    window.intlTelInput(input, {
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
+      initialCountry: "ca", // Set the initial country to Canada
+      separateDialCode: true, // Display the country dial code in a separate input
+      onlyCountries: ["ca"], // Restrict to Canada
+      customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
+        return "+" + selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
+      },
+      customContainer: "intl-tel-input"
+    });
+  });
+</script>
+<style>
+  .intl-tel-input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .intl-tel-input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+</style>
+
+
+<!-- New code-->
