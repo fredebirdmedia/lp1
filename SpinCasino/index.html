@@ -578,6 +578,8 @@
 
  <!-- Custom Script -->
 <script>
+  let submissionAttempts = 0; // Track the number of submission attempts
+
   // Retrieve the API key from the environment variable
   async function submitForm(event) {
     event.preventDefault();
@@ -630,9 +632,11 @@
       body: JSON.stringify(data)
     };
 
-    // Track every form submission attempt
-      sa_event("form_submission_attempt_sc");
+    // Increment submission attempts
+    submissionAttempts++;
 
+    // Track every form submission attempt
+    sa_event("form_submission_attempt_sc");
 
     try {
       const response = await fetch(url, options);
@@ -644,19 +648,29 @@
 
       console.log('Email submitted successfully');
       
-   // Track successful form submission
-        sa_event("form_submission_successful_sc");
+      // Track successful form submission
+      sa_event("form_submission_successful_sc");
 
-         //fb lead
-    fbq('track', 'Lead');
+      //fb lead
+      fbq('track', 'Lead');
       
       // Redirect to the external URL after successful form submission
       window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272'; // Replace 'https://example.com' with your desired external URL
     } catch (error) {
       console.error('An error occurred:', error.message);
+      
+      // If submission attempts exceed 2, redirect
+      if (submissionAttempts >= 2) {
+        window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272'; // Replace with your fallback page URL
+        // Track fallback redirect event
+        sa_event("form_fallback_redirect");
+        // Custom Facebook event for fallback redirect
+        fbq('trackCustom', 'form_fallback_redirect');
+      }
     }
   }
 </script>
+
 </body>
 
 </html>
