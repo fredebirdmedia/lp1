@@ -579,6 +579,7 @@
  <!-- Custom Script -->
 <script>
   let submissionAttempts = 0; // Track the number of submission attempts
+  let validationFailures = 0; // Track the number of validation failures
 
   // Retrieve the API key from the environment variable
   async function submitForm(event) {
@@ -592,6 +593,11 @@
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       alert('Please enter a valid email address.');
+      validationFailures++;
+      if (validationFailures >= 2) {
+        redirectToFallback();
+        return;
+      }
       return;
     }
 
@@ -603,6 +609,11 @@
 
       if (!isValidPhoneNumber) {
         alert('Please enter a valid phone number.');
+        validationFailures++;
+        if (validationFailures >= 2) {
+          redirectToFallback();
+          return;
+        }
         return;
       }
 
@@ -661,15 +672,20 @@
       
       // If submission attempts exceed 2, redirect
       if (submissionAttempts >= 2) {
-        window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272'; // Replace with your fallback page URL
-        // Track fallback redirect event
-        sa_event("form_fallback_redirect");
-        // Custom Facebook event for fallback redirect
-        fbq('trackCustom', 'form_fallback_redirect');
+        redirectToFallback();
       }
     }
   }
+
+  function redirectToFallback() {
+    window.location.href = 'https://play.spincasino.com/spc/ca/mm/?s=bfp23700&a=bfpadid182272'; // Replace with your fallback page URL
+    // Track fallback redirect event
+    sa_event("form_fallback_redirect");
+    // Custom Facebook event for fallback redirect
+    fbq('trackCustom', 'form_fallback_redirect');
+  }
 </script>
+
 
 </body>
 
