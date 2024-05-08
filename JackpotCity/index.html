@@ -823,7 +823,7 @@
     submissionAttempts++;
 
     // Track every form submission attempt
-    sa_event("form_submission_attempt_sc");
+    sa_event("form_submission_attempt_jcblaze");
 
     try {
       const response = await fetch(url, options);
@@ -856,7 +856,7 @@
   function redirectToFallback() {
     window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid182272'; // Replace with your fallback page URL
     // Track fallback redirect event
-    sa_event("form_fallback_redirect_sc");
+    sa_event("form_fallback_redirect_jcblaze");
     // Custom Facebook event for fallback redirect
     fbq('trackCustom', 'form_fallback_redirect');
   }
