@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campaign Feed</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+
+<body>
+  <div>
+    <label for="start-date">Start Date:</label>
+    <input type="text" id="start-date" class="datepicker" placeholder="Select start date">
+
+    <label for="end-date">End Date:</label>
+    <input type="text" id="end-date" class="datepicker" placeholder="Select end date">
+
+    <button id="apply-filter">Apply Filter</button>
+  </div>
+
+  <div id="campaign-feed">
+    <!-- XML data will be displayed here -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
