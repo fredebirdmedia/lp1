@@ -1,10 +1,11 @@
-// Update the fetchData function to make a request to your Netlify Function
-async function fetchData(startDate, endDate) {
+// Define the fetchData function
+async function fetchData(event, context) {
     try {
-        const response = await fetch('/.netlify/functions/fetchData', {
-            method: 'POST',
-            body: JSON.stringify({ startDate, endDate })
-        });
+        const startDate = event.startDate;
+        const endDate = event.endDate;
+
+        // Your existing logic for fetching data goes here
+        const response = await fetch(`https://www.buffalopartners.com/api/campaignfeed?username=blackbirdmedia&apikey=44DB33F3-37CE-4A09-87A3-40A0FAE787B6&startdate=${startDate}&enddate=${endDate}`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch data: ${response.statusText}`);
@@ -22,16 +23,18 @@ async function fetchData(startDate, endDate) {
             throw new Error('Empty response received');
         }
 
-        // Parse XML data
-        let parser = new DOMParser();
-        let xmlDoc = parser.parseFromString(data, "text/xml");
-
-        // Convert XML data to HTML string for display
-        let html = xmlDoc.documentElement.outerHTML;
-
-        // Display XML data in the campaign-feed div
-        document.getElementById('campaign-feed').innerHTML = html;
+        return {
+            statusCode: 200,
+            body: data
+        };
     } catch (error) {
         console.error('Error fetching XML:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Error fetching XML' })
+        };
     }
 }
+
+// Export the fetchData function
+module.exports = { fetchData };
