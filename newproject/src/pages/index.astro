@@ -1,0 +1,70 @@
+---
+const { generator } = Astro;
+const description =
+  "Build fast websites, faster. Astro is a new kind of site builder for the modern web. Lightning-fast performance meets powerful developer experience.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="generator" content={generator} />
+    <title>Astro Simple Example</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content="Astro Simple Example" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Inline styles for gradient -->
+    <style>
+      .gradient {
+        background: linear-gradient(to right, #f6d365, #fda085);
+      }
+    </style>
+  </head>
+  <body class="font-sans">
+    <div class="min-h-screen flex items-center justify-center gradient">
+      <div class="w-96 bg-white rounded-lg shadow-xl overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Simple Form</h2>
+          <form>
+            <div class="mb-4">
+              <label for="name" class="block text-gray-700">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div class="mb-4">
+              <label for="email" class="block text-gray-700">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div class="mb-4">
+              <button
+                type="submit"
+                class="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600 transition duration-300"
+                >Submit</button
+              >
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

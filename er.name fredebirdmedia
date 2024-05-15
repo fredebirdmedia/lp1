@@ -1,0 +1,17 @@
+init.defaultbranch=main
+user.name=FrederikGejl
+user.email=frederik.gejl@gmail.com
+core.repositoryformatversion=0
+core.filemode=false
+core.bare=false
+core.logallrefupdates=true
+core.symlinks=false
+core.ignorecase=true
+submodule.active=.
+remote.origin.url=git@github.com:fredebirdmedia/lp1.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+lfs.repositoryformatversion=0
+user.email=fg@blackbird-media.dk
+user.name=fredebirdmedia
