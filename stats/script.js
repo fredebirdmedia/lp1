@@ -1,3 +1,8 @@
+// Initialize date picker
+flatpickr('.datepicker', {
+    dateFormat: 'Y-m-d', // Specify the date format
+});
+
 // Update the fetchData function to make a request to your Netlify Function
 async function fetchData(startDate, endDate) {
     try {
