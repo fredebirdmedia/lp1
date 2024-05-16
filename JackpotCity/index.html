@@ -768,7 +768,7 @@
 
   <!-- Custom Script -->
  <script>
-  let submissionAttempts = 0; // Track the number of submission attempts
+ let submissionAttempts = 0; // Track the number of submission attempts
   let validationFailures = 0; // Track the number of validation failures
 
   // Retrieve the API key from the environment variable
@@ -844,6 +844,13 @@
 
       if (!response.ok) {
         const errorResponse = await response.json(); // Parse the response body as JSON
+
+        // Check if the error message contains the specific string indicating a duplicate submission
+        if (errorResponse.error.includes("Someone is already subscribed to this list")) {
+          // Track the occurrence of the specific error message
+          sa_event("Form_submission_duplicate");
+        }
+
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
       }
 
@@ -875,7 +882,7 @@
     fbq('trackCustom', 'form_fallback_redirect');
   }
 
- // Define the popup content with custom styling and content
+  // Define the popup content with custom styling and content
   const popupHTML = `
   <div id="exitIntentPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(to bottom, #8A192A, #2196F3); color: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 9999;">
     <h2>What about this offer instead?</h2>
@@ -930,6 +937,7 @@
   function isMobileDevice() {
     return /Mobi/.test(navigator.userAgent);
   }
+
    
 </script>
 </body>
