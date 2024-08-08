@@ -102,14 +102,9 @@
     }
 
     .bee-page-container,
-    .bee-row-1 {
-      background-repeat: no-repeat
-    }
-
-    .bee-row-1 .bee-row-content,
-    .bee-row-2 .bee-row-content {
-      color: #000000;
-      border-radius: 0
+    .bee-row-1 .bee-row-content {
+      background-repeat: no-repeat;
+      background-size: auto
     }
 
     body {
@@ -120,8 +115,7 @@
 
     .bee-page-container {
       background-image: none;
-      background-position: top left;
-      background-size: auto
+      background-position: top left
     }
 
     * {
@@ -133,10 +127,6 @@
       margin: 0
     }
 
-    .bee-desktop_hide {
-      display: none
-    }
-
     .bee-row-content {
       max-width: 685px;
       margin: 0 auto;
@@ -145,8 +135,6 @@
 
     .bee-row-1 .bee-col-1 .bee-block-5 div.label:not(.inline),
     .bee-row-1 .bee-col-1 .bee-block-5 label:not(.inline),
-    .bee-row-2 .bee-col-1 .bee-block-5 div.label:not(.inline),
-    .bee-row-2 .bee-col-1 .bee-block-5 label:not(.inline),
     .bee-row-content .bee-col-w12 {
       flex-basis: 100%
     }
@@ -161,8 +149,7 @@
       margin: 0 auto
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-5 .bee-form-row:not(.bee-sidelabel) input:not([type=checkbox]):not([type=radio]),
-    .bee-row-2 .bee-col-1 .bee-block-5 .bee-form-row:not(.bee-sidelabel) input:not([type=checkbox]):not([type=radio]) {
+    .bee-row-1 .bee-col-1 .bee-block-5 .bee-form-row:not(.bee-sidelabel) input:not([type=checkbox]):not([type=radio]) {
       width: 100%
     }
 
@@ -205,18 +192,16 @@
 
     .bee-row-1 {
       background-image: url('https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/ln2/4of/5fu/nova_3.png');
+      background-repeat: no-repeat;
       background-size: cover
     }
 
-    .bee-row-1 .bee-row-content,
-    .bee-row-2,
-    .bee-row-2 .bee-row-content {
-      background-repeat: no-repeat;
-      background-size: auto
+    .bee-row-1 .bee-row-content {
+      border-radius: 0;
+      color: #000000
     }
 
-    .bee-row-1 .bee-col-1,
-    .bee-row-2 .bee-col-1 {
+    .bee-row-1 .bee-col-1 {
       padding-bottom: 20px;
       padding-top: 10px;
       display: flex;
@@ -230,8 +215,7 @@
       width: 100%
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-2,
-    .bee-row-2 .bee-col-1 .bee-block-3 {
+    .bee-row-1 .bee-col-1 .bee-block-2 {
       padding: 5px
     }
 
@@ -241,9 +225,7 @@
       padding-top: 10px
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-4,
-    .bee-row-2 .bee-col-1 .bee-block-2,
-    .bee-row-2 .bee-col-1 .bee-block-6 {
+    .bee-row-1 .bee-col-1 .bee-block-4 {
       padding: 10px
     }
 
@@ -263,8 +245,7 @@
       padding-top: 10px
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-7,
-    .bee-row-2 .bee-col-1 .bee-block-7 {
+    .bee-row-1 .bee-col-1 .bee-block-7 {
       color: #ffffff;
       font-family: inherit;
       font-size: 14px;
@@ -272,53 +253,12 @@
       text-align: center
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-8,
-    .bee-row-2 .bee-col-1 .bee-block-8 {
+    .bee-row-1 .bee-col-1 .bee-block-8 {
       padding-left: 50px;
       padding-right: 50px
     }
 
-    .bee-row-2 .bee-row-content {
-      background-image: url('https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/p2i/eye/3ow/nova.png');
-      background-position: top center
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-1 {
-      padding: 15px 5px 5px;
-      width: 100%
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-4 {
-      padding: 10px 25px
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-5 {
-      font-family: Bitter, Georgia, Times, 'Times New Roman', serif;
-      font-size: 16px;
-      font-weight: 500;
-      padding-bottom: 5px;
-      padding-left: 10px;
-      padding-right: 10px;
-      text-align: center
-    }
-
-    .bee-row-1 .bee-col-1 .bee-block-3 {
-      color: #ffffff;
-      font-family: Bitter, Georgia, Times, "Times New Roman", serif;
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0;
-      line-height: 150%;
-      text-align: center
-    }
-
-    .bee-row-1 .bee-col-1 .bee-block-3 p:not(:last-child),
-    .bee-row-2 .bee-col-1 .bee-block-4 p:not(:last-child) {
-      margin-bottom: 0
-    }
-
-    .bee-row-1 .bee-col-1 .bee-block-2,
-    .bee-row-2 .bee-col-1 .bee-block-3 {
+    .bee-row-1 .bee-col-1 .bee-block-2 {
       color: #ffffff;
       font-family: Bitter, Georgia, Times, "Times New Roman", serif;
       font-size: 36px;
@@ -328,27 +268,33 @@
       text-align: center
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-8,
-    .bee-row-2 .bee-col-1 .bee-block-4,
-    .bee-row-2 .bee-col-1 .bee-block-8 {
+    .bee-row-1 .bee-col-1 .bee-block-3,
+    .bee-row-1 .bee-col-1 .bee-block-8 {
+      color: #ffffff;
       font-family: Bitter, Georgia, Times, "Times New Roman", serif;
       letter-spacing: 0;
-      line-height: 180%;
       text-align: center
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-2 p:not(:last-child),
-    .bee-row-2 .bee-col-1 .bee-block-3 p:not(:last-child) {
+    .bee-row-1 .bee-col-1 .bee-block-2 p:not(:last-child) {
       margin-bottom: undefined
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-7 .bee-icon-image,
-    .bee-row-2 .bee-col-1 .bee-block-7 .bee-icon-image {
+    .bee-row-1 .bee-col-1 .bee-block-3 {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 150%
+    }
+
+    .bee-row-1 .bee-col-1 .bee-block-3 p:not(:last-child) {
+      margin-bottom: 0
+    }
+
+    .bee-row-1 .bee-col-1 .bee-block-7 .bee-icon-image {
       padding: 0
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-7 .bee-icon:not(.bee-icon-first) .bee-content,
-    .bee-row-2 .bee-col-1 .bee-block-7 .bee-icon:not(.bee-icon-first) .bee-content {
+    .bee-row-1 .bee-col-1 .bee-block-7 .bee-icon:not(.bee-icon-first) .bee-content {
       margin-left: 10px
     }
 
@@ -356,39 +302,24 @@
       margin-right: 10px
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-8,
-    .bee-row-2 .bee-col-1 .bee-block-8 {
-      color: #ffffff;
+    .bee-row-1 .bee-col-1 .bee-block-8 {
       direction: ltr;
       font-size: 15px;
-      font-weight: 400
+      font-weight: 400;
+      line-height: 180%
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-8 p:not(:last-child),
-    .bee-row-2 .bee-col-1 .bee-block-8 p:not(:last-child) {
+    .bee-row-1 .bee-col-1 .bee-block-8 p:not(:last-child) {
       margin-bottom: 16px
     }
 
-    .bee-row-2 .bee-col-1 .bee-block-4 {
-      color: #ffffff;
-      font-size: 20px;
-      font-weight: 600
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-7 .bee-icon::not(.bee-icon-last) .bee-content {
-      margin-right: 10px
-    }
-
-    .bee-row-1 .bee-col-1 .bee-block-5 form,
-    .bee-row-2 .bee-col-1 .bee-block-5 form {
+    .bee-row-1 .bee-col-1 .bee-block-5 form {
       display: inline-block;
       width: 85%
     }
 
     .bee-row-1 .bee-col-1 .bee-block-5 div.label,
-    .bee-row-1 .bee-col-1 .bee-block-5 label,
-    .bee-row-2 .bee-col-1 .bee-block-5 div.label,
-    .bee-row-2 .bee-col-1 .bee-block-5 label {
+    .bee-row-1 .bee-col-1 .bee-block-5 label {
       color: #ffffff;
       letter-spacing: normal;
       line-height: 200%;
@@ -413,14 +344,11 @@
     }
 
     .bee-row-1 .bee-col-1 .bee-block-5 .bee-field>label:first-child,
-    .bee-row-1 .bee-col-1 .bee-block-5 div.label,
-    .bee-row-2 .bee-col-1 .bee-block-5 .bee-field>label:first-child,
-    .bee-row-2 .bee-col-1 .bee-block-5 div.label {
+    .bee-row-1 .bee-col-1 .bee-block-5 div.label {
       padding: 3px
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-5 input:not([type=checkbox]):not([type=radio]):not([type=image]),
-    .bee-row-2 .bee-col-1 .bee-block-5 input:not([type=checkbox]):not([type=radio]):not([type=image]) {
+    .bee-row-1 .bee-col-1 .bee-block-5 input:not([type=checkbox]):not([type=radio]):not([type=image]) {
       background-color: #ffffff;
       border-bottom: 1px solid transparent;
       border-left: 1px solid transparent;
@@ -431,13 +359,11 @@
       min-height: 32px
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-5 input:not([type=checkbox]):not([type=radio]):focus,
-    .bee-row-2 .bee-col-1 .bee-block-5 input:not([type=checkbox]):not([type=radio]):focus {
+    .bee-row-1 .bee-col-1 .bee-block-5 input:not([type=checkbox]):not([type=radio]):focus {
       outline-color: #7747FF
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-5 button,
-    .bee-row-2 .bee-col-1 .bee-block-5 button {
+    .bee-row-1 .bee-col-1 .bee-block-5 button {
       background-color: #fadc57;
       border-bottom: 0 solid transparent;
       border-left: 0 solid transparent;
@@ -452,33 +378,12 @@
       width: 60%
     }
 
-    .bee-row-1 .bee-col-1 .bee-block-5 .bee-button-container,
-    .bee-row-2 .bee-col-1 .bee-block-5 .bee-button-container {
+    .bee-row-1 .bee-col-1 .bee-block-5 .bee-button-container {
       padding-top: 10px;
       text-align: center
     }
 
-    .bee-row-2 .bee-col-1 .bee-block-5 ::-webkit-input-placeholder {
-      color: #060404
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-5 :-moz-placeholder {
-      color: #060404
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-5 ::-moz-placeholder {
-      color: #060404
-    }
-
-    .bee-row-2 .bee-col-1 .bee-block-5 :-ms-input-placeholder {
-      color: #060404
-    }
-
     @media (max-width:705px) {
-      .bee-desktop_hide {
-        display: block !important
-      }
-
       .bee-form form {
         width: 100% !important
       }
@@ -487,56 +392,34 @@
         max-width: none !important
       }
 
-      .bee-mobile_hide {
-        display: none
-      }
-
       .bee-row-content:not(.no_stack) {
         display: block
       }
 
-      .bee-row-1 .bee-col-1 .bee-block-1,
-      .bee-row-2 .bee-col-1 .bee-block-1 {
+      .bee-row-1 .bee-col-1 .bee-block-1 {
         padding: 0 10px !important
       }
 
-      .bee-row-1 .bee-col-1 .bee-block-1 img,
-      .bee-row-2 .bee-col-1 .bee-block-1 img {
+      .bee-row-1 .bee-col-1 .bee-block-1 img {
         float: none !important;
         margin: 0 auto !important
       }
 
-      .bee-row-1 .bee-col-1 .bee-block-2,
+      .bee-row-1 .bee-col-1 .bee-block-2 {
+        padding: 5px 25px 0 !important;
+        font-size: 20px !important
+      }
+
       .bee-row-1 .bee-col-1 .bee-block-3 {
         padding: 5px 25px 0 !important;
-        font-size: 16px !important
+        font-size: 18px !important
       }
 
       .bee-row-1 .bee-col-1 .bee-block-8 {
         font-size: 10px !important
       }
 
-      .bee-row-2 .bee-col-1 .bee-block-4 {
-        padding: 10px 15px 5px !important;
-        font-size: 15px !important
-      }
-
-      .bee-row-2 .bee-col-1 .bee-block-3 {
-        padding: 5px 25px 0 !important;
-        font-size: 25px !important
-      }
-
-      .bee-row-2 .bee-col-1 .bee-block-8 {
-        padding: 0 20px !important;
-        font-size: 10px !important
-      }
-
-      .bee-row-2 .bee-col-1 .bee-block-9 {
-        height: 485px !important
-      }
-
-      .bee-row-1 .bee-col-1 .bee-block-5,
-      .bee-row-2 .bee-col-1 .bee-block-5 {
+      .bee-row-1 .bee-col-1 .bee-block-5 {
         padding: 0 25px !important
       }
 
@@ -545,19 +428,13 @@
       .bee-row-1 .bee-col-1 .bee-block-5 label {
         font-size: 14px !important
       }
-
-      .bee-row-2 .bee-col-1 .bee-block-5 button,
-      .bee-row-2 .bee-col-1 .bee-block-5 input,
-      .bee-row-2 .bee-col-1 .bee-block-5 label {
-        font-size: 12px !important
-      }
     }
   </style>
 </head>
 
 <body>
   <div class="bee-page-container">
-    <div class="bee-row bee-row-1 bee-mobile_hide">
+    <div class="bee-row bee-row-1">
       <div class="bee-row-content no_stack">
         <div class="bee-col bee-col-1 bee-col-w12">
           <div class="bee-block bee-block-1 bee-image"><img alt="Image"
@@ -575,8 +452,8 @@
             <div class="center bee-separator" style="border-top:1px dotted #7a7a7a;width:85%;"></div>
           </div>
           <div class="bee-block bee-block-5 bee-form">
-        <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on" enctype="multipart/form-data"
-          method="post" onsubmit="submitForm(event)" target="_self">
+          <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on" enctype="multipart/form-data"
+            method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r0c0m4i1"><label for="r0c0m4i1">Email</label><input id="r0c0m4i1"
                     name="email" required="" type="text" /></div>
@@ -617,70 +494,6 @@
           </div>
           <div class="bee-block bee-block-9 bee-spacer">
             <div class="spacer" style="height:440px;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bee-row bee-row-2 bee-desktop_hide">
-      <div class="bee-row-content no_stack">
-        <div class="bee-col bee-col-1 bee-col-w12">
-          <div class="bee-block bee-block-1 bee-image"><img alt="Image"
-              class="bee-center bee-fixedwidth bee-fullwidthOnMobile"
-              src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/pb6/ksp/91y/novajackpotlogo-removebg-preview_1.png"
-              style="max-width:548px;" /></div>
-          <div class="bee-block bee-block-2 bee-divider">
-            <div class="center bee-separator" style="border-top:1px solid #7a7a7a;width:100%;"></div>
-          </div>
-          <div class="bee-block bee-block-3 bee-paragraph">
-            <p>Your $750 Bonus + 200 FS Galaxy of Wins Awaits!</p>
-          </div>
-          <div class="bee-block bee-block-4 bee-paragraph">
-            <p style="word-break: break-word;">Launch Your Cosmic Winning Streak! Enter Your Details for Exclusive
-              Offers</p>
-          </div>
-          <div class="bee-block bee-block-5 bee-form">
-            <form accept-charset="UTF-8" action="ACTION_PLACEHOLDER" autocomplete="on" enctype="multipart/form-data"
-              method="post" target="_self">
-              <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m4i1"><label for="r1c0m4i1">Email</label><input id="r1c0m4i1"
-                    name="email" required="" type="text" /></div>
-              </div>
-              <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m4i2"><label for="r1c0m4i2">Telephone</label><input id="r1c0m4i2"
-                    name="telephone" type="tel" /></div>
-              </div>
-              <div class="bee-form-row">
-                <div class="bee-field bee-field-r1c0m4i4">
-                  <div class="bee-button-container"><button id="r1c0m4i4" name="submit" type="submit"
-                      value="JOIN NOW">JOIN NOW</button></div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="bee-block bee-block-6 bee-divider">
-            <div class="center bee-separator" style="border-top:1px solid #dddddd;width:90%;"></div>
-          </div>
-          <div class="bee-block bee-block-7 bee-icons">
-            <div class="bee-icon bee-icon-first">
-              <div class="bee-content">
-                <div class="bee-icon-image"><img height="48px"
-                    src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/18white%281%29.png"
-                    width="auto" /></div>
-              </div>
-            </div>
-            <div class="bee-icon bee-icon-last">
-              <div class="bee-content">
-                <div class="bee-icon-image"><img height="48px"
-                    src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/1121229_1106732/gambleaware.png"
-                    width="auto" /></div>
-              </div>
-            </div>
-          </div>
-          <div class="bee-block bee-block-8 bee-paragraph">
-            <p>Gambling can be addictive. Please play responsibly.</p>
-          </div>
-          <div class="bee-block bee-block-9 bee-spacer">
-            <div class="spacer" style="height:405px;"></div>
           </div>
         </div>
       </div>
