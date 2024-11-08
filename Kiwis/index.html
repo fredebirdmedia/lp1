@@ -671,15 +671,7 @@
           return;
         }
 
-        // Get the formatted phone number including the country code
-        const formattedPhoneNumber = iti.getNumber();
-
-        // Add +1 prefix if not already present
-        var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
-      } else {
-        // If phone number is empty, send an empty string
-        var phoneNumberToSend = '';
-      }
+ 
 
       const url = '/.netlify/functions/submitFormNZ'; // Point to your serverless function
 
