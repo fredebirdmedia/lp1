@@ -1,0 +1,297 @@
+:root {
+  --clr-footer-bg: #2b2b2b;
+  --clr-light: #ebf9fe;
+  --clr-accent: #21c1fb;
+  --ff-accent: "Carter One", system-ui;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* base style */
+body {
+  font-size: 0.875rem;
+}
+
+/* reusable style */
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn {
+  font-family: var(--ff-accent);
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.8rem 1.5rem;
+  display: block;
+  border-radius: 0.5rem;
+  border: 8px solid var(--clr-light);
+  color: var(--clr-light);
+  background-image: linear-gradient(0deg, #f3ac08, #fbe521);
+  transition: background-image 0.5s ease;
+}
+
+.btn:hover {
+  background-image: linear-gradient(0deg, #218afb, #08a9f3);
+}
+
+/* page style*/
+main {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100vh;
+
+  .game-container {
+    height: 100%;
+    grid-template-rows: auto 1fr;
+    place-items: center;
+    position: relative;
+    background-image: url("../assets/space-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    overflow: hidden;
+
+    .subject-bg {
+      position: absolute;
+      bottom: 0;
+      overflow: hidden;
+      width: 25rem;
+      // add transition effect
+      transition: 0.5s ease;
+
+      @media (min-width: 768px) {
+        width: 30rem;
+      }
+
+      @media (min-width: 1280px) {
+        width: 30rem;
+      }
+
+      @media (max-height: 740px) {
+        width: 25rem;
+       }
+
+      &:first-child {
+        left: 0px;
+        width: 35rem;
+
+        @media (max-height: 740px) {
+          width: 28rem;
+         }
+      }
+
+      &:nth-child(2) {
+        right: 0px;
+        bottom: -10rem;
+
+        @media (max-width: 1280px) {
+          right: -5rem;
+          bottom: -11rem;
+        }
+
+        @media (max-width: 1024px) {
+          right: -3rem;
+          bottom: 5rem;
+          transform: rotate(-10deg);
+          width: 20rem;
+        }
+
+        @media (max-width: 740px) {
+          right: 0;
+          bottom: 25vh;
+          transform: rotate(-15deg);
+          width: 15rem;
+        }
+      }
+
+      img {
+        opacity: 0.8;
+        animation: floating 1s linear infinite alternate-reverse;
+
+        @keyframes floating {
+          0% {
+            opacity: 0.8;
+            margin-bottom: 0;
+          }
+
+          100% {
+            opacity: 1;
+            margin-bottom: -0.5rem;
+          }
+        }
+      }
+    }
+
+    .header {
+      z-index: 1;
+
+      .logo {
+        width: 16rem;
+
+        @media (max-width: 768px) {
+          width: 12rem;
+        }
+
+        @media (max-height: 740px) {
+          width: 10rem;
+         }
+      }
+    }
+
+    .game-scene {
+      z-index: 1;
+      padding-bottom: 1rem;
+
+      .stars {
+        .item {
+          height: 20vw;
+          cursor: pointer;
+          min-height: 5rem;
+
+          @media (min-width: 768px) {
+            height: 18vw;
+          }
+
+          @media (min-width: 1024px) {
+            height: 12vw;
+          }
+
+          @media (min-width: 1280px) {
+            height: 7vw;
+          }
+
+          @media (max-height: 740px) {
+            height: 7vw;
+            min-height: 5rem;
+          }
+
+          &.shake {
+            animation: shake 0.8s;
+          }
+
+          @keyframes shake {
+            0% {
+              transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            10% {
+              transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+              transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+              transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+              transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+              transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+              transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+              transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+              transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+              transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+              transform: translate(1px, -2px) rotate(-1deg);
+            }
+          }
+        }
+      }
+    }
+
+    .player-state {
+      font-size: 1.1rem;
+      color: var(--clr-light);
+      background-color: #2b2b2b77;
+      z-index: 1;
+
+      @media (min-width: 768px) {
+        font-size: 1.5rem;
+      }
+
+      @media (max-height: 740px) {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .footer {
+    background-color: var(--clr-footer-bg);
+
+    .text {
+      font-size: 0.857rem;
+      color: var(--clr-light);
+
+      @media (min-width: 768px) {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+.pop {
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #131212e4;
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 0.5s cubic-bezier(0.64, 0.57, 0.67, 1.53);
+  z-index: 2;
+
+  &-reward {
+    width: 25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: var(--clr-light);
+
+    .title {
+      font-size: 3rem;
+      font-family: var(--ff-accent);
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    &-time {
+      p {
+        font-size: 1.2rem;
+        color: var(--clr-light);
+      }
+    }
+  }
+}

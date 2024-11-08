@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en_US" dir="ltr">
+  <head>
+    <!-- Meta Tags for character set, responsive design, and IE compatibility -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Page Title -->
+    <title id="TXT_TITLE">SpinAway</title>
+
+    <!-- Preconnecting to Google Fonts for performance optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+
+    <!-- Apple Touch Icon & Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png" />
+    <link rel="manifest" href="./assets/site.webmanifest" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <script src="./script/dependencies/tailwind.js"></script>
+
+    <!-- Google Fonts for custom typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Luckiest+Guy&display=swap" rel="stylesheet" />
+
+    <!-- External Scripts for jQuery and other dependencies -->
+    <script type="text/javascript" src="./script/dependencies/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript"src="./script/dependencies/jquery.cookie.js"></script>
+    <script src="./script/main.js" type="text/javascript"></script>
+    <script src="./script/text.js" type="text/javascript"></script>
+
+    <!-- FF Pro Universal Tag -->
+    <script>
+      !(function (f, l, u, x, j, s, a, b) {
+        window.flux ||
+          ((j = "undefined" != typeof fluxOptions ? fluxOptions : {}),
+          (s = "undefined" != typeof fluxDefaults ? fluxDefaults : {}),
+          ((a = l.createElement("script")).src =
+            "https://" + u + "/integration/lumetricv2.min.js?v=" + x),
+          (a.type = "text/javascript"),
+          (a.async = "true"),
+          (queue = []),
+          (window.flux = {
+            track: function () {
+              queue.push(arguments);
+            },
+          }),
+          (a.onload = a.onreadystatechange =
+            function () {
+              var rs = this.readyState;
+              if (!rs || "complete" == rs || "loaded" == rs)
+                try {
+                  for (
+                    window.flux = new Lumetric(u, x, j, s);
+                    0 != queue.length;
+
+                  ) {
+                    var args = queue.pop();
+                    window.flux.track.apply(null, args);
+                  }
+                } catch (e) {}
+            }),
+          (b =
+            document.getElementsByTagName("script")[0]).parentNode.insertBefore(
+            a,
+            b
+          ));
+      })(window, document, "ff.casinomary.com", "3.3.0");
+    </script>
+
+    <!-- FF Pro View Event -->
+    <script>
+      flux.track("view");
+    </script>
+  </head>
+
+  <body>
+    <!-- Reward Popup Section -->
+    <div class="pop px-3">
+      <div class="pop-reward text-center rounded-xl">
+        <!-- Reward Image -->
+        <img class="pop-reward-image w-128 mb-5" src="" alt="pop image" />
+
+        <!-- Subheader for reward details -->
+        <p id="TXT_WIN_SUBHEADER" class="text font-semibold mb-5"></p>
+        <p id="TXT_WIN_BOX" class="spin font-semibold"></p>
+
+        <!-- Button to claim or continue -->
+        <button id="submit_name" class="pop-reward-btn btn w-64 rounded-full mx-auto" type="button">
+          <span id="TXT_TRY_AGAIN">TRY AGAIN</span>
+        </button>
+
+        <!-- Countdown Timer Section (hidden by default) -->
+        <div class="pop-reward-time mx-auto mt-3 hidden">
+          <p id="TXT_EXPIRES" class="font-semibold"></p>
+          <span class="counter font-semibold"></span>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Game Scene Section -->
+      <section class="game-container grid py-5 px-3">
+        <div class="subject-bg hidden xl:block">
+          <img class="img" src="./assets/astro-02.png" alt="subject" />
+        </div>
+        <div class="subject-bg">
+          <img class="img" src="./assets/astro-1.png" alt="subject" />
+        </div>
+
+        <!-- Header with Logo -->
+        <div class="header flex justify-center">
+          <div class="logo">
+            <img class="img" src="./assets/spinaway-logo.png" alt="logo" />
+          </div>
+        </div>
+
+        <!-- SpinAaway Game Grid -->
+        <div class="game-scene">
+          <div class="stars grid grid-cols-3 gap-4 lg:gap-5">
+            <!-- Star Buttons -->
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+            <button class="item">
+              <img class="img" src="./assets/star.png" alt="item" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Welcome text -->
+        <h2 id="TXT_SUBHEADER" class="player-state font-semibold text-center p-2 rounded-md lg:py-5"></h2>
+      </section>
+
+      <!-- Footer Section -->
+      <footer class="footer py-5">
+        <p id="TXT_TERMS" class="text text-center mb-5"></p>
+
+        <!-- Partners Section with Logos -->
+        <div class="partners flex gap-4 justify-center items-center">
+          <img class="img w-24" src="./assets/partner-1.png" alt="company" />
+          <img class="img w-8" src="./assets/partner-2.png" alt="company" />
+          <img class="img w-24" src="./assets/partner-3.png" alt="company" />
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
