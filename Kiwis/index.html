@@ -631,106 +631,115 @@
 	</div>
 
 	<!-- Custom Script -->
+	<!-- Custom Script -->
 	<script>
-    let submissionAttempts = 0; // Track the number of submission attempts
-    let validationFailures = 0; // Track the number of validation failures
+		let submissionAttempts = 0; // Track the number of submission attempts
+		let validationFailures = 0; // Track the number of validation failures
 
-    // Retrieve the API key from the environment variable
-    async function submitForm(event) {
-      event.preventDefault();
+		// Retrieve the API key from the environment variable
+		async function submitForm(event) {
+			event.preventDefault();
 
-		const email = document.querySelector('#r2c0m0i1').value;
-		const phoneInput = document.querySelector('#r2c0m0i3')
-      const rawPhoneNumber = phoneInput.value;
+			const email = document.querySelector('#r2c0m0i1').value;
+			const phoneInput = document.querySelector('#r2c0m0i3');
+			const rawPhoneNumber = phoneInput.value;
 
-      // Email validation using regular expression
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
-        validationFailures++;
-        if (validationFailures >= 3) {
-          redirectToFallback();
-          return;
-        }
-        return;
-      }
+			// Email validation using regular expression
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				validationFailures++;
+				if (validationFailures >= 3) {
+					redirectToFallback();
+					return;
+				}
+				return;
+			}
 
-      // Check if phone number is provided
-      if (rawPhoneNumber.trim() !== '') {
-        // Phone number validation using intl-tel-input library
-        const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-        const isValidPhoneNumber = iti.isValidNumber();
+			// Check if phone number is provided
+			if (rawPhoneNumber.trim() !== '') {
+				// Phone number validation using intl-tel-input library
+				const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+				const isValidPhoneNumber = iti.isValidNumber();
 
-        if (!isValidPhoneNumber) {
-          alert('Please enter a valid phone number.');
-          validationFailures++;
-          if (validationFailures >= 3) {
-            redirectToFallback();
-            return;
-          }
-          return;
-        }
+				if (!isValidPhoneNumber) {
+					alert('Please enter a valid phone number.');
+					validationFailures++;
+					if (validationFailures >= 3) {
+						redirectToFallback();
+						return;
+					}
+					return;
+				}
 
- 
+				// Get the formatted phone number including the country code
+				const formattedPhoneNumber = iti.getNumber();
 
-      const url = '/.netlify/functions/submitFormNZ'; // Point to your serverless function
+				// Send the formatted phone number as-is, without adding the +1 prefix
+				var phoneNumberToSend = formattedPhoneNumber;
+			} else {
+				// If phone number is empty, send an empty string
+				var phoneNumberToSend = '';
+			}
 
-      const data = {
-        email: email,
-        phone_number: phoneNumberToSend // Send the modified phone number
-      };
+			const url = '/.netlify/functions/submitFormNZ'; // Point to your serverless function
 
-      const options = {
-        method: 'POST',
-        // Use POST method to send data to the serverless function
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      };
+			const data = {
+				email: email,
+				phone_number: phoneNumberToSend // Send the formatted phone number
+			};
 
-      // Increment submission attempts
-      submissionAttempts++;
+			const options = {
+				method: 'POST',
+				// Use POST method to send data to the serverless function
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			};
 
-      // Track every form submission attempt
-      sa_event("form_submission_attempt");
+			// Increment submission attempts
+			submissionAttempts++;
 
-      try {
-        const response = await fetch(url, options);
+			// Track every form submission attempt
+			sa_event("form_submission_attempt");
 
-        if (!response.ok) {
-          const errorResponse = await response.json(); // Parse the response body as JSON
-          throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
-        }
+			try {
+				const response = await fetch(url, options);
 
-        console.log('Email submitted successfully');
+				if (!response.ok) {
+					const errorResponse = await response.json(); // Parse the response body as JSON
+					throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
+				}
 
-        // Track successful form submission
-        sa_event("form_submission_successful");
+				console.log('Email submitted successfully');
 
-        //fb lead
-        fbq('track', 'Lead');
+				// Track successful form submission
+				sa_event("form_submission_successful");
 
-        // Redirect to the external URL after successful form submission
-        window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884'; // Replace 'https://example.com' with your desired external URL
-      } catch (error) {
-        console.error('An error occurred:', error.message);
+				//fb lead
+				fbq('track', 'Lead');
 
-        // If submission attempts exceed 2, redirect
-        if (submissionAttempts >= 3) {
-          redirectToFallback();
-        }
-      }
-    }
+				// Redirect to the external URL after successful form submission
+				window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884'; // Replace 'https://example.com' with your desired external URL
+			} catch (error) {
+				console.error('An error occurred:', error.message);
 
-    function redirectToFallback() {
-      window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884'; // Replace with your fallback page URL
-      // Track fallback redirect event
-      sa_event("form_fallback_redirect");
-      // Custom Facebook event for fallback redirect
-      fbq('trackCustom', 'form_fallback_redirect');
-    }
-  </script>
+				// If submission attempts exceed 2, redirect
+				if (submissionAttempts >= 3) {
+					redirectToFallback();
+				}
+			}
+		}
+
+		function redirectToFallback() {
+			window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884'; // Replace with your fallback page URL
+			// Track fallback redirect event
+			sa_event("form_fallback_redirect");
+			// Custom Facebook event for fallback redirect
+			fbq('trackCustom', 'form_fallback_redirect');
+		}
+	</script>
 </body>
 
 </html>
