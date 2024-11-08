@@ -19,7 +19,7 @@
 	src="https://www.facebook.com/tr?id=628585812403182&ev=PageView&noscript=1"
 	/></noscript>
 	<!-- End Meta Pixel Code -->
-	<title>Spin Casino UFC Exclusive</title>
+	<title>Kiwi 1$</title>
 	<meta content="summary_large_image" name="twitter:card" />
 	<meta content="website" property="og:type" />
 	<meta content="" property="og:description" />
@@ -41,20 +41,20 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
 	<script>
 		// Initialize intl-tel-input
-			document.addEventListener("DOMContentLoaded", function () {
-				var input = document.querySelector("#r2c0m0i3");
-				window.intlTelInput(input, {
-					utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
-					initialCountry: "nz",
-					separateDialCode: false, // Changed to false to get the full number with country code
-					onlyCountries: ["nz"],
-					formatOnDisplay: true,
-					nationalMode: false, // This ensures the number is always in international format
-					customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
-						return "+64 " + selectedCountryPlaceholder;
-					}
-				});
+		document.addEventListener("DOMContentLoaded", function () {
+			var input = document.querySelector("#r2c0m0i3");
+			window.intlTelInput(input, {
+				utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
+				initialCountry: "nz",
+				separateDialCode: true, // Changed to true to handle the country code separately
+				onlyCountries: ["nz"],
+				formatOnDisplay: true,
+				nationalMode: true, // Changed to true to get national format
+				customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
+					return selectedCountryPlaceholder;
+				}
 			});
+		});
 	</script>
 	<style>	
 		.bee-row,
@@ -570,7 +570,7 @@
 								<div class="bee-field bee-field-r2c0m0i1"><label for="r2c0m0i1">Email</label><input id="r2c0m0i1" name="email" required="" type="text" /></div>
 							</div>
 							<div class="bee-form-row">
-								<div class="bee-field bee-field-r2c0m0i3"><label for="r2c0m0i3">Telephone (Optional)</label><input id="r2c0m0i3" name="telephone" type="tel" placeholder="+64 21 123 4567" data-intl-tel-input-id="0" /></div>
+								<div class="bee-field bee-field-r2c0m0i3"><label for="r2c0m0i3">Telephone (Optional)</label><input id="r2c0m0i3" name="telephone" type="tel" placeholder="21 123 4567" data-intl-tel-input-id="0" /></div>
 							</div>
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r2c0m0i4">
@@ -639,16 +639,33 @@
 
 		// Retrieve the API key from the environment variable
 	async function submitForm(event) {
-			event.preventDefault();
+		event.preventDefault();
 
-			const email = document.querySelector('#r2c0m0i1').value;
-			const phoneInput = document.querySelector('#r2c0m0i3');
-			const rawPhoneNumber = phoneInput.value;
+		const email = document.querySelector('#r2c0m0i1').value;
+		const phoneInput = document.querySelector('#r2c0m0i3');
+		const rawPhoneNumber = phoneInput.value;
 
-			// Email validation using regular expression
-			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			if (!emailRegex.test(email)) {
-				alert('Please enter a valid email address.');
+		// Email validation using regular expression
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			alert('Please enter a valid email address.');
+			validationFailures++;
+			if (validationFailures >= 3) {
+				redirectToFallback();
+				return;
+			}
+			return;
+		}
+
+		let phoneNumberToSend = '';
+
+		// Check if phone number is provided
+		if (rawPhoneNumber.trim() !== '') {
+			const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+			const isValidPhoneNumber = iti.isValidNumber();
+
+			if (!isValidPhoneNumber) {
+				alert('Please enter a valid phone number.');
 				validationFailures++;
 				if (validationFailures >= 3) {
 					redirectToFallback();
@@ -657,36 +674,25 @@
 				return;
 			}
 
-			let phoneNumberToSend = '';
+			// Get the number without the plus sign and any formatting
+			let nationalNumber = iti.getNumber().replace(/\D/g, '');
 
-			// Check if phone number is provided
-			if (rawPhoneNumber.trim() !== '') {
-				const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-				const isValidPhoneNumber = iti.isValidNumber();
-
-				if (!isValidPhoneNumber) {
-					alert('Please enter a valid phone number.');
-					validationFailures++;
-					if (validationFailures >= 3) {
-						redirectToFallback();
-						return;
-					}
-					return;
-				}
-
-				// Get the formatted phone number and clean it
-				phoneNumberToSend = iti.getNumber()
-					.replace(/\s+/g, '')  // Remove all spaces
-					.replace(/^00/, '+')  // Replace 00 with + at the start if present
-					.replace(/[()-]/g, ''); // Remove parentheses and hyphens
+			// Remove the country code (64) if it's at the start of the number
+			if (nationalNumber.startsWith('64')) {
+				nationalNumber = nationalNumber.substring(2);
 			}
 
-			const url = '/.netlify/functions/submitFormNZ';
+			// Format for SimpleTexting: "64" + national number
+			phoneNumberToSend = "64" + nationalNumber;
+		}
 
-			const data = {
-				email: email,
-				phone_number: phoneNumberToSend
-			};
+		const url = '/.netlify/functions/submitFormNZ';
+
+		const data = {
+			email: email,
+			phone_number: phoneNumberToSend
+		};
+
 
 			const options = {
 				method: 'POST',
