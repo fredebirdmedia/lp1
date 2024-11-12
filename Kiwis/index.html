@@ -626,38 +626,19 @@
 	<!-- Custom Script -->
 	<!-- Custom Script -->
 	<script>
-		let submissionAttempts = 0; // Track the number of submission attempts
-		let validationFailures = 0; // Track the number of validation failures
+		let submissionAttempts = 0;
+		let validationFailures = 0;
 
-		// Retrieve the API key from the environment variable
-	async function submitForm(event) {
-		event.preventDefault();
+		async function submitForm(event) {
+			event.preventDefault();
 
-		const email = document.querySelector('#r2c0m0i1').value;
-		const phoneInput = document.querySelector('#r2c0m0i3');
-		const rawPhoneNumber = phoneInput.value;
+			const email = document.querySelector('#r2c0m0i1').value;
+			const phoneInput = document.querySelector('#r2c0m0i3');
+			const rawPhoneNumber = phoneInput.value;
 
-		// Email validation using regular expression
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			alert('Please enter a valid email address.');
-			validationFailures++;
-			if (validationFailures >= 3) {
-				redirectToFallback();
-				return;
-			}
-			return;
-		}
-
-		let phoneNumberToSend = '';
-
-		// Check if phone number is provided
-		if (rawPhoneNumber.trim() !== '') {
-			const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-			const isValidPhoneNumber = iti.isValidNumber();
-
-			if (!isValidPhoneNumber) {
-				alert('Please enter a valid phone number.');
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
 				validationFailures++;
 				if (validationFailures >= 3) {
 					redirectToFallback();
@@ -666,63 +647,57 @@
 				return;
 			}
 
-			// Get the number without the plus sign and any formatting
-			let nationalNumber = iti.getNumber().replace(/\D/g, '');
+			let phoneNumberToSend = '';
 
-			// Remove the country code (64) if it's at the start of the number
-			if (nationalNumber.startsWith('64')) {
-				nationalNumber = nationalNumber.substring(2);
+			if (rawPhoneNumber.trim() !== '') {
+				const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+				const isValidPhoneNumber = iti.isValidNumber();
+
+				if (!isValidPhoneNumber) {
+					alert('Please enter a valid phone number.');
+					validationFailures++;
+					if (validationFailures >= 3) {
+						redirectToFallback();
+						return;
+					}
+					return;
+				}
+
+				phoneNumberToSend = iti.getNumber();
 			}
 
-			// Format for SimpleTexting: "64" + national number
-			phoneNumberToSend = "+64" + nationalNumber;
-		}
+			const url = '/.netlify/functions/submitFormNZ';
 
-		const url = '/.netlify/functions/submitFormNZ';
-
-		const data = {
-			email: email,
-			phone_number: phoneNumberToSend
-		};
-
+			const data = {
+				email: email,
+				phone_number: phoneNumberToSend
+			};
 
 			const options = {
 				method: 'POST',
-				// Use POST method to send data to the serverless function
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(data)
 			};
 
-			// Increment submission attempts
 			submissionAttempts++;
-
-			// Track every form submission attempt
 			sa_event("form_submission_attempt");
 
 			try {
 				const response = await fetch(url, options);
 
 				if (!response.ok) {
-					const errorResponse = await response.json(); // Parse the response body as JSON
+					const errorResponse = await response.json();
 					throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
 				}
 
 				console.log('Email submitted successfully');
-
-				// Track successful form submission
 				sa_event("form_submission_successful");
-
-				//fb lead
 				fbq('track', 'Lead');
-
-				// Redirect to the external URL after successful form submission
-				window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884'; // Replace 'https://example.com' with your desired external URL
+				window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884';
 			} catch (error) {
 				console.error('An error occurred:', error.message);
-
-				// If submission attempts exceed 2, redirect
 				if (submissionAttempts >= 3) {
 					redirectToFallback();
 				}
@@ -730,10 +705,8 @@
 		}
 
 		function redirectToFallback() {
-			window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884'; // Replace with your fallback page URL
-			// Track fallback redirect event
+			window.location.href = 'https://www.kiwistreasure.com/?s=bfp23700&a=bfpadid194884';
 			sa_event("form_fallback_redirect");
-			// Custom Facebook event for fallback redirect
 			fbq('trackCustom', 'form_fallback_redirect');
 		}
 	</script>
