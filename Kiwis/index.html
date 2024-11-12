@@ -57,6 +57,10 @@
 		});
 	</script>
 	<style>	
+
+
+
+ 
 		.bee-row,
 		.bee-row-content {
 			position: relative
@@ -138,6 +142,7 @@
 			flex: 1;
 			flex-wrap: wrap;
 			align-items: center
+		
 		}
 
 		.bee-form .bee-form-row .bee-field input:not([type=checkbox]):not([type=radio]) {
@@ -386,7 +391,7 @@
 		}
 
 		.bee-row-3 .bee-col-1 .bee-block-1 ::-webkit-input-placeholder {
-			color: #ffffff
+			color: #000000
 		}
 
 		.bee-row-3 .bee-col-1 .bee-block-1 :-moz-placeholder {
@@ -413,7 +418,7 @@
 			border-radius: 6px;
 			border-right: 1px solid #a3a3a3;
 			border-top: 1px solid #a3a3a3;
-			color: #ffffff;
+			color: #000000;
 			padding: 5px;
 			min-height: 33.4px
 		}
@@ -518,24 +523,7 @@
 			}
 		}
 		
-		/* Custom CSS */
-		.bee-form .bee-form-row .bee-field input[type="text"],
-		.bee-form .bee-form-row .bee-field input[type="tel"] {
-			width: 100% !important;
-			padding: 8px !important;
-			font-size: 16px !important;
-			border: 1px solid #a3a3a3 !important;
-			color: #000000 !important;
-			background-color: #eaeaea !important;
-		}
-		.bee-form .bee-form-row .bee-field input[type="tel"] {
-			padding-left: 70px !important;
-		}
 
-		 /* Specific adjustments for intl-tel-input */
-		.intl-tel-input {
-			width: 100% !important;
-		}
 
 	</style>
 </head>
@@ -569,9 +557,13 @@
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r2c0m0i1"><label for="r2c0m0i1">Email</label><input id="r2c0m0i1" name="email" required="" type="text" /></div>
 							</div>
-							<div class="bee-form-row">
-								<div class="bee-field bee-field-r2c0m0i3"><label for="r2c0m0i3">Telephone (Optional)</label><input id="r2c0m0i3" name="telephone" type="tel" placeholder="21 123 4567" data-intl-tel-input-id="0" /></div>
-							</div>
+					<div class="bee-form-row" style="width: 100%;">
+						<div class="bee-field bee-field-r2c0m0i3" style="width: 100%;">
+							<label for="r2c0m0i3">Telephone (Optional)</label>
+							<input id="r2c0m0i3" name="telephone" type="tel" placeholder="21 123 4567" data-intl-tel-input-id="0"
+								style="width: 100%;" />
+						</div>
+					</div>
 							<div class="bee-form-row">
 								<div class="bee-field bee-field-r2c0m0i4">
 									<div class="bee-button-container"><button id="r2c0m0i4" name="submit" type="submit" value="SIGN UP">SIGN UP</button></div>
