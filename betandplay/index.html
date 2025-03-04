@@ -127,27 +127,7 @@
   position: relative;
 }
 
- /* Make form fields larger on mobile */
-  .bee-row-2 .bee-col-1 .bee-block-3 input:not([type=checkbox]):not([type=radio]):not([type=image]) {
-    font-size: 16px !important;
-    min-height: 44px !important; 
-    padding: 10px !important;
-  }
-  
-  /* Make labels larger */
-  .bee-row-2 .bee-col-1 .bee-block-3 label {
-    font-size: 16px !important;
-    margin-bottom: 6px !important;
-    display: block !important;
-  }
-  
-  /* Make the button larger */
-  .bee-row-2 .bee-col-1 .bee-block-3 button {
-    font-size: 16px !important;
-    min-height: 48px !important;
-    width: 90% !important;
-    padding: 10px 20px !important;
-  }
+
 
     .bee-row-2,
     .bee-row-2 .bee-row-content {
@@ -569,6 +549,103 @@
       .bee-row-2 .bee-col-1 .bee-block-3 label {
         font-size: 12px !important
       }
+
+      @media (max-width:460px) {
+  /* Make form fields larger on mobile */
+  .bee-row-2 .bee-col-1 .bee-block-3 input:not([type=checkbox]):not([type=radio]):not([type=image]) {
+    font-size: 16px !important;
+    min-height: 44px !important; 
+    padding: 10px !important;
+  }
+  
+  /* Make labels larger */
+  .bee-row-2 .bee-col-1 .bee-block-3 label {
+    font-size: 16px !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+  }
+  
+  /* Make the button larger */
+  .bee-row-2 .bee-col-1 .bee-block-3 button {
+    font-size: 16px !important;
+    min-height: 48px !important;
+    width: 90% !important;
+    padding: 10px 20px !important;
+  }
+  
+  /* Add more padding to the form container */
+  .bee-row-2 .bee-col-1 .bee-block-3 {
+    padding: 15px 20px !important;
+  }
+  
+  /* Increase spacing between form elements */
+  .bee-form-row {
+    margin-bottom: 15px !important;
+  }
+  
+  /* Make phone dropdown larger */
+  .intl-tel-input .selected-flag {
+    padding: 0 12px !important;
+    height: 44px !important;
+  }
+  
+  /* Make telephone input text larger */
+  .iti__country-list {
+    font-size: 16px !important;
+  }
+  
+  /* Increase spacing between sections */
+  .bee-block {
+    margin-bottom: 15px !important;
+  }
+  
+  /* Larger headline text */
+  .bee-row-2 .bee-col-1 .bee-block-2 {
+    font-size: 24px !important;
+  }
+
+  @media (max-width:460px) {
+  /* Fix the telephone input styling */
+  .intl-tel-input {
+    width: 100% !important;
+    display: block !important;
+  }
+  
+  /* Adjust the flag container */
+  .iti__flag-container {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    min-width: 50px !important;
+  }
+  
+  /* Make the input leave space for the flag */
+  .bee-field-r1c0m2i3 input {
+    padding-left: 52px !important;
+  }
+  
+  /* Ensure the selected flag has enough space */
+  .iti__selected-flag {
+    padding: 0 8px 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+  }
+  
+  /* Adjust the arrow position */
+  .iti__arrow {
+    margin-left: 3px !important;
+  }
+  
+  /* Fix country dropdown positioning */
+  .iti__country-list {
+    width: 300px !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+}
     }
   </style>
 </head>
