@@ -111,12 +111,21 @@
       font-family: Arial, Helvetica, sans-serif
     }
 
-    .bee-page-container {
-      background-image: url("https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/ju2/egk/thr/BetandPlay%20BG.png");
-      background-position: top left;
-      background-size: cover;
-      background-repeat: no-repeat
-    }
+    html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+}
+
+  .bee-page-container {
+  background-image: url("https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/ju2/egk/thr/BetandPlay%20BG.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh; /* This ensures it fills the full viewport height */
+  position: relative;
+}
 
     .bee-row-2,
     .bee-row-2 .bee-row-content {
