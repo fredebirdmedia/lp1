@@ -53,7 +53,7 @@
     <script>
       // Initialize intl-tel-input
       document.addEventListener("DOMContentLoaded", function () {
-        var input = document.querySelector("#r1c0m2i3"); // Select the phone number input field
+        var input = document.querySelector("#r1c0m1i3"); // Select the phone number input field
         window.intlTelInput(input, {
           utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
           initialCountry: "ca", // Set the initial country to Canada
@@ -723,8 +723,8 @@
     async function submitForm(event) {
       event.preventDefault();
 
-      const email = document.querySelector('#r2c0m3i1').value;
-      const phoneInput = document.querySelector('#r2c0m3i2');
+      const email = document.querySelector('#r1c0m1i1').value;
+      const phoneInput = document.querySelector('#r1c0m1i3');
       const rawPhoneNumber = phoneInput.value;
 
       // Email validation using regular expression
