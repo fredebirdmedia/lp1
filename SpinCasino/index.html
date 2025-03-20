@@ -647,7 +647,7 @@
     submissionAttempts++;
 
     // Track every form submission attempt
-    sa_event("form_submission_attempt_sc");
+    sa_event("form_submission_attempt");
 
     try {
       const response = await fetch(url, options);
@@ -660,7 +660,7 @@
       console.log('Email submitted successfully');
       
       // Track successful form submission
-      sa_event("form_submission_successful_sc");
+      sa_event("form_submission_successful");
 
       //fb lead
       fbq('track', 'Lead');
