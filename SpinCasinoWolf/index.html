@@ -2,17 +2,7 @@
 <html lang="en">
 
 <head>
-	<!-- Hotjar Tracking Code for Site 4953445 (name missing) -->
-<script>
-    (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:4953445,hjsv:6};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-</script>
+
 	<!-- Meta Pixel Code -->
 	<script>
 	!function(f,b,e,v,n,t,s)
@@ -705,80 +695,116 @@
 	</div>
 
 	<!-- Custom Script -->
-<script>
-  // Retrieve the API key from the environment variable
-  async function submitForm(event) {
-    event.preventDefault();
+	
+	<script>
 
-    const email = document.querySelector('#r2c0m3i1').value;
-    const phoneInput = document.querySelector('#r2c0m3i2');
-    const rawPhoneNumber = phoneInput.value;
+		let submissionAttempts = 0; // Track the number of submission attempts
+		let validationFailures = 0; // Track the number of validation failures
 
-    // Email validation using regular expression
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
+		// Retrieve the API key from the environment variable
+		async function submitForm(event) {
+			event.preventDefault();
 
-    // Check if phone number is provided
-    if (rawPhoneNumber.trim() !== '') {
-      // Phone number validation using intl-tel-input library
-      const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-      const isValidPhoneNumber = iti.isValidNumber();
+			const email = document.querySelector('#r2c0m3i1').value;
+			const phoneInput = document.querySelector('#r2c0m3i2');
+			const rawPhoneNumber = phoneInput.value;
 
-      if (!isValidPhoneNumber) {
-        alert('Please enter a valid phone number.');
-        return;
-      }
+			// Email validation using regular expression
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				validationFailures++;
+				if (validationFailures >= 3) {
+					redirectToFallback();
+					return;
+				}
+				return;
+			}
 
-      // Get the formatted phone number including the country code
-      const formattedPhoneNumber = iti.getNumber();
+			// Check if phone number is provided
+			if (rawPhoneNumber.trim() !== '') {
+				// Phone number validation using intl-tel-input library
+				const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+				const isValidPhoneNumber = iti.isValidNumber();
 
-      // Add +1 prefix if not already present
-      var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
-    } else {
-      // If phone number is empty, send an empty string
-      var phoneNumberToSend = '';
-    }
+				if (!isValidPhoneNumber) {
+					alert('Please enter a valid phone number.');
+					validationFailures++;
+					if (validationFailures >= 3) {
+						redirectToFallback();
+						return;
+					}
+					return;
+				}
 
-    const data = {
-      email: email,
-      phone_number: phoneNumberToSend // Send the modified phone number
-    };
+				// Get the formatted phone number including the country code
+				const formattedPhoneNumber = iti.getNumber();
 
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    };
+				// Add +1 prefix if not already present
+				var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
+			} else {
+				// If phone number is empty, send an empty string
+				var phoneNumberToSend = '';
+			}
 
-    // Track every form submission attempt
-    sa_event("form_submission_attempt");
+			const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
 
-    const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
-    try {
-      const response = await fetch(url, options);
+			const data = {
+				email: email,
+				phone_number: phoneNumberToSend // Send the modified phone number
+			};
 
-      if (!response.ok) {
-        const errorResponse = await response.json(); // Parse the response body as JSON
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
-      }
+			const options = {
+				method: 'POST',
+				// Use POST method to send data to the serverless function
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			};
 
-      console.log('Email submitted successfully');
+			// Increment submission attempts
+			submissionAttempts++;
 
-      // Track successful form submission
-      sa_event("form_submission_successful");
+			// Track every form submission attempt
+			sa_event("form_submission_attempt");
 
-      // Redirect to the external URL after successful form submission
-      window.location.href = 'https://play.spincasino.ca/spc/ca/wave/4705/?game=wolf_blaze_wowpot&promoid=20545&steps=f&video=t&s=bfp23700&a=bfpadid183584'; // Destination URL after successful submission
-    } catch (error) {
-      console.error('An error occurred:', error.message);
-    }
-  }
-</script>
+			try {
+				const response = await fetch(url, options);
+
+				if (!response.ok) {
+					const errorResponse = await response.json(); // Parse the response body as JSON
+					throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
+				}
+
+				console.log('Email submitted successfully');
+
+				// Track successful form submission
+				sa_event("form_submission_successful");
+
+				//fb lead
+				fbq('track', 'Lead');
+
+				// Redirect to the external URL after successful form submission
+				window.location.href = 'https://offers.spincasino.com/spc/wave/wolfblaze/150?s=bfp23700&a=bfpadid183584'; // Replace 'https://example.com' with your desired external URL
+			} catch (error) {
+				console.error('An error occurred:', error.message);
+
+				// If submission attempts exceed 2, redirect
+				if (submissionAttempts >= 3) {
+					redirectToFallback();
+				}
+			}
+		}
+
+		function redirectToFallback() {
+			window.location.href = 'https://offers.spincasino.com/spc/wave/wolfblaze/150?s=bfp23700&a=bfpadid183584'; // Replace with your fallback page URL
+			// Track fallback redirect event
+			sa_event("form_fallback_redirect");
+			// Custom Facebook event for fallback redirect
+			fbq('trackCustom', 'form_fallback_redirect');
+		}
+	</script>
 	<!-- 100% privacy-first analytics -->
 <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
