@@ -529,19 +529,32 @@
 			}
 		}
 
-/* CSS Fix for CasinoMary Mobile Logo */
+/* CSS Fix for CasinoMary Logo - Desktop and Mobile */
 
-/* Target the main logo image in the first row */
+/* Target the main logo image in the first row for desktop */
 .bee-row-1 .bee-col-1 .bee-block-1 .bee-center {
-  max-width: 88px !important; /* Reduce by 50% from 176px */
+  max-width: 264px !important; /* Increase original by 50% (176px × 1.5) */
   height: auto;
   margin: 0 auto;
 }
 
 /* Make sure the Wolf Blaze game logo is also appropriately sized */
 .bee-row-2 .bee-col-1 .bee-block-1 .bee-center {
-  max-width: 220px !important; /* Reduce from 440px */
+  max-width: 660px !important; /* Increase original by 50% (440px × 1.5) */
   height: auto;
+}
+
+/* Mobile logo size adjustments */
+@media (max-width: 768px) {
+  .bee-row-1 .bee-col-1 .bee-block-1 .bee-center {
+    max-width: 88px !important; /* Smaller size for mobile */
+    height: auto;
+  }
+  
+  .bee-row-2 .bee-col-1 .bee-block-1 .bee-center {
+    max-width: 220px !important; /* Smaller size for mobile */
+    height: auto;
+  }
 }
 
 /* Adjust the header text sizes for better mobile experience */
@@ -586,7 +599,6 @@
     max-width: 180px !important;
   }
 }
-
 
 	</style>
 </head>
