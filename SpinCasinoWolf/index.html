@@ -528,6 +528,66 @@
 				font-size: 14px !important
 			}
 		}
+
+/* CSS Fix for CasinoMary Mobile Logo */
+
+/* Target the main logo image in the first row */
+.bee-row-1 .bee-col-1 .bee-block-1 .bee-center {
+  max-width: 88px !important; /* Reduce by 50% from 176px */
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Make sure the Wolf Blaze game logo is also appropriately sized */
+.bee-row-2 .bee-col-1 .bee-block-1 .bee-center {
+  max-width: 220px !important; /* Reduce from 440px */
+  height: auto;
+}
+
+/* Adjust the header text sizes for better mobile experience */
+@media (max-width: 768px) {
+  .bee-row-2 .bee-col-2 .bee-block-1 {
+    font-size: 32px !important; /* Adjusted from 55px */
+    line-height: 110% !important;
+    padding: 5px 20px 0 !important;
+  }
+  
+  .bee-row-3 .bee-col-1 .bee-block-1 {
+    font-size: 24px !important; /* Adjusted from 32px */
+    line-height: 120% !important;
+  }
+
+  /* Give the form elements a bit more breathing room */
+  .bee-row-3 .bee-col-1 .bee-block-3 {
+    padding: 0 20px !important;
+  }
+
+  /* Ensure the "SPIN CASINO" logo at the top of page isn't too large */
+  img[src*="SPIN"] {
+    max-width: 80% !important;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+}
+
+/* Additional refinements for very small screens */
+@media (max-width: 480px) {
+  .bee-row-2 .bee-col-2 .bee-block-1 {
+    font-size: 28px !important;
+  }
+  
+  .bee-row-3 .bee-col-1 .bee-block-1 {
+    font-size: 22px !important;
+  }
+
+  /* Make the Wolf Blaze game image smaller on very small screens */
+  .bee-row-2 .bee-col-1 .bee-block-1 .bee-center {
+    max-width: 180px !important;
+  }
+}
+
+
 	</style>
 </head>
 
