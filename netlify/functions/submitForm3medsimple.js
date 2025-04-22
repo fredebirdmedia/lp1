@@ -60,6 +60,35 @@ exports.handler = async function (event, context) {
 
     console.log('Marketing Platform request successful. Response:', marketingResponse.data);
 
+    // Handling request related to SimpleTexting
+    const simpleTextingUrl = 'https://api-app2.simpletexting.com/v2/api/contacts';
+    const simpleTextingApiKey = process.env.API_ST;
+
+    // Check if phone_number is provided before adding to SimpleTexting
+    if (phone_number) {
+      const simpleTextingData = {
+        contactPhone: phone_number,
+        listIds: [
+          '65d60667f82cb04ba121461f'
+      ]
+      };
+
+      const simpleTextingOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${simpleTextingApiKey}`
+        },
+        data: simpleTextingData
+      };
+
+      console.log('Making Axios request to SimpleTexting with the following options:', simpleTextingOptions);
+
+      const simpleTextingResponse = await axios.post(simpleTextingUrl, simpleTextingOptions.data, { headers: simpleTextingOptions.headers });
+
+      console.log('SimpleTexting request successful. Response:', simpleTextingResponse.data);
+    }
+
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Email and phone number updated successfully' })
