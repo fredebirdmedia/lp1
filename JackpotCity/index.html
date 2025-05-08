@@ -863,7 +863,7 @@
       fbq('track', 'Lead');
 
       // Redirect to the external URL after successful form submission
-      window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184059'; // Replace 'https://example.com' with your desired external URL
+      window.location.href = 'https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182'; // Replace 'https://example.com' with your desired external URL
     } catch (error) {
       console.error('An error occurred:', error.message);
 
@@ -875,7 +875,7 @@
   }
 
   function redirectToFallback() {
-    window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294'; // Replace with your fallback page URL
+    window.location.href = 'https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182'; // Replace with your fallback page URL
     // Track fallback redirect event
     sa_event("form_fallback_redirect_jcblaze");
     // Custom Facebook event for fallback redirect
@@ -888,11 +888,11 @@
     <h2>What about this offer instead?</h2>
     <p style="margin-bottom: 15px;">For only $1, get 80 bonus spins on Jackpot City Casino instead <br>on the slot Wacky Panda.</p>
     <img src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/mkp/a59/dfe/game-1.webp" alt="Wacky Panda Slot" style="display: block; margin-bottom: 15px; max-width: 30%">
-    <a href="https://offers.jackpotcitycasino.com/jpc/ca/mm/?s=bfp23700&a=bfpadid184063" target="_blank" id="exitIntentLink" onclick="trackGoToOfferClick()" style="display: inline-block; padding: 10px 20px; background-color: #F64B1E; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Go to offer</a>
+    <a href="https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182" target="_blank" id="exitIntentLink" onclick="trackGoToOfferClick()" style="display: inline-block; padding: 10px 20px; background-color: #F64B1E; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Go to offer</a>
     <button id="exitIntentCloseBtn" style="margin-top: 15px; padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer;">Close</button>
   </div>
 `;
-
+  //old link https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294
   // Append popup HTML to the body only if the device is not a mobile device
   if (!isMobileDevice()) {
     document.body.insertAdjacentHTML('beforeend', popupHTML);
