@@ -863,7 +863,7 @@
       fbq('track', 'Lead');
 
       // Redirect to the external URL after successful form submission
-      window.location.href = 'https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182'; // Replace 'https://example.com' with your desired external URL
+      window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294'; // Replace 'https://example.com' with your desired external URL
     } catch (error) {
       console.error('An error occurred:', error.message);
 
@@ -875,7 +875,7 @@
   }
 
   function redirectToFallback() {
-    window.location.href = 'https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182'; // Replace with your fallback page URL
+    window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294'; // Replace with your fallback page URL
     // Track fallback redirect event
     sa_event("form_fallback_redirect_jcblaze");
     // Custom Facebook event for fallback redirect
@@ -893,6 +893,7 @@
   </div>
 `;
   //old link https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294
+  //fb_jpc_blaze: https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182
   // Append popup HTML to the body only if the device is not a mobile device
   if (!isMobileDevice()) {
     document.body.insertAdjacentHTML('beforeend', popupHTML);
