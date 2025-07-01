@@ -714,8 +714,8 @@
         //fb lead
         fbq('track', 'Lead');
 
-        // Redirect to the external URL after successful form submission
-        window.location.href = 'https://www.jackpotcity.co.za/?register=1btag=P111192-PR38062-CM112476-TS2073523'; // Replace 'https://example.com' with your desired external URL
+        // Redirect to the external URL after successful form submission 
+        window.location.href = 'https://www.jackpotcity.co.za/?register=1&btag=P111192-PR27184-CM92812-TS2076504'; // Replace 'https://example.com' with your desired external URL
       } catch (error) {
         console.error('An error occurred:', error.message);
 
@@ -726,8 +726,8 @@
       }
     }
 
-    function redirectToFallback() {
-      window.location.href = 'https://www.jackpotcity.co.za/?register=1btag=P111192-PR38062-CM112476-TS2073523'; // Replace with your fallback page URL
+    function redirectToFallback() { 
+      window.location.href = 'https://www.jackpotcity.co.za/?register=1&btag=P111192-PR27184-CM92812-TS2076504'; // Replace with your fallback page URL
       // Track fallback redirect event
       sa_event("form_fallback_redirect");
       // Custom Facebook event for fallback redirect
