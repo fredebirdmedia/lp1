@@ -32,6 +32,19 @@ exports.handler = async function (event, context) {
 
     console.log('SendGrid request successful. Response:', sendgridResponse.data);
 
- 
-}
+    // This is the code you provided, which correctly handles the success return
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Email and phone number updated successfully' })
+    };
+
+  } catch (error) { // This is the catch block you provided
+    console.error('An error occurred:', error);
+
+    // This correctly handles the error return
+    return {
+      statusCode: error.response?.status || 500, // Use status from SendGrid if available, else 500
+      body: JSON.stringify({ error: error.response?.data?.message || 'An error occurred while updating the email and phone number' })
+    };
+  }
 };
