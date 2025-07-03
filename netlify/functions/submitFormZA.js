@@ -33,4 +33,5 @@ exports.handler = async function (event, context) {
     console.log('SendGrid request successful. Response:', sendgridResponse.data);
 
  
+}
 };
