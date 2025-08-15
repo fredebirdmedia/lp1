@@ -680,10 +680,10 @@
         sa_event("form_submission_successful");
 
         //fb lead
-        fbq('track', 'Lead');
+        fbq('track', 'Lead'); 
 
         // Redirect to the external URL after successful form submission
-        window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp48143&a=bfpadid213902'; // Replace 'https://example.com' with your desired external URL
+        window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace 'https://example.com' with your desired external URL
       } catch (error) {
         console.error('An error occurred:', error.message);
 
@@ -696,7 +696,7 @@
 
     
     function redirectToFallback() {
-      window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp48143&a=bfpadid213902'; // Replace with your fallback page URL
+      window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace with your fallback page URL
       // Track fallback redirect event
       sa_event("form_fallback_redirect");
       // Custom Facebook event for fallback redirect
