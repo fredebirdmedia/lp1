@@ -4,19 +4,20 @@ exports.handler = async function (event, context) {
   try {
     const { email, phone_number } = JSON.parse(event.body);
 
-    // Handling request related to SendGrid
+    // --- SETUP: Collect all API promises ---
+    const promises = [];
+
+    // -----------------------------------------------------------------
+    // 1. SENDGRID REQUEST (Existing Logic)
+    // -----------------------------------------------------------------
     const apiKey = process.env.API_KEY;
-    // Note: SendGrid's Marketing Contacts API uses 'PUT' to add or update contacts.
-    // The path for adding or updating contacts is usually /v3/marketing/contacts
     const sendgridUrl = 'https://api.sendgrid.com/v3/marketing/contacts';
-    const sendgridListId = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'; // Replace with your SendGrid list ID
+    const sendgridListId = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'; // Your SendGrid List ID
 
     const sendgridData = {
       contacts: [{
         email: email,
-        // SendGrid API typically expects 'phone_number' within custom fields or reserved fields if available,
-        // but it's used here as per the original code's structure for consistency.
-        phone_number: phone_number 
+        phone_number: phone_number
       }],
       list_ids: [sendgridListId]
     };
@@ -29,38 +30,94 @@ exports.handler = async function (event, context) {
       },
       data: JSON.stringify(sendgridData)
     };
+    
+    // Create the SendGrid promise
+    const sendgridPromise = axios.put(sendgridUrl, sendgridOptions.data, { headers: sendgridOptions.headers })
+      .then(res => {
+        console.log('SendGrid request successful. Status:', res.status);
+        return { status: 'success', service: 'SendGrid' };
+      })
+      .catch(error => {
+        console.error('SendGrid failed:', error.response?.data?.errors || error.message);
+        return { status: 'failed', service: 'SendGrid', error: error.response?.data || error.message };
+      });
+      
+    promises.push(sendgridPromise);
 
-    console.log('Making Axios request to SendGrid with the following options:', {
-      method: sendgridOptions.method,
-      url: sendgridUrl,
-      // Omit data and API key from log for security, but include other useful info
-      headers: { ...sendgridOptions.headers, 'Authorization': 'Bearer [API_KEY_HIDDEN]' } 
-    });
 
-    // Axios PUT call structure: axios.put(url, data, [config])
-    const sendgridResponse = await axios.put(sendgridUrl, sendgridOptions.data, { headers: sendgridOptions.headers });
+    // -----------------------------------------------------------------
+    // 2. BREVO REQUEST (NEW Logic)
+    // -----------------------------------------------------------------
+    const brevoApiKey = process.env.BREVO_API_KEY; // Must be set in Netlify Environment
+    const brevoUrl = 'https://api.brevo.com/v3/contacts';
+    const brevoListId = **6**; // ⬅️ UPDATED: Brevo List ID
 
-    console.log('SendGrid request successful. Status:', sendgridResponse.status, 'Response Data:', sendgridResponse.data);
+    if (!brevoApiKey) {
+      console.warn('BREVO_API_KEY is missing. Skipping Brevo request.');
+    } else {
+      const brevoData = {
+        email: email,
+        attributes: {
+          SMS: phone_number // Brevo uses 'SMS' for mobile/phone. Use international format (e.g., +4512345678).
+        },
+        listIds: [brevoListId],
+        updateEnabled: true // Allows creation or update
+      };
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Email and phone number updated successfully in SendGrid' })
-    };
-  } catch (error) {
-    console.error('An error occurred:', error.message);
-    // Log the full error object for detailed debugging if needed
-    // console.error(error); 
+      const brevoHeaders = {
+        'api-key': brevoApiKey,
+        'Content-Type': 'application/json'
+      };
 
-    // Handle potential Axios error structure
-    const statusCode = error.response?.status || 500;
-    const errorMessage = error.response?.data?.errors 
-      ? JSON.stringify(error.response.data.errors) // SendGrid errors are often in an 'errors' array
-      : error.message || 'An error occurred while updating the email and phone number in SendGrid';
+      // Create the Brevo promise
+      const brevoPromise = axios.post(brevoUrl, brevoData, { headers: brevoHeaders })
+        .then(res => {
+          console.log('Brevo request successful. Status:', res.status);
+          return { status: 'success', service: 'Brevo' };
+        })
+        .catch(error => {
+          console.error('Brevo failed:', error.response?.data?.message || error.message);
+          return { status: 'failed', service: 'Brevo', error: error.response?.data || error.message };
+        });
+
+      promises.push(brevoPromise);
+    }
+    
+    
+    // -----------------------------------------------------------------
+    // 3. EXECUTE ALL REQUESTS CONCURRENTLY
+    // -----------------------------------------------------------------
+    const results = await Promise.allSettled(promises);
+    
+    const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
+    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.status === 'failed'));
+
+    // Summarize the results
+    let message = 'Lead processed.';
+    if (successful.length > 0) {
+      message += ` Successes: ${successful.map(r => r.value.service).join(', ')}.`;
+    }
+    if (failed.length > 0) {
+      message += ` Failures: ${failed.map(r => r.value.service || 'Unknown').join(', ')}.`;
+    }
+    
+    // Determine status code: return 502 if all required services failed, otherwise 200/202 is fine.
+    const statusCode = failed.length === promises.length && promises.length > 0 ? 502 : 200;
 
     return {
       statusCode: statusCode,
+      body: JSON.stringify({ message: message, details: results.map(r => r.value || r.reason) })
+    };
+    
+  } catch (error) {
+    // This catches errors that occur *before* the API calls (e.g., JSON parsing)
+    console.error('A critical function error occurred:', error.message);
+
+    return {
+      statusCode: 500,
       body: JSON.stringify({ 
-        error: `SendGrid Update Failed: ${errorMessage}`
+        error: 'Critical Error: Lead could not be processed due to a function error.',
+        details: error.message 
       })
     };
   }
