@@ -1,0 +1,246 @@
+/* --- 1. GLOBAL RESET & BASE STYLES --- */
+:root {
+  --primary-color: #ffcc00;
+  --secondary-color: #cc00ff;
+  --background-dark: #1a0033;
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --form-bg: rgba(0, 0, 0, 0.7);
+  --max-width: 1200px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-dark);
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 💥 UPDATED IMAGE PATH HERE 💥 */
+  background: url('./img/bg.png') no-repeat center center/cover;
+  position: relative;
+  z-index: 1;
+}
+/* Pseudo-element for a subtle dark overlay on the background image (CRITICAL for contrast) */
+.hero-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
+}
+
+.hero-content {
+  max-width: 90%;
+  width: 100%;
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.logo {
+  max-width: 250px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.headline {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  color: var(--text-light);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+  font-weight: 900;
+  line-height: 1.1;
+  max-width: 700px;
+}
+
+/* Removed .flag styling since the flag and "EXCLUSIVE CANADIAN OFFER" text were removed */
+
+/* Specific styling for the key bonus numbers (High Conversion Focus) */
+.bonus-highlight {
+  color: var(--primary-color);
+  display: block;
+  font-size: 1.2em;
+  margin: 5px 0;
+}
+
+.spins-highlight {
+  color: var(--secondary-color);
+  display: block;
+  font-size: 1.1em;
+}
+
+.sub-headline {
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  margin-bottom: 30px;
+  max-width: 600px;
+}
+
+/* --- 3. CONVERSION FORM STYLES --- */
+.form-container {
+  background-color: var(--form-bg);
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 450px;
+  border: 3px solid var(--primary-color);
+}
+
+.form-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: var(--text-dark);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 8px var(--secondary-color);
+}
+
+.cta-button {
+  width: 100%;
+  padding: 20px;
+  background-color: var(--primary-color);
+  color: var(--background-dark);
+  font-size: 1.4rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.6);
+  transition: background-color 0.3s, transform 0.1s;
+  animation: pulse 1.5s infinite;
+}
+
+.cta-button:hover {
+  background-color: #ffd633;
+  transform: translateY(-2px);
+  animation: none;
+}
+
+/* Button Pulse Animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 204, 0, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 204, 0, 0);
+  }
+}
+
+.privacy-note {
+  font-size: 0.8rem;
+  margin-top: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+/* --- 4. TRUST SECTION --- */
+.trust-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background-color: #110022;
+  border-top: 5px solid var(--secondary-color);
+  flex-wrap: wrap;
+}
+
+.feature {
+  flex: 1;
+  min-width: 250px;
+  padding: 15px;
+  text-align: center;
+}
+
+.feature h3 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- 5. FOOTER --- */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: var(--background-dark);
+}
+
+/* --- 6. MEDIA QUERIES (RESPONSIVENESS) --- */
+/* Tablet & Desktop Adjustments (Form Centering Implemented Here) */
+@media (min-width: 768px) {
+  .hero-content {
+    /* Align items to the center (horizontally) */
+    justify-content: center;
+
+    /* Change from row back to column to stack elements */
+    flex-direction: column;
+
+    /* Center all content blocks (headline, sub-headline, form) */
+    align-items: center;
+    max-width: var(--max-width);
+  }
+
+  .headline,
+  .sub-headline {
+    /* Center text on the desktop view */
+    text-align: center;
+    /* Allow full width for text to use */
+    max-width: 100%;
+  }
+
+  .form-container {
+    max-width: 400px;
+    /* Remove margin that pushed it to the right in the old side-by-side design */
+    margin: 20px auto;
+  }
+}
