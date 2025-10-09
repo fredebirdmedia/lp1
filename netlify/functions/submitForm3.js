@@ -4,6 +4,9 @@ exports.handler = async function (event, context) {
   try {
     const { email, phone_number } = JSON.parse(event.body);
 
+    // Normalize phone number (recommended for Brevo/SMS)
+    const normalized_phone = (phone_number && String(phone_number).trim()) || null;
+
     // --- SETUP: Collect all API promises ---
     const promises = [];
 
@@ -17,7 +20,7 @@ exports.handler = async function (event, context) {
     const sendgridData = {
       contacts: [{
         email: email,
-        phone_number: phone_number
+        phone_number: normalized_phone
       }],
       list_ids: [sendgridListId]
     };
@@ -50,7 +53,8 @@ exports.handler = async function (event, context) {
     // -----------------------------------------------------------------
     const brevoApiKey = process.env.BREVO_API_KEY; // Must be set in Netlify Environment
     const brevoUrl = 'https://api.brevo.com/v3/contacts';
-    const brevoListId = **6**; // ⬅️ UPDATED: Brevo List ID
+    // 🛑 FIX APPLIED HERE: Removed ** from around 6
+    const brevoListId = 6; // Brevo List ID
 
     if (!brevoApiKey) {
       console.warn('BREVO_API_KEY is missing. Skipping Brevo request.');
@@ -58,7 +62,7 @@ exports.handler = async function (event, context) {
       const brevoData = {
         email: email,
         attributes: {
-          SMS: phone_number // Brevo uses 'SMS' for mobile/phone. Use international format (e.g., +4512345678).
+          SMS: normalized_phone // Brevo uses 'SMS' for mobile/phone. Use international format (e.g., +4512345678).
         },
         listIds: [brevoListId],
         updateEnabled: true // Allows creation or update
