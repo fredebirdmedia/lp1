@@ -34,7 +34,7 @@ export default async function (request, context) {
     const username = env.get('TEXTMAGIC_USERNAME');
     const apiKey = env.get('TEXTMAGIC_API_KEY');
 
-    // **LOGGING POINT 1: Before Validation**
+    // **LOGGING POINT 1: Before Validation (Enhanced Debug)**
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
 
@@ -85,16 +85,18 @@ export default async function (request, context) {
 
         // --- 3. GATE CHECK (EMAIL IS REQUIRED) ---
         if (!emailIsValid) {
+            // **CRITICAL FOR CLIENT-SIDE EVENT TRIGGERING**
             return new Response(
                 JSON.stringify({
                     error: 'Lead validation failed. Invalid email address.',
+                    validation_type: 'EMAIL_FAILED', 
                     email_status: emailLookupResponse?.status || 'API Error'
                 }),
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
         
-        // **LOGGING POINT 2: After Successful Validation**
+        // **LOGGING POINT 2: After Successful Validation (Enhanced Debug)**
         console.log(`[Validation Pass] Email: ${leadEmail} passed the gate.`);
 
 
@@ -111,7 +113,7 @@ export default async function (request, context) {
                 } else {
                     const carrierLookupResponse = await tmResponse.json();
                     
-                    // Allow 'valid' boolean true AND mobile/voip type OR if status is ambiguous (null)
+                    // Permissive Phone Validation
                     if (carrierLookupResponse.valid === true && (carrierLookupResponse.type === 'mobile' || carrierLookupResponse.type === 'voip')) {
                          phoneIsValid = true;
                     } else if (carrierLookupResponse.valid === null) {
@@ -132,6 +134,8 @@ export default async function (request, context) {
     // --- 4. ADJUST DATA BASED ON VALIDATION ---
     if (leadPhone && !phoneIsValid) {
         console.warn(`Invalid phone number: ${leadPhone} detected. Stripping phone.`);
+        // **LOGGING POINT 3: Final Submission Check (Enhanced Debug)**
+        console.log(`[SUBMISSION] Stripping phone number from lead: ${leadEmail}.`);
         leadPhone = null; 
     }
 
@@ -145,9 +149,9 @@ export default async function (request, context) {
         contacts: [{ email: leadEmail, phone_number: leadPhone }],
         list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
-    
-    // Log before calling external APIs
-    console.log(`[Submission] Sending lead: ${leadEmail}, Phone: ${leadPhone} to SendGrid.`);
+
+    // **LOGGING POINT 4: Final Submission Check (Enhanced Debug)**
+    console.log(`[Submission] Sending lead: ${leadEmail}, Phone: ${leadPhone === null ? 'STRIPPED' : leadPhone} to SendGrid.`);
 
     const sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', {
         method: 'PUT',
