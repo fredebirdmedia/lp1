@@ -581,7 +581,7 @@
           </div>
           <div class="bee-block bee-block-2 bee-paragraph bee-mobile_hide"></div>
           <div class="bee-block bee-block-3 bee-form">
-              <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on"
+              <form accept-charset="UTF-8" action="/.netlify/functions/formHandler" autocomplete="on"
               enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r2c0m2i1"><label for="r2c0m2i1">Email</label><input id="r2c0m2i1"
@@ -817,7 +817,7 @@
       var phoneNumberToSend = '';
     }
 
-    const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
+    const url = '/.netlify/functions/formHandler'; // Point to your serverless function
 
     const data = {
       email: email,
