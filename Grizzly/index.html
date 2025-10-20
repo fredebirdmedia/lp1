@@ -606,19 +606,19 @@
     const phoneInput = document.querySelector('#r1c0m1i3');
     const rawPhoneNumber = phoneInput.value;
 
-    // Email validation using regular expression
+    // Email validation using regular expression (Client-side check)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       alert('Please enter a valid email address.');
       validationFailures++;
-      if (validationFailures >= 3) {
+      if (validationFailures >= 4) {
         redirectToFallback();
         return;
       }
       return;
     }
 
-    // Check if phone number is provided
+    // Check if phone number is provided (Client-side check)
     if (rawPhoneNumber.trim() !== '') {
       // Phone number validation using intl-tel-input library
       const iti = window.intlTelInputGlobals.getInstance(phoneInput);
@@ -653,7 +653,6 @@
 
     const options = {
       method: 'POST',
-      // Use POST method to send data to the serverless function
       headers: {
         'Content-Type': 'application/json'
       },
@@ -672,10 +671,20 @@
       if (!response.ok) {
         const errorResponse = await response.json(); // Parse the response body as JSON
 
-        // --- START: TextMagic Server-Side Validation Check ---
-        // The server function returns 400 with this message if the email is bad
-        if (response.status === 400 && errorResponse.error.includes("Lead validation failed")) {
-          alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
+        // --- START: Server-Side Validation Check (Looking for 'validation_type' from server) ---
+        if (response.status === 400 && errorResponse.validation_type) {
+
+          // Fire analytics event based on failure type
+          if (errorResponse.validation_type === 'EMAIL_FAILED') {
+            sa_event("form_submission_lookup_emailfail");
+            alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
+
+          } else if (errorResponse.validation_type === 'PHONE_STRIPPED') {
+            // This case is unlikely given the server logic, but included for completeness:
+            sa_event("form_submission_lookup_phonefail");
+            alert('Warning: Phone number could not be validated and was excluded. Please check and re-submit.');
+          }
+
           validationFailures++;
           if (validationFailures >= 3) {
             redirectToFallback();
@@ -683,8 +692,9 @@
           }
           return; // Stop execution if validation failed
         }
-        // --- END: TextMagic Server-Side Validation Check ---
+        // --- END: Server-Side Validation Check ---
 
+        // If the error isn't a specific validation failure, throw the error message
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
       }
 
@@ -697,7 +707,7 @@
       fbq('track', 'Lead');
 
       // Redirect to the external URL after successful form submission
-      window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace 'https://example.com' with your desired external URL
+      window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace with your desired external URL
     } catch (error) {
       console.error('An error occurred:', error.message);
 
