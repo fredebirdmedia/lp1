@@ -581,7 +581,7 @@
           </div>
           <div class="bee-block bee-block-2 bee-paragraph bee-mobile_hide"></div>
           <div class="bee-block bee-block-3 bee-form">
-              <form accept-charset="UTF-8" action="/.netlify/functions/formHandler" autocomplete="on"
+              <form accept-charset="UTF-8" action="/.netlify/functions/formHandlerTM" autocomplete="on"
               enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r2c0m2i1"><label for="r2c0m2i1">Email</label><input id="r2c0m2i1"
@@ -767,31 +767,32 @@
   </div>
 
   <!-- Custom Script -->
- <script>
- let submissionAttempts = 0; // Track the number of submission attempts
+<script>
+
+  let submissionAttempts = 0; // Track the number of submission attempts
   let validationFailures = 0; // Track the number of validation failures
 
   // Retrieve the API key from the environment variable
   async function submitForm(event) {
     event.preventDefault();
 
-    const email = document.querySelector('#r2c0m2i1').value;
-    const phoneInput = document.querySelector('#r2c0m2i2');
+    const email = document.querySelector('#r1c0m1i1').value;
+    const phoneInput = document.querySelector('#r1c0m1i3');
     const rawPhoneNumber = phoneInput.value;
 
-    // Email validation using regular expression
+    // Email validation using regular expression (Client-side check)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       alert('Please enter a valid email address.');
       validationFailures++;
-      if (validationFailures >= 3) {
+      if (validationFailures >= 4) {
         redirectToFallback();
         return;
       }
       return;
     }
 
-    // Check if phone number is provided
+    // Check if phone number is provided (Client-side check)
     if (rawPhoneNumber.trim() !== '') {
       // Phone number validation using intl-tel-input library
       const iti = window.intlTelInputGlobals.getInstance(phoneInput);
@@ -817,7 +818,7 @@
       var phoneNumberToSend = '';
     }
 
-    const url = '/.netlify/functions/formHandler'; // Point to your serverless function
+    const url = '/.netlify/functions/formHandlerTM'; // Point to your serverless function
 
     const data = {
       email: email,
@@ -826,7 +827,6 @@
 
     const options = {
       method: 'POST',
-      // Use POST method to send data to the serverless function
       headers: {
         'Content-Type': 'application/json'
       },
@@ -837,7 +837,7 @@
     submissionAttempts++;
 
     // Track every form submission attempt
-    sa_event("form_submission_attempt_jcblaze");
+    sa_event("form_submission_attempt");
 
     try {
       const response = await fetch(url, options);
@@ -845,100 +845,62 @@
       if (!response.ok) {
         const errorResponse = await response.json(); // Parse the response body as JSON
 
-        // Check if the error message contains the specific string indicating a duplicate submission
-        if (errorResponse.error.includes("Someone is already subscribed to this list")) {
-          // Track the occurrence of the specific error message
-          sa_event("Form_submission_duplicate");
-        }
+        // --- START: Server-Side Validation Check (Looking for 'validation_type' from server) ---
+        if (response.status === 400 && errorResponse.validation_type) {
 
+          // Fire analytics event based on failure type
+          if (errorResponse.validation_type === 'EMAIL_FAILED') {
+            sa_event("form_submission_lookup_emailfail");
+            alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
+
+          } else if (errorResponse.validation_type === 'PHONE_STRIPPED') {
+            // This case is unlikely given the server logic, but included for completeness:
+            sa_event("form_submission_lookup_phonefail");
+            alert('Warning: Phone number could not be validated and was excluded. Please check and re-submit.');
+          }
+
+          validationFailures++;
+          if (validationFailures >= 3) {
+            redirectToFallback();
+            return;
+          }
+          return; // Stop execution if validation failed
+        }
+        // --- END: Server-Side Validation Check ---
+
+        // If the error isn't a specific validation failure, throw the error message
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
       }
 
       console.log('Email submitted successfully');
 
       // Track successful form submission
-      sa_event("form_submission_successful_jcblaze");
+      sa_event("form_submission_successful");
 
       //fb lead
       fbq('track', 'Lead');
 
       // Redirect to the external URL after successful form submission
-      window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184059'; // Replace 'https://example.com' with your desired external URL
+      window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294'; // Replace with your desired external URL
     } catch (error) {
       console.error('An error occurred:', error.message);
 
       // If submission attempts exceed 2, redirect
-      if (submissionAttempts >= 3) {
+      if (submissionAttempts >= 4) {
         redirectToFallback();
       }
     }
   }
 
+
   function redirectToFallback() {
     window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294'; // Replace with your fallback page URL
     // Track fallback redirect event
-    sa_event("form_fallback_redirect_jcblaze");
+    sa_event("form_fallback_redirect");
     // Custom Facebook event for fallback redirect
     fbq('trackCustom', 'form_fallback_redirect');
   }
-
-  // Define the popup content with custom styling and content
-  const popupHTML = `
-  <div id="exitIntentPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(to bottom, #8A192A, #2196F3); color: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 9999;">
-    <h2>What about this offer instead?</h2>
-    <p style="margin-bottom: 15px;">For only $1, get 80 bonus spins on Jackpot City Casino instead <br>on the slot Wacky Panda.</p>
-    <img src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/rahr16jy/mkp/a59/dfe/game-1.webp" alt="Wacky Panda Slot" style="display: block; margin-bottom: 15px; max-width: 30%">
-    <a href="https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182" target="_blank" id="exitIntentLink" onclick="trackGoToOfferClick()" style="display: inline-block; padding: 10px 20px; background-color: #F64B1E; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Go to offer</a>
-    <button id="exitIntentCloseBtn" style="margin-top: 15px; padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer;">Close</button>
-  </div>
-`;
-  //old link https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294
-  //fb_jpc_blaze: https://offers.jackpotcitycasino.com/jpc/wave/blazingbison/200/?s=bfp23700&a=bfpadid184293&pid=628585812403182
-  // Append popup HTML to the body only if the device is not a mobile device
-  if (!isMobileDevice()) {
-    document.body.insertAdjacentHTML('beforeend', popupHTML);
-
-    // Define exit intent function
-    function onExitIntent(e) {
-      e = e || window.event;
-      if (e.clientY < 0) {
-        // User is moving the cursor towards the top of the page (indicating possible intent to leave)
-        showExitIntentPopup();
-      }
-    }
-
-    // Show the exit intent popup
-    function showExitIntentPopup() {
-      const popup = document.getElementById('exitIntentPopup');
-      popup.style.display = 'block';
-
-      // Track exit intent popup shown event
-      sa_event("exit_intent_popup_shown");
-
-      // Close the popup when close button is clicked
-      const closeButton = document.getElementById('exitIntentCloseBtn');
-      closeButton.addEventListener('click', function () {
-        popup.style.display = 'none';
-      });
-
-      // Remove the exit intent event listener after the popup is shown
-      document.removeEventListener('mouseout', onExitIntent);
-    }
-
-    // Listen for mouse movement to trigger exit intent
-    document.addEventListener('mouseout', onExitIntent);
-
-    // Track outgoing link click event
-    function trackGoToOfferClick() {
-      sa_event("go_to_offer_link_clicked");
-    }
-  }
-
-  // Function to check if the device is a mobile device
-  function isMobileDevice() {
-    return /Mobi/.test(navigator.userAgent);
-  }
-
+</script>
    
 </script>
 </body>
