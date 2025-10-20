@@ -7,7 +7,7 @@ exports.handler = async function (event, context) {
     // Normalize phone number (recommended for Brevo/SMS)/
     const normalized_phone = (phone_number && String(phone_number).trim()) || null;
 
-    // --- SETUP: Collect all API promises ---//
+    // --- SETUP: Collect all API promises ---d//
     const promises = [];
 
     // -----------------------------------------------------------------
