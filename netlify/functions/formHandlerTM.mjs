@@ -34,12 +34,15 @@ export default async function (request, context) {
     const username = env.get('TEXTMAGIC_USERNAME');
     const apiKey = env.get('TEXTMAGIC_API_KEY');
 
+    // **LOGGING POINT 1: Before Validation**
+    console.log(`[Validation Start] Checking email: ${leadEmail}`);
+
+
     if (!username || !apiKey) {
         console.warn('TextMagic API credentials missing. Skipping validation.');
         emailIsValid = true; 
         phoneIsValid = true;
     } else {
-        // Base64 encode credentials for Basic Auth
         const authString = Buffer.from(`${username}:${apiKey}`).toString('base64');
         const authHeaders = {
             'Authorization': `Basic ${authString}`,
@@ -47,7 +50,7 @@ export default async function (request, context) {
         };
         const baseUrl = 'https://rest.textmagic.com/api/v2/';
 
-        // A. Email Validation (CRITICAL) - Logic unchanged from previous fix
+        // A. Email Validation (CRITICAL)
         try {
             const encodedEmail = encodeURIComponent(leadEmail);
             const emailLookupUrl = `${baseUrl}email-lookups/${encodedEmail}`; 
@@ -57,9 +60,10 @@ export default async function (request, context) {
                 let errorData = await tmResponse.text();
                 try { errorData = JSON.parse(errorData); } catch {}
                 
-                console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
+                console.error(`[TM Error] Failed API Request for ${leadEmail}. Status: ${tmResponse.status}`, errorData);
+                
                 emailLookupResponse = { status: 'API Error' }; 
-                emailIsValid = false;
+                emailIsValid = false; 
             } else {
                 emailLookupResponse = await tmResponse.json(); 
 
@@ -70,11 +74,11 @@ export default async function (request, context) {
                 ) { 
                     emailIsValid = true;
                 } else {
-                    console.log(`Email validation failed. Status: ${emailLookupResponse.deliverability}`);
+                    console.log(`[Validation Fail] Email ${leadEmail} failed. Status: ${emailLookupResponse.deliverability}`);
                 }
             }
         } catch (error) {
-            console.error(`TextMagic email fetch failed (Network/Exception):`, error.message);
+            console.error(`[Network Fail] Email fetch failed for ${leadEmail}:`, error.message);
             emailIsValid = false; 
             emailLookupResponse = { status: 'Network Exception' };
         }
@@ -89,6 +93,10 @@ export default async function (request, context) {
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
+        
+        // **LOGGING POINT 2: After Successful Validation**
+        console.log(`[Validation Pass] Email: ${leadEmail} passed the gate.`);
+
 
         // B. Phone Number Validation (CONDITIONAL)
         if (leadPhone) {
@@ -98,26 +106,25 @@ export default async function (request, context) {
                 const tmResponse = await fetch(carrierLookupUrl, { headers: authHeaders });
                 
                 if (!tmResponse.ok) {
-                    phoneIsValid = false; // Validation fails if API request fails
-                    console.error(`TextMagic Carrier API Request Failed. Status: ${tmResponse.status}`);
+                    phoneIsValid = false; 
+                    console.error(`[TM Error] Carrier API Request Failed for ${leadPhone}. Status: ${tmResponse.status}`);
                 } else {
                     const carrierLookupResponse = await tmResponse.json();
                     
-                    // FIX: Check for 'valid' boolean AND ensure type is mobile or voip
+                    // Allow 'valid' boolean true AND mobile/voip type OR if status is ambiguous (null)
                     if (carrierLookupResponse.valid === true && (carrierLookupResponse.type === 'mobile' || carrierLookupResponse.type === 'voip')) {
                          phoneIsValid = true;
                     } else if (carrierLookupResponse.valid === null) {
-                         // Permissive: If 'valid' is null/unknown, allow it to pass (assuming ambiguity is acceptable)
                          phoneIsValid = true; 
-                         console.warn(`Phone validation ambiguous (valid: null). Allowing lead to proceed.`);
+                         console.warn(`[Ambiguous Phone] Phone validation for ${leadPhone} was ambiguous. Allowing.`);
                     } else {
-                        phoneIsValid = false; // Validation failed (valid: false or wrong type)
-                        console.log(`Phone validation failed. Valid: ${carrierLookupResponse.valid}, Type: ${carrierLookupResponse.type}`);
+                        phoneIsValid = false;
+                        console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${carrierLookupResponse.valid}, Type: ${carrierLookupResponse.type}`);
                     }
                 }
             } catch (error) {
-                console.error(`TextMagic carrier fetch failed (Network/Exception):`, error.message);
-                phoneIsValid = false; // Validation fails on network exception
+                console.error(`[Network Fail] Carrier fetch failed for ${leadPhone}:`, error.message);
+                phoneIsValid = false; 
             }
         }
     }
@@ -138,6 +145,9 @@ export default async function (request, context) {
         contacts: [{ email: leadEmail, phone_number: leadPhone }],
         list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
+    
+    // Log before calling external APIs
+    console.log(`[Submission] Sending lead: ${leadEmail}, Phone: ${leadPhone} to SendGrid.`);
 
     const sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', {
         method: 'PUT',
@@ -180,6 +190,8 @@ export default async function (request, context) {
             listIds: [brevoListId],
             updateEnabled: true 
         };
+        
+        console.log(`[Submission] Sending lead: ${leadEmail} to Brevo.`);
 
         const brevoPromise = fetch(brevoUrl, {
             method: 'POST',
