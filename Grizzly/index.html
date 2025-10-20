@@ -499,7 +499,7 @@
             <div class="center bee-separator" style="border-top:1px solid #d3bb03;width:95%;"></div>
           </div>
           <div class="bee-block bee-block-2 bee-form">
-            <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3" autocomplete="on" enctype="multipart/form-data"
+            <form accept-charset="UTF-8" action="/.netlify/functions/submitForm3tm" autocomplete="on" enctype="multipart/form-data"
               method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r1c0m1i1"><label for="r1c0m1i1">Email</label><input id="r1c0m1i1"
@@ -593,23 +593,39 @@
   </div>
 
   <!-- Custom Script -->
-  <script>
+ <script>
 
-    let submissionAttempts = 0; // Track the number of submission attempts
-    let validationFailures = 0; // Track the number of validation failures
+  let submissionAttempts = 0; // Track the number of submission attempts
+  let validationFailures = 0; // Track the number of validation failures
 
-    // Retrieve the API key from the environment variable
-    async function submitForm(event) {
-      event.preventDefault();
+  // Retrieve the API key from the environment variable
+  async function submitForm(event) {
+    event.preventDefault();
 
-      const email = document.querySelector('#r1c0m1i1').value;
-      const phoneInput = document.querySelector('#r1c0m1i3'); 
-      const rawPhoneNumber = phoneInput.value;
+    const email = document.querySelector('#r1c0m1i1').value;
+    const phoneInput = document.querySelector('#r1c0m1i3');
+    const rawPhoneNumber = phoneInput.value;
 
-      // Email validation using regular expression
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
+    // Email validation using regular expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      validationFailures++;
+      if (validationFailures >= 3) {
+        redirectToFallback();
+        return;
+      }
+      return;
+    }
+
+    // Check if phone number is provided
+    if (rawPhoneNumber.trim() !== '') {
+      // Phone number validation using intl-tel-input library
+      const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+      const isValidPhoneNumber = iti.isValidNumber();
+
+      if (!isValidPhoneNumber) {
+        alert('Please enter a valid phone number.');
         validationFailures++;
         if (validationFailures >= 3) {
           redirectToFallback();
@@ -618,91 +634,89 @@
         return;
       }
 
-      // Check if phone number is provided
-      if (rawPhoneNumber.trim() !== '') {
-        // Phone number validation using intl-tel-input library
-        const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-        const isValidPhoneNumber = iti.isValidNumber();
+      // Get the formatted phone number including the country code
+      const formattedPhoneNumber = iti.getNumber();
 
-        if (!isValidPhoneNumber) {
-          alert('Please enter a valid phone number.');
+      // Add +1 prefix if not already present
+      var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
+    } else {
+      // If phone number is empty, send an empty string
+      var phoneNumberToSend = '';
+    }
+
+    const url = '/.netlify/functions/submitForm3tm'; // Point to your serverless function
+
+    const data = {
+      email: email,
+      phone_number: phoneNumberToSend // Send the modified phone number
+    };
+
+    const options = {
+      method: 'POST',
+      // Use POST method to send data to the serverless function
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
+
+    // Increment submission attempts
+    submissionAttempts++;
+
+    // Track every form submission attempt
+    sa_event("form_submission_attempt");
+
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        const errorResponse = await response.json(); // Parse the response body as JSON
+
+        // --- START: TextMagic Server-Side Validation Check ---
+        // The server function returns 400 with this message if the email is bad
+        if (response.status === 400 && errorResponse.error.includes("Lead validation failed")) {
+          alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
           validationFailures++;
           if (validationFailures >= 3) {
             redirectToFallback();
             return;
           }
-          return;
+          return; // Stop execution if validation failed
         }
+        // --- END: TextMagic Server-Side Validation Check ---
 
-        // Get the formatted phone number including the country code
-        const formattedPhoneNumber = iti.getNumber();
-
-        // Add +1 prefix if not already present
-        var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
-      } else {
-        // If phone number is empty, send an empty string
-        var phoneNumberToSend = '';
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
       }
 
-      const url = '/.netlify/functions/submitForm3'; // Point to your serverless function
+      console.log('Email submitted successfully');
 
-      const data = {
-        email: email,
-        phone_number: phoneNumberToSend // Send the modified phone number
-      };
+      // Track successful form submission
+      sa_event("form_submission_successful");
 
-      const options = {
-        method: 'POST',
-        // Use POST method to send data to the serverless function
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      };
+      //fb lead
+      fbq('track', 'Lead');
 
-      // Increment submission attempts
-      submissionAttempts++;
+      // Redirect to the external URL after successful form submission
+      window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace 'https://example.com' with your desired external URL
+    } catch (error) {
+      console.error('An error occurred:', error.message);
 
-      // Track every form submission attempt
-      sa_event("form_submission_attempt");
-
-      try {
-        const response = await fetch(url, options);
-
-        if (!response.ok) {
-          const errorResponse = await response.json(); // Parse the response body as JSON
-          throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
-        }
-
-        console.log('Email submitted successfully');
-
-        // Track successful form submission
-        sa_event("form_submission_successful");
-
-        //fb lead
-        fbq('track', 'Lead'); 
-
-        // Redirect to the external URL after successful form submission
-        window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace 'https://example.com' with your desired external URL
-      } catch (error) {
-        console.error('An error occurred:', error.message);
-
-        // If submission attempts exceed 2, redirect
-        if (submissionAttempts >= 3) {
-          redirectToFallback();
-        }
+      // If submission attempts exceed 2, redirect
+      if (submissionAttempts >= 3) {
+        redirectToFallback();
       }
-    } 
-
-    
-    function redirectToFallback() {
-      window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace with your fallback page URL
-      // Track fallback redirect event
-      sa_event("form_fallback_redirect");
-      // Custom Facebook event for fallback redirect
-      fbq('trackCustom', 'form_fallback_redirect');
     }
-  </script>
+  }
+
+
+  function redirectToFallback() {
+    window.location.href = 'https://offers.grizzlysquest.com/gqs/mm/?s=bfp23700&a=spadid216943'; // Replace with your fallback page URL
+    // Track fallback redirect event
+    sa_event("form_fallback_redirect");
+    // Custom Facebook event for fallback redirect
+    fbq('trackCustom', 'form_fallback_redirect');
+  }
+</script>
 </body>
 
 </html>
