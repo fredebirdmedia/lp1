@@ -1,5 +1,5 @@
-// Use ESM imports. Native fetch is used instead of axios.
-import { URLSearchParams } from 'node:url'; // Helpful for building query strings
+// Use ESM imports.
+import { URLSearchParams } from 'node:url'; // Required for building query strings
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
@@ -28,9 +28,9 @@ export default async function (request, context) {
     }
 
     // Initialize variables after successful parsing
-    const normalized_phone = leadPhone; 
     let emailIsValid = false; 
-    let phoneIsValid = !leadPhone;
+    // Phone validation is only necessary if a phone number was provided
+    let phoneIsValid = !leadPhone; 
     let emailLookupResponse = null;
 
     // --- 2. TEXTMAGIC LOOKUPS (Using Native fetch) ---
@@ -42,7 +42,8 @@ export default async function (request, context) {
         emailIsValid = true; 
         phoneIsValid = true;
     } else {
-        const baseUrl = 'https://rest.textmagic.com/api/v2/lookup/';
+        // Correct Base URL as per documentation
+        const baseUrl = 'https://rest.textmagic.com/api/v2/';
         const authHeaders = {
             'X-TM-Username': username,
             'X-TM-Key': apiKey,
@@ -50,34 +51,36 @@ export default async function (request, context) {
         };
 
         // A. Email Validation (CRITICAL)
-      try {
-    const emailLookupUrl = `${baseUrl}email?email=${leadEmail}`;
-    const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
+        try {
+            // Correct URL path construction: api/v2/lookup/email
+            const emailLookupUrl = `${baseUrl}lookup/email?email=${leadEmail}`;
+            const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
 
-    // *** FIX 1: Check HTTP status FIRST ***
-    if (!tmResponse.ok) {
-        // If the request itself failed (e.g., 401/403/500)
-        let errorData = await tmResponse.text();
-        try { errorData = JSON.parse(errorData); } catch {}
-        
-        console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
-        // CRITICAL: We DO NOT set emailIsValid = true here, validation failed.
-        emailLookupResponse = { status: 'API Error' }; // Create a generic error response structure
-    } else {
-        // HTTP 200 OK - Process the JSON body
-        emailLookupResponse = await tmResponse.json(); 
+            // **FIXED LOGIC**: If API request fails (400, 401, 500, etc.)
+            if (!tmResponse.ok) {
+                let errorData = await tmResponse.text();
+                try { errorData = JSON.parse(errorData); } catch {}
+                
+                console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
+                // Validation fails if API returns an error status
+                emailLookupResponse = { status: 'API Error' }; 
+                emailIsValid = false; // CRITICAL FIX: Block the lead
+            } else {
+                // HTTP 200 OK - Process the JSON body
+                emailLookupResponse = await tmResponse.json(); 
 
-        if (emailLookupResponse.status === 'deliverable') {
-            emailIsValid = true;
-        } else {
-            console.log(`Email validation failed for ${leadEmail}. Status: ${emailLookupResponse.status}`);
+                if (emailLookupResponse.status === 'deliverable') {
+                    emailIsValid = true;
+                } else {
+                    console.log(`Email validation failed for ${leadEmail}. Status: ${emailLookupResponse.status}`);
+                }
+            }
+        } catch (error) {
+            console.error(`TextMagic email fetch failed (Network/Exception):`, error.message);
+            // Treat network exceptions as validation failure to prevent spam
+            emailIsValid = false; 
+            emailLookupResponse = { status: 'Network Exception' };
         }
-    }
-} catch (error) {
-    console.error(`TextMagic email fetch failed (Exception):`, error.message);
-    // If we have an uncaught network error here, we assume valid to let the lead pass.
-    emailIsValid = true; 
-}
 
         // --- 3. GATE CHECK (EMAIL IS REQUIRED) ---
         if (!emailIsValid) {
@@ -93,19 +96,26 @@ export default async function (request, context) {
         // B. Phone Number Validation (CONDITIONAL)
         if (leadPhone) {
             try {
-                const carrierLookupUrl = `${baseUrl}carrier?phone=${leadPhone}`;
+                const carrierLookupUrl = `${baseUrl}lookup/carrier?phone=${leadPhone}`;
                 const tmResponse = await fetch(carrierLookupUrl, { headers: authHeaders });
-                const carrierLookupResponse = await tmResponse.json();
-
-                if (carrierLookupResponse.status === 'valid' && carrierLookupResponse.type === 'mobile') {
-                    phoneIsValid = true;
+                
+                if (!tmResponse.ok) {
+                    // API request itself failed, so phone validation fails
+                    phoneIsValid = false; // CRITICAL FIX: Block the lead
+                    console.error(`TextMagic Carrier API Request Failed. Status: ${tmResponse.status}`);
                 } else {
-                    phoneIsValid = false;
-                    console.log(`Phone validation failed for ${leadPhone}. Status: ${carrierLookupResponse.status}, Type: ${carrierLookupResponse.type}`);
+                    const carrierLookupResponse = await tmResponse.json();
+
+                    if (carrierLookupResponse.status === 'valid' && carrierLookupResponse.type === 'mobile') {
+                        phoneIsValid = true;
+                    } else {
+                        phoneIsValid = false;
+                        console.log(`Phone validation failed for ${leadPhone}. Status: ${carrierLookupResponse.status}, Type: ${carrierLookupResponse.type}`);
+                    }
                 }
             } catch (error) {
-                console.error(`TextMagic carrier fetch failed:`, error.message);
-                phoneIsValid = true; 
+                console.error(`TextMagic carrier fetch failed (Network/Exception):`, error.message);
+                phoneIsValid = false; // CRITICAL FIX: Block the lead
             }
         }
     }
@@ -140,7 +150,11 @@ export default async function (request, context) {
             console.log('SendGrid successful. Status:', res.status); 
             return { status: 'success', service: 'SendGrid' }; 
         }
-        const errorData = await res.json();
+        // Safely attempt to parse error body (assuming it might be JSON)
+        const errorText = await res.text();
+        let errorData = { message: errorText };
+        try { errorData = JSON.parse(errorText); } catch {}
+        
         console.error('SendGrid failed. Status:', res.status, 'Error:', errorData);
         return { status: 'failed', service: 'SendGrid', error: errorData };
     })
@@ -179,7 +193,11 @@ export default async function (request, context) {
                 console.log('Brevo request successful. Status:', res.status);
                 return { status: 'success', service: 'Brevo' };
             }
-            const errorData = await res.json();
+            // Safely attempt to parse error body
+            const errorText = await res.text();
+            let errorData = { message: errorText };
+            try { errorData = JSON.parse(errorText); } catch {}
+            
             console.error('Brevo failed. Status:', res.status, 'Error:', errorData);
             return { status: 'failed', service: 'Brevo', error: errorData };
         })
