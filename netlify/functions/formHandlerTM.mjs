@@ -29,7 +29,6 @@ export default async function (request, context) {
 
     // Initialize variables after successful parsing
     let emailIsValid = false; 
-    // Phone validation is only necessary if a phone number was provided
     let phoneIsValid = !leadPhone; 
     let emailLookupResponse = null;
 
@@ -52,8 +51,9 @@ export default async function (request, context) {
 
         // A. Email Validation (CRITICAL)
         try {
-            // Correct URL path construction: api/v2/lookup/email
-            const emailLookupUrl = `${baseUrl}lookup/email?email=${leadEmail}`;
+            // FIX: Use encodeURIComponent for safety against special characters in the URL
+            const encodedEmail = encodeURIComponent(leadEmail);
+            const emailLookupUrl = `${baseUrl}lookup/email?email=${encodedEmail}`;
             const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
 
             // **FIXED LOGIC**: If API request fails (400, 401, 500, etc.)
@@ -62,9 +62,9 @@ export default async function (request, context) {
                 try { errorData = JSON.parse(errorData); } catch {}
                 
                 console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
-                // Validation fails if API returns an error status
+                
                 emailLookupResponse = { status: 'API Error' }; 
-                emailIsValid = false; // CRITICAL FIX: Block the lead
+                emailIsValid = false; // CRITICAL FIX: Block the lead if validation fails
             } else {
                 // HTTP 200 OK - Process the JSON body
                 emailLookupResponse = await tmResponse.json(); 
@@ -96,7 +96,9 @@ export default async function (request, context) {
         // B. Phone Number Validation (CONDITIONAL)
         if (leadPhone) {
             try {
-                const carrierLookupUrl = `${baseUrl}lookup/carrier?phone=${leadPhone}`;
+                // FIX: Use encodeURIComponent for phone number
+                const encodedPhone = encodeURIComponent(leadPhone);
+                const carrierLookupUrl = `${baseUrl}lookup/carrier?phone=${encodedPhone}`;
                 const tmResponse = await fetch(carrierLookupUrl, { headers: authHeaders });
                 
                 if (!tmResponse.ok) {
@@ -134,6 +136,7 @@ export default async function (request, context) {
     // -----------------------------------------------------------------
     const sendgridData = {
         contacts: [{ email: leadEmail, phone_number: leadPhone }],
+        // Assuming SENDGRID_LIST_ID is defined in env
         list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
 
@@ -150,7 +153,7 @@ export default async function (request, context) {
             console.log('SendGrid successful. Status:', res.status); 
             return { status: 'success', service: 'SendGrid' }; 
         }
-        // Safely attempt to parse error body (assuming it might be JSON)
+        // Safely attempt to parse error body
         const errorText = await res.text();
         let errorData = { message: errorText };
         try { errorData = JSON.parse(errorText); } catch {}
