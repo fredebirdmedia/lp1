@@ -1,5 +1,5 @@
 // Use ESM imports.
-import { URLSearchParams } from 'node:url'; // Required for building query strings
+import { URLSearchParams } from 'node:url'; // Required for building query strings (though we use template literals here, it's good practice for clarity)
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
@@ -136,7 +136,6 @@ export default async function (request, context) {
     // -----------------------------------------------------------------
     const sendgridData = {
         contacts: [{ email: leadEmail, phone_number: leadPhone }],
-        // Assuming SENDGRID_LIST_ID is defined in env
         list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
 
