@@ -2,7 +2,7 @@
   "name": "lp1",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo 'No build required'" // Or any simple command
+    "build": "echo 'No build required'"
   },
   "dependencies": {
     "axios": "^1.12.2"
