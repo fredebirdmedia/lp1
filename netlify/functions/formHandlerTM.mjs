@@ -43,41 +43,39 @@ export default async function (request, context) {
         const authString = Buffer.from(`${username}:${apiKey}`).toString('base64');
         const authHeaders = {
             'Authorization': `Basic ${authString}`,
-            'Accept': 'application/json' // Ensure we request JSON
+            'Accept': 'application/json' 
         };
         const baseUrl = 'https://rest.textmagic.com/api/v2/';
 
-
-        // A. Email Validation (CRITICAL)
+        // A. Email Validation (CRITICAL) - Logic unchanged from previous fix
         try {
-            // FIX: Use PATH PARAMETER and URL encode it completely
             const encodedEmail = encodeURIComponent(leadEmail);
-            // New Correct URL: /api/v2/email-lookups/{email}
             const emailLookupUrl = `${baseUrl}email-lookups/${encodedEmail}`; 
-
             const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
 
             if (!tmResponse.ok) {
-                // Handle non-200 API response status
                 let errorData = await tmResponse.text();
                 try { errorData = JSON.parse(errorData); } catch {}
                 
                 console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
                 emailLookupResponse = { status: 'API Error' }; 
-                emailIsValid = false; // Validation fails
+                emailIsValid = false;
             } else {
                 emailLookupResponse = await tmResponse.json(); 
 
-                // Check for 'deliverable' status (as used in previous logs)
-                if (emailLookupResponse.deliverability === 'deliverable') { 
+                // Permissive Email Validation: allow 'deliverable' OR 'unknown'
+                if (
+                    emailLookupResponse.deliverability === 'deliverable' ||
+                    emailLookupResponse.deliverability === 'unknown'
+                ) { 
                     emailIsValid = true;
                 } else {
                     console.log(`Email validation failed. Status: ${emailLookupResponse.deliverability}`);
                 }
             }
         } catch (error) {
-            console.error(`TextMagic email fetch failed (Exception):`, error.message);
-            emailIsValid = false; // Validation fails
+            console.error(`TextMagic email fetch failed (Network/Exception):`, error.message);
+            emailIsValid = false; 
             emailLookupResponse = { status: 'Network Exception' };
         }
 
@@ -95,28 +93,31 @@ export default async function (request, context) {
         // B. Phone Number Validation (CONDITIONAL)
         if (leadPhone) {
             try {
-                // FIX: Use PATH PARAMETER for phone lookup
                 const encodedPhone = encodeURIComponent(leadPhone);
-                // New Correct URL: /api/v2/lookups/{phone}
                 const carrierLookupUrl = `${baseUrl}lookups/${encodedPhone}`; 
                 const tmResponse = await fetch(carrierLookupUrl, { headers: authHeaders });
                 
                 if (!tmResponse.ok) {
-                    phoneIsValid = false; // Validation fails
+                    phoneIsValid = false; // Validation fails if API request fails
                     console.error(`TextMagic Carrier API Request Failed. Status: ${tmResponse.status}`);
                 } else {
                     const carrierLookupResponse = await tmResponse.json();
-                    // Check 'valid' boolean from documented response schema
-                    if (carrierLookupResponse.valid === true && carrierLookupResponse.type === 'mobile') {
-                        phoneIsValid = true;
+                    
+                    // FIX: Check for 'valid' boolean AND ensure type is mobile or voip
+                    if (carrierLookupResponse.valid === true && (carrierLookupResponse.type === 'mobile' || carrierLookupResponse.type === 'voip')) {
+                         phoneIsValid = true;
+                    } else if (carrierLookupResponse.valid === null) {
+                         // Permissive: If 'valid' is null/unknown, allow it to pass (assuming ambiguity is acceptable)
+                         phoneIsValid = true; 
+                         console.warn(`Phone validation ambiguous (valid: null). Allowing lead to proceed.`);
                     } else {
-                        phoneIsValid = false;
+                        phoneIsValid = false; // Validation failed (valid: false or wrong type)
                         console.log(`Phone validation failed. Valid: ${carrierLookupResponse.valid}, Type: ${carrierLookupResponse.type}`);
                     }
                 }
             } catch (error) {
                 console.error(`TextMagic carrier fetch failed (Network/Exception):`, error.message);
-                phoneIsValid = false; // Validation fails
+                phoneIsValid = false; // Validation fails on network exception
             }
         }
     }
@@ -128,7 +129,6 @@ export default async function (request, context) {
     }
 
     // --- 5. EXECUTE LEAD SUBMISSIONS ---
-    // ... (SendGrid and Brevo logic remains the same, as it was already correct) ...
     const promises = [];
 
     // -----------------------------------------------------------------
