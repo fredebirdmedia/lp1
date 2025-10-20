@@ -50,22 +50,34 @@ export default async function (request, context) {
         };
 
         // A. Email Validation (CRITICAL)
-        try {
-            const emailLookupUrl = `${baseUrl}email?email=${leadEmail}`;
-            const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
-            
-            // Note: We read the response body here, which is why we save it to handle the GATE CHECK below
-            emailLookupResponse = await tmResponse.json(); 
+      try {
+    const emailLookupUrl = `${baseUrl}email?email=${leadEmail}`;
+    const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
 
-            if (emailLookupResponse.status === 'deliverable') {
-                emailIsValid = true;
-            } else {
-                console.log(`Email validation failed for ${leadEmail}. Status: ${emailLookupResponse.status}`);
-            }
-        } catch (error) {
-            console.error(`TextMagic email fetch failed:`, error.message);
-            emailIsValid = true; 
+    // *** FIX 1: Check HTTP status FIRST ***
+    if (!tmResponse.ok) {
+        // If the request itself failed (e.g., 401/403/500)
+        let errorData = await tmResponse.text();
+        try { errorData = JSON.parse(errorData); } catch {}
+        
+        console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
+        // CRITICAL: We DO NOT set emailIsValid = true here, validation failed.
+        emailLookupResponse = { status: 'API Error' }; // Create a generic error response structure
+    } else {
+        // HTTP 200 OK - Process the JSON body
+        emailLookupResponse = await tmResponse.json(); 
+
+        if (emailLookupResponse.status === 'deliverable') {
+            emailIsValid = true;
+        } else {
+            console.log(`Email validation failed for ${leadEmail}. Status: ${emailLookupResponse.status}`);
         }
+    }
+} catch (error) {
+    console.error(`TextMagic email fetch failed (Exception):`, error.message);
+    // If we have an uncaught network error here, we assume valid to let the lead pass.
+    emailIsValid = true; 
+}
 
         // --- 3. GATE CHECK (EMAIL IS REQUIRED) ---
         if (!emailIsValid) {
