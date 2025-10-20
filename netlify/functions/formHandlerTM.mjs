@@ -1,5 +1,5 @@
 // Use ESM imports.
-import { URLSearchParams } from 'node:url'; // Required for building query strings (though we use template literals here, it's good practice for clarity)
+import { URLSearchParams } from 'node:url'; 
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
@@ -12,7 +12,6 @@ export default async function (request, context) {
     let leadPhone = null;
 
     try {
-        // V2: Read the request body as text and parse it
         const requestBody = await request.text();
         const { email, phone_number } = JSON.parse(requestBody);
 
@@ -20,65 +19,65 @@ export default async function (request, context) {
         leadPhone = (phone_number && String(phone_number).trim()) || null;
 
     } catch (error) {
-        // Catches JSON parsing errors (V2 Response format)
         return new Response(
             JSON.stringify({ error: 'Invalid JSON body provided.', details: error.message }),
             { status: 400, headers: { 'Content-Type': 'application/json' } }
         );
     }
 
-    // Initialize variables after successful parsing
+    // Initialize variables
     let emailIsValid = false; 
     let phoneIsValid = !leadPhone; 
     let emailLookupResponse = null;
 
-    // --- 2. TEXTMAGIC LOOKUPS (Using Native fetch) ---
+    // --- 2. TEXTMAGIC LOOKUPS (Using Native fetch & Basic Auth) ---
     const username = env.get('TEXTMAGIC_USERNAME');
     const apiKey = env.get('TEXTMAGIC_API_KEY');
 
     if (!username || !apiKey) {
-        console.warn('TextMagic API credentials missing. Assuming validation is successful.');
+        console.warn('TextMagic API credentials missing. Skipping validation.');
         emailIsValid = true; 
         phoneIsValid = true;
     } else {
-        // Correct Base URL as per documentation
-        const baseUrl = 'https://rest.textmagic.com/api/v2/';
+        // Base64 encode credentials for Basic Auth
+        const authString = Buffer.from(`${username}:${apiKey}`).toString('base64');
         const authHeaders = {
-            'X-TM-Username': username,
-            'X-TM-Key': apiKey,
-            'Content-Type': 'application/json'
+            'Authorization': `Basic ${authString}`,
+            'Accept': 'application/json' // Ensure we request JSON
         };
+        const baseUrl = 'https://rest.textmagic.com/api/v2/';
+
 
         // A. Email Validation (CRITICAL)
         try {
-            // FIX: Use encodeURIComponent for safety against special characters in the URL
+            // FIX: Use PATH PARAMETER and URL encode it completely
             const encodedEmail = encodeURIComponent(leadEmail);
-            const emailLookupUrl = `${baseUrl}lookup/email?email=${encodedEmail}`;
+            // New Correct URL: /api/v2/email-lookups/{email}
+            const emailLookupUrl = `${baseUrl}email-lookups/${encodedEmail}`; 
+
             const tmResponse = await fetch(emailLookupUrl, { headers: authHeaders });
 
-            // **FIXED LOGIC**: If API request fails (400, 401, 500, etc.)
             if (!tmResponse.ok) {
+                // Handle non-200 API response status
                 let errorData = await tmResponse.text();
                 try { errorData = JSON.parse(errorData); } catch {}
                 
                 console.error(`TextMagic API Request Failed. Status: ${tmResponse.status}`, errorData);
-                
                 emailLookupResponse = { status: 'API Error' }; 
-                emailIsValid = false; // CRITICAL FIX: Block the lead if validation fails
+                emailIsValid = false; // Validation fails
             } else {
-                // HTTP 200 OK - Process the JSON body
                 emailLookupResponse = await tmResponse.json(); 
 
-                if (emailLookupResponse.status === 'deliverable') {
+                // Check for 'deliverable' status (as used in previous logs)
+                if (emailLookupResponse.deliverability === 'deliverable') { 
                     emailIsValid = true;
                 } else {
-                    console.log(`Email validation failed for ${leadEmail}. Status: ${emailLookupResponse.status}`);
+                    console.log(`Email validation failed. Status: ${emailLookupResponse.deliverability}`);
                 }
             }
         } catch (error) {
-            console.error(`TextMagic email fetch failed (Network/Exception):`, error.message);
-            // Treat network exceptions as validation failure to prevent spam
-            emailIsValid = false; 
+            console.error(`TextMagic email fetch failed (Exception):`, error.message);
+            emailIsValid = false; // Validation fails
             emailLookupResponse = { status: 'Network Exception' };
         }
 
@@ -96,28 +95,28 @@ export default async function (request, context) {
         // B. Phone Number Validation (CONDITIONAL)
         if (leadPhone) {
             try {
-                // FIX: Use encodeURIComponent for phone number
+                // FIX: Use PATH PARAMETER for phone lookup
                 const encodedPhone = encodeURIComponent(leadPhone);
-                const carrierLookupUrl = `${baseUrl}lookup/carrier?phone=${encodedPhone}`;
+                // New Correct URL: /api/v2/lookups/{phone}
+                const carrierLookupUrl = `${baseUrl}lookups/${encodedPhone}`; 
                 const tmResponse = await fetch(carrierLookupUrl, { headers: authHeaders });
                 
                 if (!tmResponse.ok) {
-                    // API request itself failed, so phone validation fails
-                    phoneIsValid = false; // CRITICAL FIX: Block the lead
+                    phoneIsValid = false; // Validation fails
                     console.error(`TextMagic Carrier API Request Failed. Status: ${tmResponse.status}`);
                 } else {
                     const carrierLookupResponse = await tmResponse.json();
-
-                    if (carrierLookupResponse.status === 'valid' && carrierLookupResponse.type === 'mobile') {
+                    // Check 'valid' boolean from documented response schema
+                    if (carrierLookupResponse.valid === true && carrierLookupResponse.type === 'mobile') {
                         phoneIsValid = true;
                     } else {
                         phoneIsValid = false;
-                        console.log(`Phone validation failed for ${leadPhone}. Status: ${carrierLookupResponse.status}, Type: ${carrierLookupResponse.type}`);
+                        console.log(`Phone validation failed. Valid: ${carrierLookupResponse.valid}, Type: ${carrierLookupResponse.type}`);
                     }
                 }
             } catch (error) {
                 console.error(`TextMagic carrier fetch failed (Network/Exception):`, error.message);
-                phoneIsValid = false; // CRITICAL FIX: Block the lead
+                phoneIsValid = false; // Validation fails
             }
         }
     }
@@ -129,6 +128,7 @@ export default async function (request, context) {
     }
 
     // --- 5. EXECUTE LEAD SUBMISSIONS ---
+    // ... (SendGrid and Brevo logic remains the same, as it was already correct) ...
     const promises = [];
 
     // -----------------------------------------------------------------
@@ -152,7 +152,6 @@ export default async function (request, context) {
             console.log('SendGrid successful. Status:', res.status); 
             return { status: 'success', service: 'SendGrid' }; 
         }
-        // Safely attempt to parse error body
         const errorText = await res.text();
         let errorData = { message: errorText };
         try { errorData = JSON.parse(errorText); } catch {}
@@ -195,7 +194,6 @@ export default async function (request, context) {
                 console.log('Brevo request successful. Status:', res.status);
                 return { status: 'success', service: 'Brevo' };
             }
-            // Safely attempt to parse error body
             const errorText = await res.text();
             let errorData = { message: errorText };
             try { errorData = JSON.parse(errorText); } catch {}
