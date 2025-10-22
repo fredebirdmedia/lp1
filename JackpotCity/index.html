@@ -768,13 +768,24 @@
 
   <!-- Custom Script -->
 <script>
-
   let submissionAttempts = 0; // Track the number of submission attempts
   let validationFailures = 0; // Track the number of validation failures
+  let isSubmitting = false;   // CRITICAL: Lock flag to prevent duplicate submissions
 
   // Retrieve the API key from the environment variable
   async function submitForm(event) {
     event.preventDefault();
+
+    // 1. Check and set the lock flag
+    if (isSubmitting) {
+      console.warn("Form submission already in progress. Blocking duplicate.");
+      // >>> NEW TRACKING EVENT ADDED HERE <<<
+      if (typeof sa_event === 'function') {
+        sa_event("form_submission_duplicate_blocked");
+      }
+      return;
+    }
+    isSubmitting = true; // Lock the form
 
     const email = document.querySelector('#r2c0m2i1').value;
     const phoneInput = document.querySelector('#r2c0m2i2');
@@ -784,6 +795,7 @@
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       alert('Please enter a valid email address.');
+      isSubmitting = false; // Unlock if client-side validation fails
       validationFailures++;
       if (validationFailures >= 4) {
         redirectToFallback();
@@ -800,6 +812,7 @@
 
       if (!isValidPhoneNumber) {
         alert('Please enter a valid phone number.');
+        isSubmitting = false; // Unlock if client-side validation fails
         validationFailures++;
         if (validationFailures >= 3) {
           redirectToFallback();
@@ -850,14 +863,17 @@
 
           // Fire analytics event based on failure type
           if (errorResponse.validation_type === 'EMAIL_FAILED') {
-            sa_event("form_submission_lookup_emailfail");
+            sa_event("form_submission_lookup_emailfail"); // <--- ANALYTICS EVENT
             alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
 
           } else if (errorResponse.validation_type === 'PHONE_STRIPPED') {
-            // This case is unlikely given the server logic, but included for completeness:
-            sa_event("form_submission_lookup_phonefail");
+            // This case is unlikely to be triggered as a 400, but included for event tracking:
+            sa_event("form_submission_lookup_phonefail"); // <--- ANALYTICS EVENT
             alert('Warning: Phone number could not be validated and was excluded. Please check and re-submit.');
           }
+
+          // CRITICAL FIX: Lift the lock immediately so the user can fix the form and retry.
+          isSubmitting = false;
 
           validationFailures++;
           if (validationFailures >= 3) {
@@ -868,10 +884,11 @@
         }
         // --- END: Server-Side Validation Check ---
 
-        // If the error isn't a specific validation failure, throw the error message
+        // If the error isn't a specific validation failure (e.g., general 500 error), throw it.
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
       }
 
+      // SUCCESS PATH
       console.log('Email submitted successfully');
 
       // Track successful form submission
@@ -884,6 +901,9 @@
       window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184294'; // Replace with your desired external URL
     } catch (error) {
       console.error('An error occurred:', error.message);
+
+      // On network failure or unhandled exception, lift the lock to allow retry
+      isSubmitting = false;
 
       // If submission attempts exceed 2, redirect
       if (submissionAttempts >= 4) {
