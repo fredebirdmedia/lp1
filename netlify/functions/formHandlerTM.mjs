@@ -5,15 +5,16 @@ import { Buffer } from 'node:buffer';
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
+    // --- FIX APPLIED HERE: ACCESS NETLIFY.ENV DIRECTLY ---
     // Access environment variables using Netlify.env.get
-    const { env } = Netlify;
+    const env = Netlify.env; // FIX: Access Netlify.env directly and assign it to a local variable
 
     // --- 0. CREDENTIAL SETUP ---
     const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
     const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
     const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
     const sendgridMarketingApiKey = env.get('API_KEY'); 
-    const brevoApiKey = env.get('BREVO_API_KEY'); 
+    const brevoApiKey = env.get('BREVO_API_KEY');
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
@@ -43,7 +44,6 @@ export default async function (request, context) {
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
     // --- 2. EMAIL VALIDATION (SENDGRID) ---
-    // ... (Email Validation Logic - UNCHANGED) ...
     if (!sendgridValidationApiKey) {
         console.warn('SendGrid Validation API key missing. Skipping email check.');
         emailIsValid = true; 
@@ -109,12 +109,43 @@ export default async function (request, context) {
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
     // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
-    // ******* CRITICAL FIX: Bypass the entire Twilio block to stop the crash *******
     if (leadPhone) {
-        console.warn(`Twilio/Phone validation skipped to prevent 502 crash. Phone will be processed as valid.`);
-        phoneIsValid = true;
+        if (!twilioAccountSid || !twilioAuthToken) {
+            console.warn('Twilio credentials missing. Skipping phone validation.');
+            phoneIsValid = true;
+        } else {
+            // Twilio Lookup API Logic 
+            const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
+            const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
+            
+            try {
+                const encodedPhone = encodeURIComponent(leadPhone);
+                const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
+
+                const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
+                
+                if (!twilioResponse.ok) {
+                    phoneIsValid = false; 
+                    console.error(`[Twilio Error] Lookup API Failed for ${leadPhone}. Status: ${twilioResponse.status}`);
+                } else {
+                    const lookupResponse = await twilioResponse.json();
+                    
+                    if (lookupResponse.valid === true && (lookupResponse.type === 'mobile' || lookupResponse.type === 'voip')) {
+                         phoneIsValid = true;
+                    } else if (lookupResponse.valid === null) {
+                         phoneIsValid = true; 
+                         console.warn(`[Ambiguous Phone] Twilio lookup for ${leadPhone} was ambiguous. Allowing.`);
+                    } else {
+                        phoneIsValid = false;
+                        console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${lookupResponse.valid}, Type: ${lookupResponse.type}`);
+                    }
+                }
+            } catch (error) {
+                console.error(`[Network Fail] Twilio lookup fetch failed (Exception):`, error.message);
+                phoneIsValid = false;
+            }
+        }
     }
-    // -----------------------------------------------------------------------------
 
     // --- 5. ADJUST DATA BASED ON VALIDATION ---
     if (leadPhone && !phoneIsValid) {
@@ -214,6 +245,7 @@ export default async function (request, context) {
     }
     
     // --- 7. FINISH ---
+    // The server is now expected to reach this final return statement without crashing.
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
