@@ -118,7 +118,9 @@ export default async function (request, context) {
             
             try {
                 const encodedPhone = encodeURIComponent(leadPhone);
+                // Twilio Lookup URL: /v2/PhoneNumbers/{PhoneNumber}?Type=carrier
                 const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
+
                 const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
                 
                 if (!twilioResponse.ok) {
@@ -152,7 +154,7 @@ export default async function (request, context) {
     }
 
     // --- 6. EXECUTE LEAD SUBMISSIONS ---
-    // ******* CRITICAL FIX: Explicitly declare promises *******
+    // ******* FIX: Declare promises *******
     const promises = [];
     let sendgridPromise = null;
     let brevoPromise = null; 
@@ -245,7 +247,7 @@ export default async function (request, context) {
     }
     
     // --- 7. FINISH ---
-    // The previous ReferenceError crash is resolved by the explicit declaration and assignment above.
+    // The server is now expected to reach this final return statement without crashing.
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
