@@ -1,20 +1,17 @@
-// Use ESM imports.
-import { URLSearchParams } from 'node:url'; 
-import { Buffer } from 'node:buffer'; 
+// Use ESM imports for Node.js built-in modules
+import { Buffer } from 'node:buffer';
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
-    // --- FIX APPLIED: Access environment variables using Netlify.env.get() global API ---
-    // The previous process.env access caused the fatal crash.
-    const env = Netlify.env;
-
-    // --- 0. CREDENTIAL SETUP (Fixed for Netlify V2 compatibility) ---
-    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
-    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
-    const sendgridMarketingApiKey = env.get('API_KEY'); 
-    const brevoApiKey = env.get('BREVO_API_KEY');
+    // --- 0. CREDENTIAL SETUP (Netlify V2 Functions compatibility) ---
+    // Access environment variables directly using Netlify.env.get() - do NOT store the env reference
+    const sendgridValidationApiKey = Netlify.env.get('SENDGRID_VALID'); 
+    const twilioAccountSid = Netlify.env.get('TWILIO_ACCOUNT_SID');
+    const twilioAuthToken = Netlify.env.get('TWILIO_AUTH_TOKEN');
+    const sendgridMarketingApiKey = Netlify.env.get('API_KEY'); 
+    const brevoApiKey = Netlify.env.get('BREVO_API_KEY');
+    const sendgridListId = Netlify.env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963';
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
@@ -40,7 +37,6 @@ export default async function (request, context) {
     let validationVerdict = 'Not_Run'; 
     let emailLookupResponse = null;
 
-    // **LOGGING POINT 1: Before Validation**
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
     // --- 2. EMAIL VALIDATION (SENDGRID) ---
@@ -75,7 +71,6 @@ export default async function (request, context) {
                 const score = validationResult.score;
                 const checks = emailLookupResponse?.result?.checks;
 
-                // --- FILTERING STRATEGY ---
                 if (checks.has_mx_or_a_record === false || checks.has_known_bounces === true) {
                     console.log(`[Validation Fail] Email ${leadEmail} blocked by Hard Block Rule (MX/Bounce).`);
                     emailIsValid = false;
@@ -105,7 +100,6 @@ export default async function (request, context) {
         );
     }
     
-    // **LOGGING POINT 2: After Successful Validation**
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
     // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
@@ -114,7 +108,6 @@ export default async function (request, context) {
             console.warn('Twilio credentials missing. Skipping phone validation.');
             phoneIsValid = true;
         } else {
-            // Twilio Lookup API Logic 
             const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
             const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
             
@@ -159,12 +152,11 @@ export default async function (request, context) {
     let sendgridPromise = null;
     let brevoPromise = null; 
     
-    // Determine tagging for SendGrid submission
     const finalScore = emailLookupResponse?.result?.score || 0;
     const sendGridValidationTag = (finalScore >= 0.85) ? 'valid' : 'risky';
     
     // -----------------------------------------------------------------
-    // A. SENDGRID MARKETING REQUEST (Definition and Push)
+    // A. SENDGRID MARKETING REQUEST
     // -----------------------------------------------------------------
     
     const sendgridData = {
@@ -176,8 +168,7 @@ export default async function (request, context) {
                 "SCORE": finalScore * 100
             }
         }],
-        // FIX: Ensure SENDGRID_LIST_ID is read using Netlify.env.get()
-        list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
+        list_ids: [sendgridListId] 
     };
 
     console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
@@ -205,7 +196,7 @@ export default async function (request, context) {
     promises.push(sendgridPromise); 
 
     // -----------------------------------------------------------------
-    // B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY - Definition and Push)
+    // B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY)
     // -----------------------------------------------------------------
     if (finalScore >= 0.85) { 
         
@@ -261,7 +252,6 @@ export default async function (request, context) {
     
     const finalStatusCode = successful.length > 0 ? 200 : 502; 
 
-    // Final return uses the V2 Response object
     return new Response(
         JSON.stringify({ message: message, details: results.map(r => r.value || r.reason) }),
         {
