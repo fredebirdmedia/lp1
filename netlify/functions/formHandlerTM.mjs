@@ -1,14 +1,14 @@
 // Use ESM imports.
 import { Buffer } from 'node:buffer'; 
+import process from 'process'; 
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
-    // Access environment variables using process.env (stable access)
+    // Access environment variables (stable access)
     const env = process.env;
 
     // --- 0. CREDENTIAL SETUP ---
-    // Read directly from process.env for universal stability
     const sendgridValidationApiKey = env.SENDGRID_VALID; 
     const sendgridMarketingApiKey = env.API_KEY; 
     const brevoApiKey = env.BREVO_API_KEY;
@@ -22,7 +22,6 @@ export default async function (request, context) {
         const data = JSON.parse(requestBody);
         
         leadEmail = data.email;
-        // Phone number is received but will be processed as is (no external validation)
         leadPhone = (data.phone_number && String(data.phone_number).trim()) || null;
 
     } catch (error) {
@@ -35,15 +34,14 @@ export default async function (request, context) {
     // Initialize variables
     let emailIsValid = false; 
     let validationVerdict = 'Not_Run'; 
-    let finalScore = 0;
+    let finalScore = 0; // Still capturing score for SendGrid tagging
     let emailLookupResponse = null;
 
-    // **LOGGING POINT 1: Before Validation**
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
-    // --- 2. EMAIL VALIDATION (SENDGRID) ---
+    // --- 2. EMAIL VALIDATION (SENDGRID VALIDATION API) ---
     if (!sendgridValidationApiKey) {
-        console.warn('SendGrid Validation API key missing. Skipping email check.');
+        console.warn('SendGrid Validation API key missing. Skipping external check.');
         emailIsValid = true; 
         validationVerdict = 'API_KEY_MISSING';
     } else {
@@ -67,21 +65,18 @@ export default async function (request, context) {
                 emailLookupResponse = await response.json(); 
                 const validationResult = emailLookupResponse?.result;
                 validationVerdict = validationResult.verdict; 
-                finalScore = validationResult.score;
+                finalScore = validationResult.score; 
                 const checks = emailLookupResponse?.result?.checks;
 
-                // --- FILTERING STRATEGY ---
-                // Hard Block Rule: Block if MX record is missing or known to bounce
-                if (checks.has_mx_or_a_record === false || checks.has_known_bounces === true) {
-                    console.log(`[Validation Fail] Email blocked by Hard Block Rule (MX/Bounce).`);
+                // --- SIMPLIFIED PERMISSIVE FILTERING STRATEGY ---
+                // Block only if the email is definitively Invalid or has hard bounce checks.
+                if (validationVerdict === 'Invalid' || checks.has_known_bounces === true) {
+                    console.log(`[Validation Fail] Email blocked by Hard Invalid Rule (Verdict: ${validationVerdict}).`);
                     emailIsValid = false;
                 } 
-                // Accept emails that meet the minimum score (0.50 for Risky/Valid)
-                else if (finalScore >= 0.50) { 
+                // ACCEPT EVERYTHING ELSE (Valid, Risky, Unknown)
+                else { 
                     emailIsValid = true;
-                } else {
-                    console.log(`[Validation Fail] Email blocked by Score Rule (Score: ${finalScore}).`);
-                    emailIsValid = false;
                 }
             }
         } catch (error) {
@@ -103,27 +98,20 @@ export default async function (request, context) {
         );
     }
     
-    // **LOGGING POINT 2: After Successful Validation**
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
-
     // --- 4. PHONE VALIDATION SKIPPED ---
-    // Phone validation is entirely removed to ensure stability.
-    const phoneIsValidFinal = true; // Always true since we skip validation
-    if (leadPhone && !phoneIsValidFinal) {
-        leadPhone = null; 
-    }
-
-
-    // --- 5. EXECUTE LEAD SUBMISSIONS ---
+    // (Twilio/Phone validation is entirely removed for stability.)
+    
+    // --- 5. EXECUTE LEAD SUBMISSIONS (SIMPLIFIED) ---
     const promises = [];
-    let sendgridPromise = null;
     
     // Determine tagging for SendGrid submission
-    const sendGridValidationTag = (finalScore >= 0.85) ? 'valid' : 'risky';
+    // Tagging is now 'valid' or 'risky' based on the API verdict, not a score threshold.
+    const sendGridValidationTag = (validationVerdict === 'Valid') ? 'valid' : 'risky';
     
     // -----------------------------------------------------------------
-    // A. SENDGRID MARKETING REQUEST (REQUIRED FOR ALL VALID/RISKY LEADS)
+    // A. SENDGRID MARKETING REQUEST (ALL ACCEPTABLE LEADS)
     // -----------------------------------------------------------------
     
     const sendgridData = {
@@ -131,16 +119,16 @@ export default async function (request, context) {
             email: leadEmail, 
             phone_number: leadPhone,
             custom_fields: {
-                "VALIDATION": sendGridValidationTag, 
-                "SCORE": finalScore * 100
+                "VALIDATION": sendGridValidationTag, // Tagging: 'valid' or 'risky'
+                "SCORE": finalScore * 100 // Still pass score for data retention
             }
         }],
         list_ids: [env.SENDGRID_LIST_ID || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
 
-    console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
+    console.log(`[Submission] Sending lead to SendGrid Marketing (Tag: ${sendGridValidationTag}).`);
 
-    sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', { 
+    const sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', { 
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${sendgridMarketingApiKey}`,
@@ -149,10 +137,7 @@ export default async function (request, context) {
         body: JSON.stringify(sendgridData)
     })
     .then(async res => {
-        if (res.ok) {
-            console.log('SendGrid Marketing successful. Status:', res.status); 
-            return { status: 'success', service: 'SendGrid' }; 
-        }
+        if (res.ok) { return { status: 'success', service: 'SendGrid' }; }
         return { status: 'failed', service: 'SendGrid', error: 'Submission failed.' };
     })
     .catch(error => {
@@ -163,66 +148,51 @@ export default async function (request, context) {
     promises.push(sendgridPromise); 
 
     // -----------------------------------------------------------------
-    // B. BREVO REQUEST (ONLY FOR HIGH-CONFIDENCE 'VALID' LEADS)
+    // B. BREVO REQUEST (ALL ACCEPTABLE LEADS - NO SCORE FILTER)
     // -----------------------------------------------------------------
-    if (finalScore >= 0.85) { 
+    if (brevoApiKey) { 
         
         const brevoUrl = 'https://api.brevo.com/v3/contacts';
         const brevoListId = 6; 
-        const brevoApiKeyLocal = brevoApiKey; // Use a local name for clarity
 
-        if (brevoApiKeyLocal) {
-            const brevoData = {
-                email: leadEmail,
-                attributes: { SMS: leadPhone },
-                listIds: [brevoListId],
-                updateEnabled: true 
-            };
-            
-            console.log(`[Submission] Sending high-confidence lead: ${leadEmail} to Brevo.`);
+        const brevoData = {
+            email: leadEmail,
+            attributes: { SMS: leadPhone },
+            listIds: [brevoListId],
+            updateEnabled: true 
+        };
+        
+        console.log(`[Submission] Sending lead to Brevo.`);
 
-            const brevoPromise = fetch(brevoUrl, { 
-                method: 'POST',
-                headers: {
-                    'api-key': brevoApiKeyLocal,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(brevoData)
-            })
-            .then(async res => {
-                if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
-                return { status: 'failed', service: 'Brevo', error: 'Submission failed.' };
-            })
-            .catch(error => {
-                console.error('Brevo failed (Network/Fetch):', error.message);
-                return { status: 'failed', service: 'Brevo', error: error.message };
-            });
+        const brevoPromise = fetch(brevoUrl, { 
+            method: 'POST',
+            headers: {
+                'api-key': brevoApiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(brevoData)
+        })
+        .then(async res => {
+            if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
+            return { status: 'failed', service: 'Brevo', error: 'Submission failed.' };
+        })
+        .catch(error => {
+            console.error('Brevo failed (Network/Fetch):', error.message);
+            return { status: 'failed', service: 'Brevo', error: error.message };
+        });
 
-            promises.push(brevoPromise); 
-        }
-    } else {
-        console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
+        promises.push(brevoPromise); 
     }
     
-    // --- 7. FINISH ---
+    // --- 6. FINISH ---
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
-    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.status === 'failed'));
-
-    let message = 'Lead processed.';
-    if (successful.length > 0) {
-        message += ` Successes: ${successful.map(r => r.value.service).join(', ')}.`;
-    }
-    if (failed.length > 0) {
-        message += ` Failures: ${failed.map(r => r.value.service || 'Unknown').join(', ')}.`;
-    }
     
     const finalStatusCode = successful.length > 0 ? 200 : 502; 
 
-    // Final return uses the V2 Response object (HTTP 200 on successful submission)
     return new Response(
-        JSON.stringify({ message: message, details: results.map(r => r.value || r.reason) }),
+        JSON.stringify({ message: 'Submission completed.' }),
         {
             status: finalStatusCode,
             headers: { 'Content-Type': 'application/json' }
