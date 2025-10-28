@@ -112,13 +112,13 @@ export default async function (request, context) {
             console.warn('Twilio credentials missing. Skipping phone validation.');
             phoneIsValid = true;
         } else {
+            // **FIX INSERTED HERE**
             // Twilio Lookup API Logic 
             const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
             const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
             
             try {
                 const encodedPhone = encodeURIComponent(leadPhone);
-                // Twilio Lookup URL: /v2/PhoneNumbers/{PhoneNumber}?Type=carrier
                 const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
 
                 const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
@@ -145,6 +145,7 @@ export default async function (request, context) {
             }
         }
     }
+    // -----------------------------------------------------------------
 
     // --- 5. ADJUST DATA BASED ON VALIDATION ---
     if (leadPhone && !phoneIsValid) {
@@ -154,7 +155,6 @@ export default async function (request, context) {
     }
 
     // --- 6. EXECUTE LEAD SUBMISSIONS ---
-    // ******* FIX: Declare promises *******
     const promises = [];
     let sendgridPromise = null;
     let brevoPromise = null; 
@@ -181,7 +181,6 @@ export default async function (request, context) {
 
     console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
 
-    // FIX ASSIGNMENT: Assign fetch promise to the declared variable
     sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', { 
         method: 'PUT',
         headers: {
@@ -222,7 +221,6 @@ export default async function (request, context) {
             
             console.log(`[Submission] Sending high-confidence lead: ${leadEmail} to Brevo.`);
 
-            // FIX ASSIGNMENT: Assign fetch promise to the declared variable
             brevoPromise = fetch(brevoUrl, { 
                 method: 'POST',
                 headers: {
@@ -247,7 +245,6 @@ export default async function (request, context) {
     }
     
     // --- 7. FINISH ---
-    // The server is now expected to reach this final return statement without crashing.
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
