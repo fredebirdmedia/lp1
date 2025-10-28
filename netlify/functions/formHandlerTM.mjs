@@ -108,7 +108,40 @@ export default async function (request, context) {
 
     // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
     if (leadPhone) {
-        // ... (Twilio Lookup API Logic) ...
+        if (!twilioAccountSid || !twilioAuthToken) {
+            console.warn('Twilio credentials missing. Skipping phone validation.');
+            phoneIsValid = true;
+        } else {
+            // Twilio Lookup API Logic 
+            const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
+            const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
+            
+            try {
+                const encodedPhone = encodeURIComponent(leadPhone);
+                const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
+                const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
+                
+                if (!twilioResponse.ok) {
+                    phoneIsValid = false; 
+                    console.error(`[Twilio Error] Lookup API Failed for ${leadPhone}. Status: ${twilioResponse.status}`);
+                } else {
+                    const lookupResponse = await twilioResponse.json();
+                    
+                    if (lookupResponse.valid === true && (lookupResponse.type === 'mobile' || lookupResponse.type === 'voip')) {
+                         phoneIsValid = true;
+                    } else if (lookupResponse.valid === null) {
+                         phoneIsValid = true; 
+                         console.warn(`[Ambiguous Phone] Twilio lookup for ${leadPhone} was ambiguous. Allowing.`);
+                    } else {
+                        phoneIsValid = false;
+                        console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${lookupResponse.valid}, Type: ${lookupResponse.type}`);
+                    }
+                }
+            } catch (error) {
+                console.error(`[Network Fail] Twilio lookup fetch failed (Exception):`, error.message);
+                phoneIsValid = false;
+            }
+        }
     }
 
     // --- 5. ADJUST DATA BASED ON VALIDATION ---
@@ -212,6 +245,7 @@ export default async function (request, context) {
     }
     
     // --- 7. FINISH ---
+    // The previous ReferenceError crash is resolved by the explicit declaration and assignment above.
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
