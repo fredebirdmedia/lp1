@@ -108,45 +108,47 @@ export default async function (request, context) {
     // **LOGGING POINT 2: After Successful Validation**
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
-    // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
-    if (leadPhone) {
-        if (!twilioAccountSid || !twilioAuthToken) {
-            console.warn('Twilio credentials missing. Skipping phone validation.');
-            phoneIsValid = true;
-        } else {
-            // Twilio Lookup API Logic 
-            // FIX: Buffer is imported at the top of the file
-            const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
-            const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
-            
-            try {
-                const encodedPhone = encodeURIComponent(leadPhone);
-                const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
+// --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
+if (leadPhone) {
+    // FIX: Check credentials once and skip the block entirely if missing.
+    if (!twilioAccountSid || !twilioAuthToken) {
+        console.warn('Twilio credentials missing. Skipping phone validation.');
+        phoneIsValid = true; // Assume valid if we can't run the check
+    } else {
+        // Twilio Lookup API Logic 
+        const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
+        const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
+        
+        try {
+            const encodedPhone = encodeURIComponent(leadPhone);
+            const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
 
-                const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
+            const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
+            
+            if (!twilioResponse.ok) {
+                // If Twilio API returns error (400, 404, etc.)
+                phoneIsValid = false; 
+                console.error(`[Twilio Error] Lookup API Failed for ${leadPhone}. Status: ${twilioResponse.status}`);
+            } else {
+                const lookupResponse = await twilioResponse.json();
                 
-                if (!twilioResponse.ok) {
-                    phoneIsValid = false; 
-                    console.error(`[Twilio Error] Lookup API Failed for ${leadPhone}. Status: ${twilioResponse.status}`);
+                // Check validity AND ensure type is mobile/voip, OR if status is ambiguous (null)
+                if (lookupResponse.valid === true && (lookupResponse.type === 'mobile' || lookupResponse.type === 'voip')) {
+                     phoneIsValid = true;
+                } else if (lookupResponse.valid === null) {
+                     phoneIsValid = true; 
+                     console.warn(`[Ambiguous Phone] Twilio lookup for ${leadPhone} was ambiguous. Allowing.`);
                 } else {
-                    const lookupResponse = await twilioResponse.json();
-                    
-                    if (lookupResponse.valid === true && (lookupResponse.type === 'mobile' || lookupResponse.type === 'voip')) {
-                         phoneIsValid = true;
-                    } else if (lookupResponse.valid === null) {
-                         phoneIsValid = true; 
-                         console.warn(`[Ambiguous Phone] Twilio lookup for ${leadPhone} was ambiguous. Allowing.`);
-                    } else {
-                        phoneIsValid = false;
-                        console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${lookupResponse.valid}, Type: ${lookupResponse.type}`);
-                    }
+                    phoneIsValid = false;
+                    console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${lookupResponse.valid}, Type: ${lookupResponse.type}`);
                 }
-            } catch (error) {
-                console.error(`[Network Fail] Twilio lookup fetch failed (Exception):`, error.message);
-                phoneIsValid = false;
             }
+        } catch (error) {
+            console.error(`[Network Fail] Twilio lookup fetch failed (Exception):`, error.message);
+            phoneIsValid = false;
         }
     }
+}
 
     // --- 5. ADJUST DATA BASED ON VALIDATION ---
     if (leadPhone && !phoneIsValid) {
