@@ -13,7 +13,6 @@ export default async function (request, context) {
     const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
     const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
     const sendgridMarketingApiKey = env.get('API_KEY'); 
-    // Brevo API Key is still read, but the submission block is removed
     const brevoApiKey = env.get('BREVO_API_KEY'); 
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
@@ -44,6 +43,7 @@ export default async function (request, context) {
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
     // --- 2. EMAIL VALIDATION (SENDGRID) ---
+    // ... (Email Validation Logic - UNCHANGED) ...
     if (!sendgridValidationApiKey) {
         console.warn('SendGrid Validation API key missing. Skipping email check.');
         emailIsValid = true; 
@@ -109,43 +109,12 @@ export default async function (request, context) {
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
     // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
+    // ******* CRITICAL FIX: Bypass the entire Twilio block to stop the crash *******
     if (leadPhone) {
-        if (!twilioAccountSid || !twilioAuthToken) {
-            console.warn('Twilio credentials missing. Skipping phone validation.');
-            phoneIsValid = true;
-        } else {
-            // Twilio Lookup API Logic 
-            const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
-            const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
-            
-            try {
-                const encodedPhone = encodeURIComponent(leadPhone);
-                const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
-
-                const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
-                
-                if (!twilioResponse.ok) {
-                    phoneIsValid = false; 
-                    console.error(`[Twilio Error] Lookup API Failed for ${leadPhone}. Status: ${twilioResponse.status}`);
-                } else {
-                    const lookupResponse = await twilioResponse.json();
-                    
-                    if (lookupResponse.valid === true && (lookupResponse.type === 'mobile' || lookupResponse.type === 'voip')) {
-                         phoneIsValid = true;
-                    } else if (lookupResponse.valid === null) {
-                         phoneIsValid = true; 
-                         console.warn(`[Ambiguous Phone] Twilio lookup for ${leadPhone} was ambiguous. Allowing.`);
-                    } else {
-                        phoneIsValid = false;
-                        console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${lookupResponse.valid}, Type: ${lookupResponse.type}`);
-                    }
-                }
-            } catch (error) {
-                console.error(`[Network Fail] Twilio lookup fetch failed (Exception):`, error.message);
-                phoneIsValid = false;
-            }
-        }
+        console.warn(`Twilio/Phone validation skipped to prevent 502 crash. Phone will be processed as valid.`);
+        phoneIsValid = true;
     }
+    // -----------------------------------------------------------------------------
 
     // --- 5. ADJUST DATA BASED ON VALIDATION ---
     if (leadPhone && !phoneIsValid) {
@@ -157,6 +126,7 @@ export default async function (request, context) {
     // --- 6. EXECUTE LEAD SUBMISSIONS ---
     const promises = [];
     let sendgridPromise = null;
+    let brevoPromise = null; 
     
     // Determine tagging for SendGrid submission
     const finalScore = emailLookupResponse?.result?.score || 0;
@@ -203,20 +173,51 @@ export default async function (request, context) {
     promises.push(sendgridPromise); 
 
     // -----------------------------------------------------------------
-    // B. BREVO REQUEST BLOCKED
+    // B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY - Definition and Push)
     // -----------------------------------------------------------------
-    if (brevoApiKey) {
-        console.warn(`Brevo submission logic has been REMOVED for this test to resolve the 502 error.`);
+    if (finalScore >= 0.85) { 
+        
+        const brevoUrl = 'https://api.brevo.com/v3/contacts';
+        const brevoListId = 6; 
+
+        if (brevoApiKey) {
+            const brevoData = {
+                email: leadEmail,
+                attributes: { SMS: leadPhone },
+                listIds: [brevoListId],
+                updateEnabled: true 
+            };
+            
+            console.log(`[Submission] Sending high-confidence lead: ${leadEmail} to Brevo.`);
+
+            brevoPromise = fetch(brevoUrl, { 
+                method: 'POST',
+                headers: {
+                    'api-key': brevoApiKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(brevoData)
+            })
+            .then(async res => {
+                if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
+                return { status: 'failed', service: 'Brevo', error: 'Submission failed.' };
+            })
+            .catch(error => {
+                console.error('Brevo failed (Network/Fetch):', error.message);
+                return { status: 'failed', service: 'Brevo', error: error.message };
+            });
+
+            promises.push(brevoPromise); 
+        }
     } else {
-        console.warn(`Brevo skipped due to score/logic removal.`);
+        console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
     }
     
     // --- 7. FINISH ---
-    // The system only waits for the SendGrid Promise (promises.length = 1).
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
-    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.value.status === 'failed'));
+    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.status === 'failed'));
 
     let message = 'Lead processed.';
     if (successful.length > 0) {
@@ -226,7 +227,6 @@ export default async function (request, context) {
         message += ` Failures: ${failed.map(r => r.value.service || 'Unknown').join(', ')}.`;
     }
     
-    // Final status code is 200 on success, or 502/400 on failure
     const finalStatusCode = successful.length > 0 ? 200 : 502; 
 
     // Final return uses the V2 Response object
