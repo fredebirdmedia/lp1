@@ -158,7 +158,26 @@ export default async function (request, context) {
     }
 
     // --- 6. EXECUTE LEAD SUBMISSIONS ---
-    const promises = [];
+   // Initialize empty array for promises
+const promises = []; 
+
+// ... (SendGrid promise creation - always runs) ...
+promises.push(sendgridPromise);
+
+// B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY)
+if (finalScore >= 0.85) { 
+    // This block ONLY runs if the score is high enough
+    const brevoApiKey = env.get('BREVO_API_KEY');
+    // ... (Brevo setup logic) ...
+
+    if (brevoApiKey) {
+        // ... (Brevo promise creation code) ...
+        promises.push(brevoPromise); // <--- ONLY PUSH IF READY TO SEND
+    }
+} else {
+    // This warning runs if the score is too low, and NO promise is created or pushed
+    console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
+}
 
     // Determine tagging for SendGrid submission
     const finalScore = emailLookupResponse?.result?.score || 0;
