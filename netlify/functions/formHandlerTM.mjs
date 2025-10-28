@@ -1,20 +1,17 @@
 // Use ESM imports.
 import { URLSearchParams } from 'node:url'; 
 import { Buffer } from 'node:buffer'; 
+import process from 'process'; // Explicitly import process for V2 compatibility (though often global, better safe)
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
-    // --- FIX APPLIED HERE: ACCESS NETLIFY.ENV DIRECTLY ---
-    // Access environment variables using Netlify.env.get
-    const env = Netlify.env; // FIX: Access Netlify.env directly and assign it to a local variable
-
-    // --- 0. CREDENTIAL SETUP ---
-    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
-    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
-    const sendgridMarketingApiKey = env.get('API_KEY'); 
-    const brevoApiKey = env.get('BREVO_API_KEY');
+    // --- 0. CREDENTIAL SETUP (FIXED: Using process.env directly) ---
+    const sendgridValidationApiKey = process.env.SENDGRID_VALID; 
+    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+    const sendgridMarketingApiKey = process.env.API_KEY; 
+    const brevoApiKey = process.env.BREVO_API_KEY;
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
@@ -176,7 +173,7 @@ export default async function (request, context) {
                 "SCORE": finalScore * 100
             }
         }],
-        list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
+        list_ids: [process.env.SENDGRID_LIST_ID || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] // FIXED ENV ACCESS
     };
 
     console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
@@ -245,7 +242,6 @@ export default async function (request, context) {
     }
     
     // --- 7. FINISH ---
-    // The server is now expected to reach this final return statement without crashing.
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
