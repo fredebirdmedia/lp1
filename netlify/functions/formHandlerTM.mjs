@@ -1,5 +1,7 @@
 // Use ESM imports.
 import { URLSearchParams } from 'node:url'; 
+// FIX: Explicitly import Buffer for V2 environment compatibility
+import { Buffer } from 'node:buffer'; 
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
@@ -112,8 +114,8 @@ export default async function (request, context) {
             console.warn('Twilio credentials missing. Skipping phone validation.');
             phoneIsValid = true;
         } else {
-            // **FIX INSERTED HERE**
             // Twilio Lookup API Logic 
+            // FIX: Buffer is imported at the top of the file
             const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
             const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
             
@@ -145,7 +147,6 @@ export default async function (request, context) {
             }
         }
     }
-    // -----------------------------------------------------------------
 
     // --- 5. ADJUST DATA BASED ON VALIDATION ---
     if (leadPhone && !phoneIsValid) {
@@ -201,7 +202,7 @@ export default async function (request, context) {
         return { status: 'failed', service: 'SendGrid', error: error.message };
     });
         
-    promises.push(sendgridPromise); // PUSH
+    promises.push(sendgridPromise); 
 
     // -----------------------------------------------------------------
     // B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY - Definition and Push)
@@ -238,7 +239,7 @@ export default async function (request, context) {
                 return { status: 'failed', service: 'Brevo', error: error.message };
             });
 
-            promises.push(brevoPromise); // PUSH
+            promises.push(brevoPromise); 
         }
     } else {
         console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
