@@ -13,6 +13,9 @@ export default async function (request, context) {
     const sendgridMarketingApiKey = env.API_KEY; 
     const brevoApiKey = env.BREVO_API_KEY;
 
+    // --- HARDCODED VALUE ---
+    const SENDGRID_LIST_ID = 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'; 
+
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
     let leadPhone = null;
@@ -34,7 +37,7 @@ export default async function (request, context) {
     // Initialize variables
     let emailIsValid = false; 
     let validationVerdict = 'Not_Run'; 
-    let finalScore = 0; // Still capturing score for SendGrid tagging
+    let finalScore = 0; 
     let emailLookupResponse = null;
 
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
@@ -69,7 +72,6 @@ export default async function (request, context) {
                 const checks = emailLookupResponse?.result?.checks;
 
                 // --- SIMPLIFIED PERMISSIVE FILTERING STRATEGY ---
-                // Block only if the email is definitively Invalid or has hard bounce checks.
                 if (validationVerdict === 'Invalid' || checks.has_known_bounces === true) {
                     console.log(`[Validation Fail] Email blocked by Hard Invalid Rule (Verdict: ${validationVerdict}).`);
                     emailIsValid = false;
@@ -101,13 +103,12 @@ export default async function (request, context) {
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
     // --- 4. PHONE VALIDATION SKIPPED ---
-    // (Twilio/Phone validation is entirely removed for stability.)
+    // (No Twilio/Phone validation is used.)
     
     // --- 5. EXECUTE LEAD SUBMISSIONS (SIMPLIFIED) ---
     const promises = [];
     
     // Determine tagging for SendGrid submission
-    // Tagging is now 'valid' or 'risky' based on the API verdict, not a score threshold.
     const sendGridValidationTag = (validationVerdict === 'Valid') ? 'valid' : 'risky';
     
     // -----------------------------------------------------------------
@@ -119,11 +120,10 @@ export default async function (request, context) {
             email: leadEmail, 
             phone_number: leadPhone,
             custom_fields: {
-                "VALIDATION": sendGridValidationTag, // Tagging: 'valid' or 'risky'
-                "SCORE": finalScore * 100 // Still pass score for data retention
+                "VALIDATION": sendGridValidationTag // ONLY VALIDATION FIELD
             }
         }],
-        list_ids: [env.SENDGRID_LIST_ID || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
+        list_ids: [SENDGRID_LIST_ID] // USING HARDCODED VALUE
     };
 
     console.log(`[Submission] Sending lead to SendGrid Marketing (Tag: ${sendGridValidationTag}).`);
@@ -148,7 +148,7 @@ export default async function (request, context) {
     promises.push(sendgridPromise); 
 
     // -----------------------------------------------------------------
-    // B. BREVO REQUEST (ALL ACCEPTABLE LEADS - NO SCORE FILTER)
+    // B. BREVO REQUEST (ALL ACCEPTABLE LEADS)
     // -----------------------------------------------------------------
     if (brevoApiKey) { 
         
