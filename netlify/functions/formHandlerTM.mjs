@@ -4,7 +4,13 @@ import { URLSearchParams } from 'node:url';
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
+    // Access environment variables using Netlify.env.get
     const { env } = Netlify;
+
+    // --- 0. CREDENTIAL SETUP ---
+    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
+    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
+    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
     
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
@@ -25,20 +31,19 @@ export default async function (request, context) {
     }
 
     // Initialize variables
-    let validationVerdict = null; // Stores 'valid', 'risky', 'undeliverable', etc.
-    let emailIsValid = false;     // True only for 'Valid' and 'Risky'
+    let emailIsValid = false;       // Final decision: does this lead proceed?
     let phoneIsValid = !leadPhone; 
+    let validationVerdict = 'Not_Run';  // Stores final validation verdict (Valid, Risky, Invalid, etc.)
+    let emailLookupResponse = null;
 
-    // --- 2. EMAIL VALIDATION (SENDGRID) ---
-    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
-    
     // **LOGGING POINT 1: Before Validation**
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
+    // --- 2. EMAIL VALIDATION (SENDGRID) ---
     if (!sendgridValidationApiKey) {
         console.warn('SendGrid Validation API key missing. Skipping email check.');
         emailIsValid = true; 
-        validationVerdict = 'unknown';
+        validationVerdict = 'API_KEY_MISSING';
     } else {
         const validationUrl = 'https://api.sendgrid.com/v3/validations/email'; 
         
@@ -53,23 +58,32 @@ export default async function (request, context) {
             });
 
             if (!response.ok) {
-                // API request failed (400, 403, 500)
                 let errorData = await response.text();
                 try { errorData = JSON.parse(errorData); } catch {}
                 
                 console.error(`[SG Validation Error] Failed API Request. Status: ${response.status}`, errorData);
+                
                 validationVerdict = 'API_ERROR';
                 emailIsValid = false; 
             } else {
-                const emailLookupResponse = await response.json(); 
+                emailLookupResponse = await response.json(); 
                 const validationResult = emailLookupResponse?.result;
                 validationVerdict = validationResult.verdict; 
+                const score = validationResult.score;
+                const checks = validationResult.checks;
 
-                // Decision Logic: Accept Valid OR Risky
-                if (validationVerdict === 'Valid' || validationVerdict === 'Risky') { 
+                // --- NEW FILTERING STRATEGY ---
+
+                // 1. HARD BLOCK: Check for fatal errors that guarantee a bounce or previous failure
+                if (checks.has_mx_or_a_record === false || checks.has_known_bounces === true) {
+                    console.log(`[Validation Fail] Email ${leadEmail} blocked by Hard Block Rule (MX/Bounce).`);
+                    emailIsValid = false;
+                } 
+                // 2. SOFT BLOCK: Accept leads that meet the minimum score threshold (e.g., 50%)
+                else if (score >= 0.50) { 
                     emailIsValid = true;
                 } else {
-                    console.log(`[Validation Fail] Email ${leadEmail} blocked. Verdict: ${validationVerdict}`);
+                    console.log(`[Validation Fail] Email ${leadEmail} blocked by Score Rule (Score: ${score}).`);
                     emailIsValid = false;
                 }
             }
@@ -97,14 +111,42 @@ export default async function (request, context) {
 
 
     // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
-    // (Existing Twilio logic runs here, ensuring phoneIsValid is set)
-    // Twilio logic simplified for brevity, assuming integrity of prior steps.
-    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
-
-    if (leadPhone && twilioAccountSid && twilioAuthToken) {
-        // ... (Twilio Lookup code for phone number validation) ...
-        // If phone validation fails, phoneIsValid is set to false
+    if (leadPhone) {
+        if (!twilioAccountSid || !twilioAuthToken) {
+            console.warn('Twilio credentials missing. Skipping phone validation.');
+            phoneIsValid = true;
+        } else {
+            // ... (Twilio Lookup API Logic - Kept separate for clarity) ...
+            const twilioAuthString = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64');
+            const twilioAuthHeaders = { 'Authorization': `Basic ${twilioAuthString}`, 'Accept': 'application/json' };
+            
+            try {
+                const encodedPhone = encodeURIComponent(leadPhone);
+                const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}`;
+                const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
+                
+                if (!twilioResponse.ok) {
+                    phoneIsValid = false; 
+                    console.error(`[Twilio Error] Lookup API Failed for ${leadPhone}. Status: ${twilioResponse.status}`);
+                } else {
+                    const lookupResponse = await twilioResponse.json();
+                    
+                    // Check validity AND ensure type is mobile/voip, OR if status is ambiguous (null)
+                    if (lookupResponse.valid === true && (lookupResponse.type === 'mobile' || lookupResponse.type === 'voip')) {
+                         phoneIsValid = true;
+                    } else if (lookupResponse.valid === null) {
+                         phoneIsValid = true; 
+                         console.warn(`[Ambiguous Phone] Twilio lookup for ${leadPhone} was ambiguous. Allowing.`);
+                    } else {
+                        phoneIsValid = false;
+                        console.log(`[Validation Fail] Phone ${leadPhone} failed. Valid: ${lookupResponse.valid}, Type: ${lookupResponse.type}`);
+                    }
+                }
+            } catch (error) {
+                console.error(`[Network Fail] Twilio lookup fetch failed (Exception):`, error.message);
+                phoneIsValid = false;
+            }
+        }
     }
 
 
@@ -118,25 +160,28 @@ export default async function (request, context) {
     // --- 6. EXECUTE LEAD SUBMISSIONS ---
     const promises = [];
 
-    // --- A. SENDGRID MARKETING REQUEST (ALL VALID AND RISKY LEADS) ---
-    const sendgridMarketingApiKey = env.get('API_KEY');
+    // Determine tagging for SendGrid submission
+    const finalScore = emailLookupResponse?.result?.score || 0;
+    const sendGridValidationTag = (finalScore >= 0.85) ? 'valid' : 'risky';
     
-    // Set validation tag based on the successful verdict
-    const validationTag = (validationVerdict === 'Valid') ? 'valid' : 'risky';
+    // -----------------------------------------------------------------
+    // A. SENDGRID MARKETING REQUEST (ALL ACCEPTABLE LEADS)
+    // -----------------------------------------------------------------
+    const sendgridMarketingApiKey = env.get('API_KEY'); 
     
     const sendgridData = {
         contacts: [{ 
             email: leadEmail, 
             phone_number: leadPhone,
-            // ADD CUSTOM FIELD: SendGrid requires custom field names to be uppercase
             custom_fields: {
-                "VALIDATION": validationTag 
+                "VALIDATION": sendGridValidationTag, // Tagging: 'valid' or 'risky'
+                "SCORE": finalScore * 100 // Tagging: Send score as percentage (if supported by SendGrid field type)
             }
         }],
         list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
 
-    console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${validationTag}) to SendGrid.`);
+    console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
 
     const sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', {
         method: 'PUT',
@@ -151,7 +196,6 @@ export default async function (request, context) {
             console.log('SendGrid Marketing successful. Status:', res.status); 
             return { status: 'success', service: 'SendGrid' }; 
         }
-        // ... (Error handling remains the same) ...
         return { status: 'failed', service: 'SendGrid', error: 'Submission failed.' };
     })
     .catch(error => {
@@ -161,8 +205,10 @@ export default async function (request, context) {
         
     promises.push(sendgridPromise);
 
-    // --- B. BREVO REQUEST (ONLY FOR HIGH-CONFIDENCE 'VALID' LEADS) ---
-    if (validationVerdict === 'Valid') { // Only push to Brevo if high confidence
+    // -----------------------------------------------------------------
+    // B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY)
+    // -----------------------------------------------------------------
+    if (finalScore >= 0.85) { // Threshold: Only push if score is 85% or higher
         const brevoApiKey = env.get('BREVO_API_KEY');
         const brevoUrl = 'https://api.brevo.com/v3/contacts';
         const brevoListId = 6; 
@@ -179,7 +225,11 @@ export default async function (request, context) {
 
             const brevoPromise = fetch(brevoUrl, {
                 method: 'POST',
-                // ... (Brevo headers and logic remain the same) ...
+                headers: {
+                    'api-key': brevoApiKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(brevoData)
             })
             .then(async res => {
                 if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
@@ -193,7 +243,7 @@ export default async function (request, context) {
             promises.push(brevoPromise);
         }
     } else {
-        console.warn(`Brevo skipped for email ${leadEmail} due to '${validationVerdict}' verdict.`);
+        console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
     }
     
     // --- 7. FINISH ---
