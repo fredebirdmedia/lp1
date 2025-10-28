@@ -1,6 +1,6 @@
 // Use ESM imports.
 import { URLSearchParams } from 'node:url'; 
-import { Buffer } from 'node:buffer'; // FIX: Explicitly import Buffer for V2 environment compatibility
+import { Buffer } from 'node:buffer'; 
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
@@ -13,7 +13,8 @@ export default async function (request, context) {
     const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
     const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
     const sendgridMarketingApiKey = env.get('API_KEY'); 
-    const brevoApiKey = env.get('BREVO_API_KEY');
+    // Brevo API Key is still read, but the submission block is removed
+    const brevoApiKey = env.get('BREVO_API_KEY'); 
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
@@ -156,7 +157,6 @@ export default async function (request, context) {
     // --- 6. EXECUTE LEAD SUBMISSIONS ---
     const promises = [];
     let sendgridPromise = null;
-    let brevoPromise = null; 
     
     // Determine tagging for SendGrid submission
     const finalScore = emailLookupResponse?.result?.score || 0;
@@ -203,51 +203,20 @@ export default async function (request, context) {
     promises.push(sendgridPromise); 
 
     // -----------------------------------------------------------------
-    // B. BREVO REQUEST (HIGH-CONFIDENCE LEADS ONLY - Definition and Push)
+    // B. BREVO REQUEST BLOCKED
     // -----------------------------------------------------------------
-    if (finalScore >= 0.85) { 
-        
-        const brevoUrl = 'https://api.brevo.com/v3/contacts';
-        const brevoListId = 6; 
-
-        if (brevoApiKey) {
-            const brevoData = {
-                email: leadEmail,
-                attributes: { SMS: leadPhone },
-                listIds: [brevoListId],
-                updateEnabled: true 
-            };
-            
-            console.log(`[Submission] Sending high-confidence lead: ${leadEmail} to Brevo.`);
-
-            brevoPromise = fetch(brevoUrl, { 
-                method: 'POST',
-                headers: {
-                    'api-key': brevoApiKey,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(brevoData)
-            })
-            .then(async res => {
-                if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
-                return { status: 'failed', service: 'Brevo', error: 'Submission failed.' };
-            })
-            .catch(error => {
-                console.error('Brevo failed (Network/Fetch):', error.message);
-                return { status: 'failed', service: 'Brevo', error: error.message };
-            });
-
-            promises.push(brevoPromise); 
-        }
+    if (brevoApiKey) {
+        console.warn(`Brevo submission logic has been REMOVED for this test to resolve the 502 error.`);
     } else {
-        console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
+        console.warn(`Brevo skipped due to score/logic removal.`);
     }
     
     // --- 7. FINISH ---
+    // The system only waits for the SendGrid Promise (promises.length = 1).
     const results = await Promise.allSettled(promises);
     
     const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
-    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.status === 'failed'));
+    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.value.status === 'failed'));
 
     let message = 'Lead processed.';
     if (successful.length > 0) {
@@ -257,7 +226,8 @@ export default async function (request, context) {
         message += ` Failures: ${failed.map(r => r.value.service || 'Unknown').join(', ')}.`;
     }
     
-    const finalStatusCode = failed.length === promises.length && promises.length > 0 ? 502 : 200;
+    // Final status code is 200 on success, or 502/400 on failure
+    const finalStatusCode = successful.length > 0 ? 200 : 502; 
 
     // Final return uses the V2 Response object
     return new Response(
