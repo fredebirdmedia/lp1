@@ -5,13 +5,14 @@ import { Buffer } from 'node:buffer';
 export default async function (request, context) {
     
     // --- 0. CREDENTIAL SETUP (Netlify V2 Functions compatibility) ---
-    // Access environment variables directly using Netlify.env.get() - do NOT store the env reference
-    const sendgridValidationApiKey = Netlify.env.get('SENDGRID_VALID'); 
-    const twilioAccountSid = Netlify.env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = Netlify.env.get('TWILIO_AUTH_TOKEN');
-    const sendgridMarketingApiKey = Netlify.env.get('API_KEY'); 
-    const brevoApiKey = Netlify.env.get('BREVO_API_KEY');
-    const sendgridListId = Netlify.env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963';
+    // Access environment variables using the global Netlify object
+    const { env } = Netlify;
+    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
+    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
+    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
+    const sendgridMarketingApiKey = env.get('API_KEY'); 
+    const brevoApiKey = env.get('BREVO_API_KEY');
+    const sendgridListId = env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963';
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
