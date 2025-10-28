@@ -1,11 +1,18 @@
 // Use ESM imports.
-import { URLSearchParams } from 'node:url'; 
+import { Buffer } from 'node:buffer'; 
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
-    const { env } = Netlify;
-    
+    // Access environment variables using process.env (stable access)
+    const env = process.env;
+
+    // --- 0. CREDENTIAL SETUP ---
+    // Read directly from process.env for universal stability
+    const sendgridValidationApiKey = env.SENDGRID_VALID; 
+    const sendgridMarketingApiKey = env.API_KEY; 
+    const brevoApiKey = env.BREVO_API_KEY;
+
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
     let leadPhone = null;
@@ -15,6 +22,7 @@ export default async function (request, context) {
         const data = JSON.parse(requestBody);
         
         leadEmail = data.email;
+        // Phone number is received but will be processed as is (no external validation)
         leadPhone = (data.phone_number && String(data.phone_number).trim()) || null;
 
     } catch (error) {
@@ -25,20 +33,19 @@ export default async function (request, context) {
     }
 
     // Initialize variables
-    let validationVerdict = null; // Stores 'valid', 'risky', 'undeliverable', etc.
-    let emailIsValid = false;     // True only for 'Valid' and 'Risky'
-    let phoneIsValid = !leadPhone; 
+    let emailIsValid = false; 
+    let validationVerdict = 'Not_Run'; 
+    let finalScore = 0;
+    let emailLookupResponse = null;
 
-    // --- 2. EMAIL VALIDATION (SENDGRID) ---
-    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
-    
     // **LOGGING POINT 1: Before Validation**
     console.log(`[Validation Start] Checking email: ${leadEmail}`);
 
+    // --- 2. EMAIL VALIDATION (SENDGRID) ---
     if (!sendgridValidationApiKey) {
         console.warn('SendGrid Validation API key missing. Skipping email check.');
         emailIsValid = true; 
-        validationVerdict = 'unknown';
+        validationVerdict = 'API_KEY_MISSING';
     } else {
         const validationUrl = 'https://api.sendgrid.com/v3/validations/email'; 
         
@@ -53,23 +60,27 @@ export default async function (request, context) {
             });
 
             if (!response.ok) {
-                // API request failed (400, 403, 500)
-                let errorData = await response.text();
-                try { errorData = JSON.parse(errorData); } catch {}
-                
-                console.error(`[SG Validation Error] Failed API Request. Status: ${response.status}`, errorData);
+                console.error(`[SG Validation Error] Failed API Request. Status: ${response.status}`);
                 validationVerdict = 'API_ERROR';
                 emailIsValid = false; 
             } else {
-                const emailLookupResponse = await response.json(); 
+                emailLookupResponse = await response.json(); 
                 const validationResult = emailLookupResponse?.result;
                 validationVerdict = validationResult.verdict; 
+                finalScore = validationResult.score;
+                const checks = emailLookupResponse?.result?.checks;
 
-                // Decision Logic: Accept Valid OR Risky
-                if (validationVerdict === 'Valid' || validationVerdict === 'Risky') { 
+                // --- FILTERING STRATEGY ---
+                // Hard Block Rule: Block if MX record is missing or known to bounce
+                if (checks.has_mx_or_a_record === false || checks.has_known_bounces === true) {
+                    console.log(`[Validation Fail] Email blocked by Hard Block Rule (MX/Bounce).`);
+                    emailIsValid = false;
+                } 
+                // Accept emails that meet the minimum score (0.50 for Risky/Valid)
+                else if (finalScore >= 0.50) { 
                     emailIsValid = true;
                 } else {
-                    console.log(`[Validation Fail] Email ${leadEmail} blocked. Verdict: ${validationVerdict}`);
+                    console.log(`[Validation Fail] Email blocked by Score Rule (Score: ${finalScore}).`);
                     emailIsValid = false;
                 }
             }
@@ -96,49 +107,40 @@ export default async function (request, context) {
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
 
-    // --- 4. PHONE VALIDATION (TWILIO LOOKUP) ---
-    // (Existing Twilio logic runs here, ensuring phoneIsValid is set)
-    // Twilio logic simplified for brevity, assuming integrity of prior steps.
-    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
-
-    if (leadPhone && twilioAccountSid && twilioAuthToken) {
-        // ... (Twilio Lookup code for phone number validation) ...
-        // If phone validation fails, phoneIsValid is set to false
-    }
-
-
-    // --- 5. ADJUST DATA BASED ON VALIDATION ---
-    if (leadPhone && !phoneIsValid) {
-        console.warn(`Invalid phone number: ${leadPhone} detected. Stripping phone.`);
-        console.log(`[SUBMISSION] Stripping phone number from lead: ${leadEmail}.`);
+    // --- 4. PHONE VALIDATION SKIPPED ---
+    // Phone validation is entirely removed to ensure stability.
+    const phoneIsValidFinal = true; // Always true since we skip validation
+    if (leadPhone && !phoneIsValidFinal) {
         leadPhone = null; 
     }
 
-    // --- 6. EXECUTE LEAD SUBMISSIONS ---
-    const promises = [];
 
-    // --- A. SENDGRID MARKETING REQUEST (ALL VALID AND RISKY LEADS) ---
-    const sendgridMarketingApiKey = env.get('API_KEY');
+    // --- 5. EXECUTE LEAD SUBMISSIONS ---
+    const promises = [];
+    let sendgridPromise = null;
     
-    // Set validation tag based on the successful verdict
-    const validationTag = (validationVerdict === 'Valid') ? 'valid' : 'risky';
+    // Determine tagging for SendGrid submission
+    const sendGridValidationTag = (finalScore >= 0.85) ? 'valid' : 'risky';
+    
+    // -----------------------------------------------------------------
+    // A. SENDGRID MARKETING REQUEST (REQUIRED FOR ALL VALID/RISKY LEADS)
+    // -----------------------------------------------------------------
     
     const sendgridData = {
         contacts: [{ 
             email: leadEmail, 
             phone_number: leadPhone,
-            // ADD CUSTOM FIELD: SendGrid requires custom field names to be uppercase
             custom_fields: {
-                "VALIDATION": validationTag 
+                "VALIDATION": sendGridValidationTag, 
+                "SCORE": finalScore * 100
             }
         }],
-        list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
+        list_ids: [env.SENDGRID_LIST_ID || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
 
-    console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${validationTag}) to SendGrid.`);
+    console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
 
-    const sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', {
+    sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', { 
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${sendgridMarketingApiKey}`,
@@ -151,7 +153,6 @@ export default async function (request, context) {
             console.log('SendGrid Marketing successful. Status:', res.status); 
             return { status: 'success', service: 'SendGrid' }; 
         }
-        // ... (Error handling remains the same) ...
         return { status: 'failed', service: 'SendGrid', error: 'Submission failed.' };
     })
     .catch(error => {
@@ -159,15 +160,18 @@ export default async function (request, context) {
         return { status: 'failed', service: 'SendGrid', error: error.message };
     });
         
-    promises.push(sendgridPromise);
+    promises.push(sendgridPromise); 
 
-    // --- B. BREVO REQUEST (ONLY FOR HIGH-CONFIDENCE 'VALID' LEADS) ---
-    if (validationVerdict === 'Valid') { // Only push to Brevo if high confidence
-        const brevoApiKey = env.get('BREVO_API_KEY');
+    // -----------------------------------------------------------------
+    // B. BREVO REQUEST (ONLY FOR HIGH-CONFIDENCE 'VALID' LEADS)
+    // -----------------------------------------------------------------
+    if (finalScore >= 0.85) { 
+        
         const brevoUrl = 'https://api.brevo.com/v3/contacts';
         const brevoListId = 6; 
+        const brevoApiKeyLocal = brevoApiKey; // Use a local name for clarity
 
-        if (brevoApiKey) {
+        if (brevoApiKeyLocal) {
             const brevoData = {
                 email: leadEmail,
                 attributes: { SMS: leadPhone },
@@ -177,9 +181,13 @@ export default async function (request, context) {
             
             console.log(`[Submission] Sending high-confidence lead: ${leadEmail} to Brevo.`);
 
-            const brevoPromise = fetch(brevoUrl, {
+            const brevoPromise = fetch(brevoUrl, { 
                 method: 'POST',
-                // ... (Brevo headers and logic remain the same) ...
+                headers: {
+                    'api-key': brevoApiKeyLocal,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(brevoData)
             })
             .then(async res => {
                 if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
@@ -190,10 +198,10 @@ export default async function (request, context) {
                 return { status: 'failed', service: 'Brevo', error: error.message };
             });
 
-            promises.push(brevoPromise);
+            promises.push(brevoPromise); 
         }
     } else {
-        console.warn(`Brevo skipped for email ${leadEmail} due to '${validationVerdict}' verdict.`);
+        console.warn(`Brevo skipped for email ${leadEmail} due to score (${finalScore}).`);
     }
     
     // --- 7. FINISH ---
@@ -210,9 +218,9 @@ export default async function (request, context) {
         message += ` Failures: ${failed.map(r => r.value.service || 'Unknown').join(', ')}.`;
     }
     
-    const finalStatusCode = failed.length === promises.length && promises.length > 0 ? 502 : 200;
+    const finalStatusCode = successful.length > 0 ? 200 : 502; 
 
-    // Final return uses the V2 Response object
+    // Final return uses the V2 Response object (HTTP 200 on successful submission)
     return new Response(
         JSON.stringify({ message: message, details: results.map(r => r.value || r.reason) }),
         {
