@@ -103,13 +103,9 @@ export default async function (request, context) {
     console.log(`[Validation Pass] Email: ${leadEmail} passed the gate. Verdict: ${validationVerdict}`);
 
     // --- 4. PHONE VALIDATION SKIPPED ---
-    // (No Twilio/Phone validation is used.)
     
     // --- 5. EXECUTE LEAD SUBMISSIONS (SIMPLIFIED) ---
     const promises = [];
-    
-    // Determine tagging for SendGrid submission
-    const sendGridValidationTag = (validationVerdict === 'Valid') ? 'valid' : 'risky';
     
     // -----------------------------------------------------------------
     // A. SENDGRID MARKETING REQUEST (ALL ACCEPTABLE LEADS)
@@ -118,15 +114,12 @@ export default async function (request, context) {
     const sendgridData = {
         contacts: [{ 
             email: leadEmail, 
-            phone_number: leadPhone,
-            custom_fields: {
-                "VALIDATION": sendGridValidationTag // ONLY VALIDATION FIELD
-            }
+            phone_number: leadPhone
         }],
         list_ids: [SENDGRID_LIST_ID] // USING HARDCODED VALUE
     };
 
-    console.log(`[Submission] Sending lead to SendGrid Marketing (Tag: ${sendGridValidationTag}).`);
+    console.log(`[Submission] Sending lead to SendGrid Marketing.`);
 
     const sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', { 
         method: 'PUT',
