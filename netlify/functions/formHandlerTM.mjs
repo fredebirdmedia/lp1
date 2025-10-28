@@ -1,38 +1,25 @@
 // Use ESM imports.
 import { URLSearchParams } from 'node:url'; 
 import { Buffer } from 'node:buffer'; 
-import process from 'process'; // Use process.env for stable access
-
-// Helper function to handle fetch with a timeout
-function fetchWithTimeout(resource, options = {}, timeout = 8000) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-
-    return fetch(resource, {
-        ...options,
-        signal: controller.signal
-    }).finally(() => clearTimeout(id));
-}
 
 // Export function using the recommended ESM default export and V2 signature
 export default async function (request, context) {
     
-    // Use the core Node process.env method for stability
-    const env = process.env;
+    // --- FIX APPLIED: Access environment variables using Netlify.env.get() global API ---
+    // The previous process.env access caused the fatal crash.
+    const env = Netlify.env;
 
-    // --- 0. CREDENTIAL SETUP ---
-    const sendgridValidationApiKey = env.SENDGRID_VALID; 
-    const twilioAccountSid = env.TWILIO_ACCOUNT_SID;
-    const twilioAuthToken = env.TWILIO_AUTH_TOKEN;
-    const sendgridMarketingApiKey = env.API_KEY; 
-    const brevoApiKey = env.BREVO_API_KEY;
+    // --- 0. CREDENTIAL SETUP (Fixed for Netlify V2 compatibility) ---
+    const sendgridValidationApiKey = env.get('SENDGRID_VALID'); 
+    const twilioAccountSid = env.get('TWILIO_ACCOUNT_SID');
+    const twilioAuthToken = env.get('TWILIO_AUTH_TOKEN');
+    const sendgridMarketingApiKey = env.get('API_KEY'); 
+    const brevoApiKey = env.get('BREVO_API_KEY');
 
     // --- 1. HANDLE REQUEST BODY & INITIAL SETUP ---
     let leadEmail = null;
     let leadPhone = null;
-    let finalResponse = null;
 
-    // FIX: Top-level try-catch block to prevent 502 crash on any unhandled exception
     try {
         const requestBody = await request.text();
         const data = JSON.parse(requestBody);
@@ -41,7 +28,6 @@ export default async function (request, context) {
         leadPhone = (data.phone_number && String(data.phone_number).trim()) || null;
 
     } catch (error) {
-        // Catches initial parsing error
         return new Response(
             JSON.stringify({ error: 'Invalid JSON body provided.', details: error.message }),
             { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -66,15 +52,14 @@ export default async function (request, context) {
         const validationUrl = 'https://api.sendgrid.com/v3/validations/email'; 
         
         try {
-            // FIX: Use fetchWithTimeout helper (8s timeout)
-            const response = await fetchWithTimeout(validationUrl, {
+            const response = await fetch(validationUrl, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${sendgridValidationApiKey}`, 
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email: leadEmail })
-            }, 8000); 
+            });
 
             if (!response.ok) {
                 let errorData = await response.text();
@@ -137,8 +122,7 @@ export default async function (request, context) {
                 const encodedPhone = encodeURIComponent(leadPhone);
                 const twilioUrl = `https://lookups.twilio.com/v2/PhoneNumbers/${encodedPhone}?Type=carrier`;
 
-                // FIX: Use fetchWithTimeout helper (5s timeout)
-                const twilioResponse = await fetchWithTimeout(twilioUrl, { headers: twilioAuthHeaders }, 5000);
+                const twilioResponse = await fetch(twilioUrl, { headers: twilioAuthHeaders });
                 
                 if (!twilioResponse.ok) {
                     phoneIsValid = false; 
@@ -192,21 +176,20 @@ export default async function (request, context) {
                 "SCORE": finalScore * 100
             }
         }],
-        // FIX: Ensure SENDGRID_LIST_ID is defined
-        list_ids: [process.env.SENDGRID_LIST_ID || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
+        // FIX: Ensure SENDGRID_LIST_ID is read using Netlify.env.get()
+        list_ids: [env.get('SENDGRID_LIST_ID') || 'c35ce8c7-0b05-4686-ac5c-67717f5e5963'] 
     };
 
     console.log(`[Submission] Sending lead: ${leadEmail} (Tag: ${sendGridValidationTag}) to SendGrid Marketing.`);
 
-    // FIX: Use fetchWithTimeout helper (5s timeout)
-    sendgridPromise = fetchWithTimeout('https://api.sendgrid.com/v3/marketing/contacts', { 
+    sendgridPromise = fetch('https://api.sendgrid.com/v3/marketing/contacts', { 
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${sendgridMarketingApiKey}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(sendgridData)
-    }, 5000)
+    })
     .then(async res => {
         if (res.ok) {
             console.log('SendGrid Marketing successful. Status:', res.status); 
@@ -239,15 +222,14 @@ export default async function (request, context) {
             
             console.log(`[Submission] Sending high-confidence lead: ${leadEmail} to Brevo.`);
 
-            // FIX: Use fetchWithTimeout helper (5s timeout)
-            brevoPromise = fetchWithTimeout(brevoUrl, { 
+            brevoPromise = fetch(brevoUrl, { 
                 method: 'POST',
                 headers: {
                     'api-key': brevoApiKey,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(brevoData)
-            }, 5000)
+            })
             .then(async res => {
                 if (res.ok || res.status === 201) { return { status: 'success', service: 'Brevo' }; }
                 return { status: 'failed', service: 'Brevo', error: 'Submission failed.' };
@@ -264,34 +246,24 @@ export default async function (request, context) {
     }
     
     // --- 7. FINISH ---
-    // FIX: Wrap logic to safely handle promise rejection reasons
     const results = await Promise.allSettled(promises);
     
-    // Safely extract results and reasons
-    const processedResults = results.map(r => {
-        if (r.status === 'fulfilled') {
-            return r.value;
-        }
-        // FIX: Safely serialize error message from rejected promise
-        return { status: 'failed', service: r.reason?.service || 'Network', error: r.reason?.message || 'Timeout/Network Error' };
-    });
-    
-    const successful = processedResults.filter(r => r.status === 'success');
-    const failed = processedResults.filter(r => r.status === 'failed');
+    const successful = results.filter(r => r.status === 'fulfilled' && r.value.status === 'success');
+    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value.status === 'failed'));
 
     let message = 'Lead processed.';
     if (successful.length > 0) {
-        message += ` Successes: ${successful.map(r => r.service).join(', ')}.`;
+        message += ` Successes: ${successful.map(r => r.value.service).join(', ')}.`;
     }
     if (failed.length > 0) {
-        message += ` Failures: ${failed.map(r => r.service || 'Unknown').join(', ')}.`;
+        message += ` Failures: ${failed.map(r => r.value.service || 'Unknown').join(', ')}.`;
     }
     
     const finalStatusCode = successful.length > 0 ? 200 : 502; 
 
     // Final return uses the V2 Response object
     return new Response(
-        JSON.stringify({ message: message, details: processedResults }),
+        JSON.stringify({ message: message, details: results.map(r => r.value || r.reason) }),
         {
             status: finalStatusCode,
             headers: { 'Content-Type': 'application/json' }
