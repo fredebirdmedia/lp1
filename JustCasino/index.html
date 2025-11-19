@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Justcasino Exclusive Canadian Offer</title>
+  <title>Justcasino Exclusive Canadian Offer - Split Test C</title>
   <meta content="summary_large_image" name="twitter:card" />
   <meta content="website" property="og:type" />
   <meta content="Claim your C$5000 Bonus, 400 Free Spins, and 10% Cashback now!" property="og:description" />
@@ -48,7 +48,10 @@
       --color-card: #000000;
       --color-border-glow: rgba(255, 192, 0, 0.7);
       --font-family: 'Inter Tight', sans-serif;
-      /* UPDATED FONT */
+      --form-input-bg: #fff;
+      /* NEW: White input background */
+      --form-input-text: #121212;
+      /* Black input text */
     }
 
     * {
@@ -60,9 +63,8 @@
     body {
       font-family: var(--font-family);
       font-weight: 500;
-      /* Medium weight for body */
       background-color: var(--color-dark);
-      color: var(--color-light);
+      
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
@@ -85,9 +87,8 @@
 
     .section-title {
       text-align: center;
-      font-size: 1.5rem;
-      font-weight: 800;
-      /* Extra bold */
+      font-size: 2rem;
+      font-weight: 900;
       margin-bottom: 3rem;
       color: var(--color-accent);
       text-transform: uppercase;
@@ -95,7 +96,7 @@
     }
 
     .header {
-      padding: 0rem 0;
+      padding: 0.5rem 0;
       text-align: center;
       background-color: var(--color-card);
       box-shadow: 0 4px 20px rgba(255, 192, 0, 0.1);
@@ -107,76 +108,114 @@
       filter: none;
     }
 
+    /* ---------------------- */
+    /* HERO SECTION - SPLIT TEST C (Vertical Split) */
+    /* ---------------------- */
     .hero-section {
-      background: var(--color-dark);
-      background: radial-gradient(circle at top, rgba(255, 192, 0, 0.15) 0%, var(--color-dark) 40%);
+      background-color: var(--color-dark);
+      padding: 2rem 2rem 6rem 2rem;
+      min-height: 550px;
 
-      padding: 1rem 1rem 7rem;
-      text-align: center;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 500px;
+      justify-content: space-between;
+    }
+
+    .hero-content {
+      flex-basis: 55%;
+      text-align: left;
+      padding-right: 3rem;
     }
 
     .hero-content h1 {
-      font-size: 1rem;
-      font-weight: 700;
-      /* Bold */
+      font-size: 4rem;
+      font-weight: 900;
       margin-bottom: 0.5rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: -1px;
       color: var(--color-light);
+      line-height: 1;
     }
 
     .hero-content h2 {
-      font-size: 2rem;
-      font-weight: 900;
-      /* Ultra bold */
+      font-size: 1.5rem;
+      font-weight: 500;
       color: var(--color-accent);
-      margin-bottom: 3.5rem;
-      text-shadow: 0 0 15px rgba(255, 192, 0, 0.7);
-      line-height: 1.1;
-      padding: 0.5rem 1rem;
-      border-bottom: 5px solid var(--color-light);
-      display: inline-block;
+      margin-bottom: 0.5rem;
+      text-shadow: none;
+      border-bottom: none;
+      display: block;
+      padding: 0;
     }
 
+    /* ---------------------- */
+    /* FORM STYLES - SPLIT TEST C (White Inputs) */
+    /* ---------------------- */
     .form-container {
+      flex-basis: 40%;
       background-color: var(--color-card);
       padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 20px var(--color-border-glow);
-      max-width: 420px;
-      width: 100%;
-      margin: 0 auto;
-      border: 1px solid var(--color-accent);
+      border-radius: 12px;
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.9), 0 0 15px var(--color-border-glow);
+      border: 2px solid var(--color-light);
+      max-width: 450px;
+      margin: 0;
     }
 
     .form-group {
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
       text-align: left;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
       font-weight: 700;
-      /* Bold */
       color: var(--color-light);
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
+    /* Input Base Style - defines size (1rem padding + 1.1rem font-size = ~44px height) */
     .form-group input {
       width: 100%;
       padding: 1rem;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background-color: var(--color-dark);
-      color: var(--color-light);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: var(--form-input-bg);
+      color: var(--form-input-text);
       font-size: 1.1rem;
+      height: 44px;
+      /* Explicit height for consistency */
     }
+
+    /* Fix 1: Ensure phone input height matches email input and force prefix text to black */
+    .form-group #phone-input {
+      padding-left: 10px;
+      /* Resetting padding for clean input */
+    }
+
+    .iti__flag-container {
+      height: 44px;
+      /* Match input height */
+    }
+
+    .iti__selected-flag {
+      background-color: var(--form-input-bg);
+      border-radius: 6px 0 0 6px;
+    }
+
+    .iti__country-name,
+    .iti__dial-code {
+      color: var(--form-input-text) !important;
+      /* CRITICAL FIX: Make +1 prefix black */
+    }
+
+    /* Ensure the input itself follows the general styling */
+    .form-group input.form-control {
+      height: 44px;
+      /* Match input height */
+    }
+
 
     .form-group input:focus {
       outline: none;
@@ -188,32 +227,21 @@
       width: 100%;
     }
 
-    /* FINAL, MOST SPECIFIC FIX: Targets the dial code text directly */
-.iti__selected-flag .iti__selected-dial-code {
-    color: #000000 !important; 
-    opacity: 1 !important; /* Ensure it's not made transparent/faded by a rule */
-}
-
-    
-
     .iti__country-list {
       background-color: var(--color-card);
       border: 1px solid var(--color-accent);
       border-radius: 8px;
     }
 
-
-
     .btn-submit {
       width: 100%;
-      padding: 1.25rem;
+      padding: 1.3rem;
       background-color: var(--color-secondary);
       color: var(--color-card);
       border: none;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      /* Bold */
+      border-radius: 8px;
+      font-size: 1.3rem;
+      font-weight: 900;
       text-transform: uppercase;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
@@ -223,16 +251,20 @@
 
     .btn-submit:hover {
       background-color: #ffd24c;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(255, 192, 0, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 192, 0, 0.8);
     }
 
     .disclaimer-text {
-      font-size: 0.8rem;
-      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      margin-top: 1rem;
       color: #909090;
+      text-align: center;
     }
 
+    /* ---------------------- */
+    /* CARDS & FOOTER */
+    /* ---------------------- */
     .feature-cards {
       padding: 5rem 0;
       background-color: var(--color-dark);
@@ -294,15 +326,6 @@
       font-size: 1.05rem;
     }
 
-    .payment-icons {
-      gap: 2rem;
-    }
-
-    .payment-icons img {
-      height: 40px;
-      filter: brightness(90%);
-    }
-
     .footer {
       padding: 2.5rem 0;
       background-color: var(--color-card);
@@ -313,51 +336,41 @@
       font-size: 0.85rem;
     }
 
-    /* ------------------------------------------------ */
-    /* AGGRESSIVE MOBILE COMPRESSION STYLES (40-50% REDUCTION) */
-    /* ------------------------------------------------ */
-
+    /* ---------------------- */
+    /* MOBILE STYLES (Stacking) */
+    /* ---------------------- */
     @media (max-width: 768px) {
-
-      /* GLOBAL CONTAINER PADDING */
-      .container {
-        padding: 0 0.5rem !important;
-      }
-
-      /* HERO SECTION (Aggressive Top/Side padding reduction) */
       .hero-section {
-        padding: 1.5rem 0.5rem 4rem !important;
-        min-height: 300px !important;
+        flex-direction: column;
+        /* Stack elements vertically */
+        padding: 1.5rem 0.5rem 3rem !important;
+        min-height: auto;
       }
 
-      /* H1 & H2 SIZES (~40% reduction) */
+      .hero-content {
+        flex-basis: auto;
+        text-align: center;
+        /* Center text on mobile */
+        padding-right: 0;
+        margin-bottom: 2rem;
+      }
+
       .hero-content h1 {
-        font-size: 1.2rem !important;
-        letter-spacing: 1px;
+        font-size: 2.5rem !important;
+        letter-spacing: 0;
+        line-height: 1.1;
       }
 
       .hero-content h2 {
-        font-size: 2.5rem !important;
-        margin-bottom: 1.5rem !important;
+        font-size: 1.2rem !important;
+        margin-top: 0.5rem;
       }
 
-      /* FORM */
       .form-container {
-        padding: 1rem !important;
-      }
-
-      /* FEATURE CARDS & TITLES */
-      .section-title {
-        font-size: 1.5rem !important;
-        margin-bottom: 2rem !important;
-      }
-
-      .feature-cards {
-        padding: 3rem 0 !important;
-      }
-
-      .card h3 {
-        font-size: 1.3rem !important;
+        flex-basis: auto;
+        padding: 1.5rem;
+        max-width: 100%;
+        margin: 0;
       }
     }
   </style>
@@ -373,36 +386,40 @@
   </div>
 
   <div class="hero-section">
-    <div class="hero-content">
-      <h1 id="hero-h1" data-fr="FORFAIT DE BIENVENUE EXCLUSIF POUR LE CANADA">Exclusive Canadian Welcome Package</h1>
-      <h2 id="hero-h2" data-fr="BONUS DE 5 000 $CA + 400 TOURS GRATUITS + 10% CASHBACK">C$5,000 BONUS + 400 FREE SPINS +
-        10% CASHBACK</h2>
-    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1 id="hero-h1" data-fr="OBTENEZ JUSQU'À 5 000 $CA + 400 TOURS GRATUITS">GET UP TO C$5000 BONUS + 400 FREE
+          SPINS</h1>
+        <h2 id="hero-h2" data-fr="PLUS 10% DE CASHBACK GARANTI">PLUS 10% GUARANTEED CASHBACK</h2>
+      </div>
 
-    <div class="form-container">
-      <form accept-charset="UTF-8" action="/.netlify/functions/formHandlerTM" autocomplete="on"
-        enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self" id="justcasino-form">
+      <div class="form-container">
+        <form accept-charset="UTF-8" action="/.netlify/functions/formHandlerTM" autocomplete="on"
+          enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self" id="justcasino-form">
 
-        <div class="form-group">
-          <label for="email-input" data-fr="Courriel">Email</label>
-          <input id="email-input" name="email" required="" type="email" placeholder="enter your email"
-            data-fr-placeholder="entrez votre courriel" />
-        </div>
+          <div class="form-group">
+            <label for="email-input" data-fr="Courriel">Email</label>
+            <input id="email-input" name="email" required="" type="email" placeholder="enter your email"
+              data-fr-placeholder="entrez votre courriel" />
+          </div>
 
-        <div class="form-group">
-          <label for="phone-input" data-fr="Téléphone (Facultatif)">Telephone (Optional)</label>
-          <input id="phone-input" name="telephone" type="tel" placeholder="(555) 555-5555" data-intl-tel-input-id="0" />
-        </div>
+          <div class="form-group">
+            <label for="phone-input" data-fr="Téléphone (Facultatif)">Telephone (Optional)</label>
+            <input id="phone-input" name="telephone" type="tel" placeholder="(555) 555-5555" class="form-control"
+              data-intl-tel-input-id="0" />
+          </div>
 
-        <button class="btn-submit" id="submit-btn" name="submit" type="submit" value="CLAIM NOW"
-          data-fr="RÉCLAMEZ MAINTENANT">CLAIM YOUR REWARDS</button>
-      </form>
+          <button class="btn-submit" id="submit-btn" name="submit" type="submit" value="CLAIM NOW"
+            data-fr="RÉCLAMEZ MAINTENANT">CLAIM YOUR REWARDS</button>
+        </form>
 
-      <p class="disclaimer-text">
-        By signing up, I agree to the <a href="https://justcasino.com/privacy-policy/" target="_blank">privacy
-          policy</a>, and I consent to Justcasino processing my personal information and sending me relevant offers and
-        information from affiliated companies.
-      </p>
+        <p class="disclaimer-text">
+          By signing up, I agree to the <a href="https://justcasino.com/privacy-policy/" target="_blank">privacy
+            policy</a>, and I consent to Justcasino processing my personal information and sending me relevant offers
+          and
+          information from affiliated companies.
+        </p>
+      </div>
     </div>
   </div>
 
