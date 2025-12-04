@@ -685,11 +685,16 @@
         if (typeof sa_event === 'function') sa_event("form_submission_successful");
         if (typeof fbq === 'function') fbq('track', 'Lead');
 
-        // --- FUNNELFLUX CUSTOM EVENT ADDED HERE ---
-        if (typeof flux !== 'undefined' && typeof flux.track === 'function') {
-          flux.track("custom", "FormSubmit");
+        // --- FUNNELFLUX CUSTOM EVENT ADDED HERE (WITH LOCAL CATCH) ---
+        try {
+          if (typeof flux !== 'undefined' && typeof flux.track === 'function') {
+            flux.track("custom", "FormSubmit");
+          }
+        } catch (trackingError) {
+          // This ensures a tracking error does not break the main submission logic.
+          console.error("FunnelFlux tracking failed, but continuing with redirect:", trackingError);
         }
-        // ------------------------------------------
+        // -------------------------------------------------------------
 
         window.location.href = 'https://ff.casinomary.com/action/1';
       } catch (error) {
