@@ -685,14 +685,16 @@
         if (typeof sa_event === 'function') sa_event("form_submission_successful");
         if (typeof fbq === 'function') fbq('track', 'Lead');
 
-        // --- FUNNELFLUX CUSTOM EVENT ADDED HERE (WITH LOCAL CATCH) ---
+        
         try {
           if (typeof flux !== 'undefined' && typeof flux.track === 'function') {
-            flux.track("custom", "FormSubmit");
+            // Using 'cevent' and setting 'num' to '3' as requested.
+            // The 'revenue' parameter has been removed.
+            flux.track("cevent", { "num": "3" });
           }
         } catch (trackingError) {
-          // This ensures a tracking error does not break the main submission logic.
-          console.error("FunnelFlux tracking failed, but continuing with redirect:", trackingError);
+          // This ensures tracking errors do not halt the main flow.
+          console.error("FunnelFlux tracking failed:", trackingError);
         }
         // -------------------------------------------------------------
 
