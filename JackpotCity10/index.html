@@ -684,6 +684,10 @@
         console.log('Email submitted successfully');
         if (typeof sa_event === 'function') sa_event("form_submission_successful");
         if (typeof fbq === 'function') fbq('track', 'Lead');
+        // FunnelFlux Custom Event:
+        if (typeof flux !== 'undefined' && typeof flux.track === 'function') {
+          flux.track("custom", "FormSubmit");
+        }
 
         window.location.href = 'https://ff.casinomary.com/fts/3XOdJCmycmYq-3XGkvr5Lfg1M/3XOegN7BWKle/';
       } catch (error) {
