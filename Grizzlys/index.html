@@ -599,115 +599,160 @@
   </div>
 
   <!-- Custom Script -->
-  <script>
-
+ <script>
     let submissionAttempts = 0; // Track the number of submission attempts
     let validationFailures = 0; // Track the number of validation failures
+    let isSubmitting = false;   // CRITICAL: Lock flag to prevent duplicate submissions
 
     // Retrieve the API key from the environment variable
     async function submitForm(event) {
-      event.preventDefault();
+        event.preventDefault();
 
-      const email = document.querySelector('#r1c0m1i1').value;
-      const phoneInput = document.querySelector('#r1c0m1i3');
-      const rawPhoneNumber = phoneInput.value;
-
-      // Email validation using regular expression
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
-        validationFailures++;
-        if (validationFailures >= 3) {
-          redirectToFallback();
-          return;
-        }
-        return;
-      }
-
-      // Check if phone number is provided
-      if (rawPhoneNumber.trim() !== '') {
-        // Phone number validation using intl-tel-input library
-        const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-        const isValidPhoneNumber = iti.isValidNumber();
-
-        if (!isValidPhoneNumber) {
-          alert('Please enter a valid phone number.');
-          validationFailures++;
-          if (validationFailures >= 3) {
-            redirectToFallback();
+        // 1. Check and set the lock flag
+        if (isSubmitting) {
+            console.warn("Form submission already in progress. Blocking duplicate.");
+            // >>> ANALYTICS: Track the blocked duplicate submission <<<
+            if (typeof sa_event === 'function') {
+                sa_event("form_submission_duplicate_blocked"); 
+            }
             return;
-          }
-          return;
+        }
+        isSubmitting = true; // Lock the form
+
+        const email = document.querySelector('#r1c0m1i1').value;
+        const phoneInput = document.querySelector('#r1c0m1i3');
+        const rawPhoneNumber = phoneInput.value;
+
+        // Email validation using regular expression (Client-side check)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            isSubmitting = false; // Unlock if client-side validation fails
+            validationFailures++;
+            if (validationFailures >= 3) {
+                redirectToFallback();
+                return;
+            }
+            return;
         }
 
-        // Get the formatted phone number including the country code
-        const formattedPhoneNumber = iti.getNumber();
+        // Check if phone number is provided (Client-side check)
+        if (rawPhoneNumber.trim() !== '') {
+            // Phone number validation using intl-tel-input library
+            const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+            const isValidPhoneNumber = iti.isValidNumber();
 
-        // Add +1 prefix if not already present
-        var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
-      } else {
-        // If phone number is empty, send an empty string
-        var phoneNumberToSend = '';
-      }
+            if (!isValidPhoneNumber) {
+                alert('Please enter a valid phone number.');
+                isSubmitting = false; // Unlock if client-side validation fails
+                validationFailures++;
+                if (validationFailures >= 3) {
+                    redirectToFallback();
+                    return;
+                }
+                return;
+            }
 
-      const url = '/.netlify/functions/formHandlerTM'; // Point to your serverless function
+            // Get the formatted phone number including the country code
+            const formattedPhoneNumber = iti.getNumber();
 
-      const data = {
-        email: email,
-        phone_number: phoneNumberToSend // Send the modified phone number
-      };
-
-      const options = {
-        method: 'POST',
-        // Use POST method to send data to the serverless function
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      };
-
-      // Increment submission attempts
-      submissionAttempts++;
-
-      // Track every form submission attempt
-      sa_event("form_submission_attempt");
-
-      try {
-        const response = await fetch(url, options);
-
-        if (!response.ok) {
-          const errorResponse = await response.json(); // Parse the response body as JSON
-          throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
+            // Add +1 prefix if not already present
+            var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
+        } else {
+            // If phone number is empty, send an empty string
+            var phoneNumberToSend = '';
         }
 
-        console.log('Email submitted successfully');
+        const url = '/.netlify/functions/formHandlerTM'; // Point to your serverless function
 
-        // Track successful form submission
-        sa_event("form_submission_successful");
+        const data = {
+            email: email,
+            phone_number: phoneNumberToSend // Send the modified phone number
+        };
 
-        //fb lead
-        fbq('track', 'Lead');
+        const options = {
+            method: 'POST',
+            // Use POST method to send data to the serverless function
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
 
-        // Redirect to the external URL after successful form submission
-        window.location.href = 'https://www.grizzlysquest.com?s=bfp48143&a=bfpadid213782'; // Replace 'https://example.com' with your desired external URL
-      } catch (error) {
-        console.error('An error occurred:', error.message);
+        // Increment submission attempts
+        submissionAttempts++;
 
-        // If submission attempts exceed 2, redirect
-        if (submissionAttempts >= 3) {
-          redirectToFallback();
+        // Track every form submission attempt
+        sa_event("form_submission_attempt");
+
+        try {
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+                const errorResponse = await response.json(); // Parse the response body as JSON
+                
+                // --- START: Server-Side Validation Check ---
+                if (response.status === 400 && errorResponse.validation_type) {
+                    
+                    // Fire analytics event based on failure type
+                    if (errorResponse.validation_type === 'EMAIL_FAILED') {
+                        sa_event("form_submission_lookup_emailfail");
+                        alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
+
+                    } else if (errorResponse.validation_type === 'PHONE_STRIPPED') {
+                        // This event tracks when the server actively chose to strip the phone number
+                        sa_event("form_submission_lookup_phonefail"); 
+                        alert('Warning: Phone number could not be validated and was excluded. Please check and re-submit.');
+                    }
+                    
+                    // CRITICAL FIX: Lift the lock immediately so the user can fix the form and retry.
+                    isSubmitting = false;
+
+                    validationFailures++;
+                    if (validationFailures >= 3) {
+                        redirectToFallback();
+                        return;
+                    }
+                    return; // Stop execution if validation failed
+                }
+                // --- END: Server-Side Validation Check ---
+
+                // If the error isn't a specific validation failure (e.g., general 500 error), throw it.
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
+            }
+
+            // SUCCESS PATH
+            console.log('Email submitted successfully');
+
+            // Track successful form submission
+            sa_event("form_submission_successful");
+
+            //fb lead
+            fbq('track', 'Lead');
+
+            // Redirect to the external URL after successful form submission
+            window.location.href = 'https://www.grizzlysquest.com?s=bfp48143&a=bfpadid213782'; // Replace with your desired external URL
+        } catch (error) {
+            console.error('An error occurred:', error.message);
+
+            // On network failure or unhandled exception, lift the lock to allow retry
+            isSubmitting = false;
+
+            // If submission attempts exceed 2, redirect
+            if (submissionAttempts >= 3) {
+                redirectToFallback();
+            }
         }
-      }
     }
 
     function redirectToFallback() {
-      window.location.href = 'https://www.grizzlysquest.com?s=bfp48143&a=bfpadid213782'; // Replace with your fallback page URL
-      // Track fallback redirect event
-      sa_event("form_fallback_redirect");
-      // Custom Facebook event for fallback redirect
-      fbq('trackCustom', 'form_fallback_redirect');
+        window.location.href = 'https://www.grizzlysquest.com?s=bfp48143&a=bfpadid213782'; // Replace with your fallback page URL
+        // Track fallback redirect event
+        sa_event("form_fallback_redirect");
+        // Custom Facebook event for fallback redirect
+        fbq('trackCustom', 'form_fallback_redirect');
     }
-  </script>
+</script>
 </body>
 
 </html>

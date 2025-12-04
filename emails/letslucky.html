@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let's Lucky - Welcome Bonus!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* Custom styles based on the scraped branding data */
+    :root {
+      --primary: #4C26AA;
+      /* Purple */
+      --accent: #EAAE44;
+      /* Gold/Orange */
+      --text-color: #4C26AA;
+    }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      background-color: #f3f4f6;
+      /* Light gray background for email feel */
+    }
+
+    .text-shadow {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta-button {
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#4C26AA',
+            'brand-accent': '#EAAE44',
+            'brand-text': '#4C26AA',
+          },
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="p-4 sm:p-8 flex justify-center items-center min-h-screen">
+
+  <div id="newsletter-container"
+    class="w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden border-4 border-brand-primary">
+
+    <!-- Header -->
+    <header class="bg-brand-primary p-4 text-center">
+      <!-- Placeholder for Logo -->
+      <img src="https://placehold.co/200x50/FFF/4C26AA" alt="Let's Lucky Logo"
+        class="mx-auto h-10 object-contain">
+    </header>
+
+    <!-- Hero Section with Offer -->
+    <div class="p-6 sm:p-10 text-center space-y-6">
+
+      <!-- Main Copy (Under 200 Characters) -->
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-brand-text leading-tight text-shadow">
+        Spin into luck! 🚀 Grab your HUGE Welcome Pack: $4,500 + 300 FREE Spins + $20 Bets. Fast Payouts & 14,000+ games
+        await. Join the fun in 1 minute! Play now!
+      </h1>
+
+      <!-- Visual of the Bonus -->
+      <img src="https://placehold.co/550x200/4C26AA/EAAE44"
+        alt="Massive welcome bonus offer visual" class="w-full rounded-lg shadow-lg">
+
+      <!-- Call to Action -->
+      <a href="https://www.letslucky.com/en-CA/entry?sign-up=modal" target="_blank" class="block">
+        <button
+          class="cta-button w-full sm:w-2/3 mx-auto py-3 text-xl font-black bg-brand-accent text-white rounded-full uppercase tracking-wider shadow-lg shadow-brand-accent/50 hover:bg-yellow-500">
+          Join The Fun Now!
+        </button>
+      </a>
+
+    </div>
+
+    <!-- Key Features Section -->
+    <div class="bg-brand-primary/10 p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+      <div class="p-2">
+        <span class="text-3xl" role="img" aria-label="Dice">🎲</span>
+        <p class="mt-1 text-sm font-semibold text-brand-text">14,000+ Games</p>
+      </div>
+      <div class="p-2">
+        <span class="text-3xl" role="img" aria-label="Clock">⏱️</span>
+        <p class="mt-1 text-sm font-semibold text-brand-text">Fast Withdrawals</p>
+      </div>
+      <div class="p-2">
+        <span class="text-3xl" role="img" aria-label="Headset">📞</span>
+        <p class="mt-1 text-sm font-semibold text-brand-text">24/7 Live Support</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="p-4 text-center text-xs text-gray-500">
+      <p>You received this email because you signed up for Let's Lucky Casino promotions. Gambling can be addictive.
+        Please play responsibly.</p>
+      <p class="mt-2 text-brand-text">© 2025 Let's Lucky Casino</p>
+    </footer>
+  </div>
+
+</body>
+
+</html>
