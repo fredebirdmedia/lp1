@@ -644,6 +644,10 @@
         phoneNumberToSend = iti.getNumber();
       }
 
+      // Create PII variables
+      const pii_email = email.toLowerCase().trim();
+      const pii_phone = phoneNumberToSend.replace(/\D/g, '');
+
       const url = event.target.action;
 
       const data = {
@@ -685,7 +689,7 @@
         if (typeof sa_event === 'function') sa_event("form_submission_successful");
         if (typeof fbq === 'function') fbq('track', 'Lead');
 
-        
+
         try {
           if (typeof flux !== 'undefined' && typeof flux.track === 'function') {
             // Using 'cevent' and setting 'num' to '3' as requested.
@@ -698,7 +702,7 @@
         }
         // -------------------------------------------------------------
 
-        window.location.href = 'https://ff.casinomary.com/action/1';
+        window.location.href = `https://ff.casinomary.com/action/1?pii_email=${encodeURIComponent(pii_email)}&pii_phone=${encodeURIComponent(pii_phone)}`;
       } catch (error) {
         console.error('An error occurred during submission:', error.message);
 
