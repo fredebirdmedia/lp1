@@ -2,20 +2,12 @@
 <html lang="en">
 
 <head>
-  <!-- FF Pro Universal Tag -->
-  <script>!function (f, l, u, x, j, s, a, b) { window.flux || (j = "undefined" != typeof fluxOptions ? fluxOptions : {}, s = "undefined" != typeof fluxDefaults ? fluxDefaults : {}, (a = l.createElement("script")).src = "https://" + u + "/integration/lumetricv2.min.js?v=" + x, a.type = "text/javascript", a.async = "true", queue = [], window.flux = { track: function () { queue.push(arguments) } }, a.onload = a.onreadystatechange = function () { var rs = this.readyState; if (!rs || "complete" == rs || "loaded" == rs) try { for (window.flux = new Lumetric(u, x, j, s); 0 != queue.length;) { var args = queue.pop(); window.flux.track.apply(null, args) } } catch (e) { } }, (b = document.getElementsByTagName("script")[0]).parentNode.insertBefore(a, b)) }(window, document, "ff.casinomary.com", "3.3.0");</script>
-
-  <!-- FF Pro View Event -->
-  <script>
-    flux.track("view")
-  </script>
-
   <!-- Meta Pixel Code -->
   <script>
     !function (f, b, e, v, n, t, s) {
       if (f.fbq) return; n = f.fbq = function () {
         n.callMethod ?
-          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
       };
       if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
       n.queue = []; t = b.createElement(e); t.async = !0;
@@ -54,52 +46,52 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"
     type="text/css" />
 
-  <!-- 100% privacy-first analytics -->
-  <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-  <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
-      referrerpolicy="no-referrer-when-downgrade" /></noscript>
+<!-- 100% privacy-first analytics -->
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
+    referrerpolicy="no-referrer-when-downgrade" /></noscript>
 
 
 
-  <!-- New code-->
-  <!-- Include the CSS file for intl-tel-input -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
-  <!-- Include the JavaScript files for intl-tel-input -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
-  <script>
-    // Initialize intl-tel-input
-    document.addEventListener("DOMContentLoaded", function () {
-      var input = document.querySelector("#r2c0m2i2"); // Select the phone number input field
-      window.intlTelInput(input, {
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
-        initialCountry: "ca", // Set the initial country to Canada
-        separateDialCode: true, // Display the country dial code in a separate input
-        onlyCountries: ["ca"], // Restrict to Canada
-        customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
-          return "+" + selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
-        },
-        customContainer: "intl-tel-input"
-      });
+<!-- New code-->
+<!-- Include the CSS file for intl-tel-input -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+<!-- Include the JavaScript files for intl-tel-input -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js"></script>
+<script>
+  // Initialize intl-tel-input
+  document.addEventListener("DOMContentLoaded", function () {
+    var input = document.querySelector("#r2c0m2i2"); // Select the phone number input field
+    window.intlTelInput(input, {
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/utils.js",
+      initialCountry: "ca", // Set the initial country to Canada
+      separateDialCode: true, // Display the country dial code in a separate input
+      onlyCountries: ["ca"], // Restrict to Canada
+      customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
+        return "+" + selectedCountryData.dialCode + " " + selectedCountryPlaceholder;
+      },
+      customContainer: "intl-tel-input"
     });
-  </script>
+  });
+</script>
 
 
   <style>
-    .bee-form .bee-form-row .bee-field input[type="text"],
-    .bee-form .bee-form-row .bee-field input[type="tel"] {
-      width: 100%; // Ensures full width
-      padding: 8px; // Uniform padding
-      font-size: 16px; // Ensures text size is the same
-      border: 1px solid #ccc; // Standard border to match the look
-    }
+.bee-form .bee-form-row .bee-field input[type="text"],
+.bee-form .bee-form-row .bee-field input[type="tel"] {
+  width: 100%; // Ensures full width
+  padding: 8px; // Uniform padding
+  font-size: 16px; // Ensures text size is the same
+  border: 1px solid #ccc; // Standard border to match the look
+}
 
-    /* Specific adjustments for intl-tel-input */
-    .intl-tel-input {
-      width: 100%; // Force the intl-tel-input to take full width
-    }
+/* Specific adjustments for intl-tel-input */
+.intl-tel-input {
+  width: 100%; // Force the intl-tel-input to take full width
+}
 
-
+    
     .bee-row,
     .bee-row-content {
       position: relative
@@ -585,11 +577,11 @@
         <div class="bee-col bee-col-1 bee-col-w12">
           <div class="bee-block bee-block-1 bee-paragraph">
             <p style="word-break: break-word;">100 Spins on Blazing Bison + 50 Spins On Wolf Blaze Megaways + $1600
-              Deposit Bonus </p>
+              Deposit Bonus </p>
           </div>
           <div class="bee-block bee-block-2 bee-paragraph bee-mobile_hide"></div>
           <div class="bee-block bee-block-3 bee-form">
-            <form accept-charset="UTF-8" action="/.netlify/functions/formHandlerTM" autocomplete="on"
+              <form accept-charset="UTF-8" action="/.netlify/functions/formHandlerTM" autocomplete="on"
               enctype="multipart/form-data" method="post" onsubmit="submitForm(event)" target="_self">
               <div class="bee-form-row">
                 <div class="bee-field bee-field-r2c0m2i1"><label for="r2c0m2i1">Email</label><input id="r2c0m2i1"
@@ -681,8 +673,7 @@
           <div class="bee-block bee-block-2 bee-heading">
             <h1
               style="color:#ffffff;direction:ltr;font-family:'Inter','Arial';font-size:16px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
-              <span class="tinyMce-placeholder">All The Games You Need</span>
-            </h1>
+              <span class="tinyMce-placeholder">All The Games You Need</span> </h1>
           </div>
         </div>
         <div class="bee-col bee-col-2 bee-col-w4">
@@ -698,8 +689,7 @@
           <div class="bee-block bee-block-2 bee-heading">
             <h1
               style="color:#ffffff;direction:ltr;font-family:'Inter','Arial';font-size:16px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
-              <span class="tinyMce-placeholder">Safe And Secure Banking</span>
-            </h1>
+              <span class="tinyMce-placeholder">Safe And Secure Banking</span> </h1>
           </div>
         </div>
         <div class="bee-col bee-col-3 bee-col-w4">
@@ -715,8 +705,7 @@
           <div class="bee-block bee-block-2 bee-heading">
             <h1
               style="color:#ffffff;direction:ltr;font-family:'Inter','Arial';font-size:16px;font-weight:700;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;">
-              <span class="tinyMce-placeholder">Live Chat Support</span>
-            </h1>
+              <span class="tinyMce-placeholder">Live Chat Support</span> </h1>
           </div>
         </div>
       </div>
@@ -778,130 +767,161 @@
   </div>
 
   <!-- Custom Script -->
-  <script>
-    let submissionAttempts = 0;
-    let validationFailures = 0;
-    let isSubmitting = false;
+<script>
+  let submissionAttempts = 0; // Track the number of submission attempts
+  let validationFailures = 0; // Track the number of validation failures
+  let isSubmitting = false;   // CRITICAL: Lock flag to prevent duplicate submissions
 
-    async function submitForm(event) {
-      event.preventDefault();
+  // Retrieve the API key from the environment variable
+  async function submitForm(event) {
+    event.preventDefault();
 
-      if (isSubmitting) {
-        console.warn("Form submission already in progress. Blocking duplicate.");
-        if (typeof sa_event === 'function') {
-          sa_event("form_submission_duplicate_blocked");
-        }
+    // 1. Check and set the lock flag
+    if (isSubmitting) {
+      console.warn("Form submission already in progress. Blocking duplicate.");
+      // >>> NEW TRACKING EVENT ADDED HERE <<<
+      if (typeof sa_event === 'function') {
+        sa_event("form_submission_duplicate_blocked");
+      }
+      return;
+    }
+    isSubmitting = true; // Lock the form
+
+    const email = document.querySelector('#r2c0m2i1').value;
+    const phoneInput = document.querySelector('#r2c0m2i2');
+    const rawPhoneNumber = phoneInput.value;
+
+    // Email validation using regular expression (Client-side check)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      isSubmitting = false; // Unlock if client-side validation fails
+      validationFailures++;
+      if (validationFailures >= 4) {
+        redirectToFallback();
         return;
       }
-      isSubmitting = true;
+      return;
+    }
 
-      const emailInput = document.querySelector('#r2c0m2i1');
-      const phoneInput = document.querySelector('#r2c0m2i2');
-      const email = emailInput.value;
-      const rawPhoneNumber = phoneInput.value;
+    // Check if phone number is provided (Client-side check)
+    if (rawPhoneNumber.trim() !== '') {
+      // Phone number validation using intl-tel-input library
+      const iti = window.intlTelInputGlobals.getInstance(phoneInput);
+      const isValidPhoneNumber = iti.isValidNumber();
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
-        isSubmitting = false;
+      if (!isValidPhoneNumber) {
+        alert('Please enter a valid phone number.');
+        isSubmitting = false; // Unlock if client-side validation fails
         validationFailures++;
-        if (validationFailures >= 4) {
+        if (validationFailures >= 3) {
           redirectToFallback();
           return;
         }
         return;
       }
 
-      let phoneNumberToSend = '';
+      // Get the formatted phone number including the country code
+      const formattedPhoneNumber = iti.getNumber();
 
-      if (rawPhoneNumber.trim() !== '') {
-        const iti = window.intlTelInputGlobals.getInstance(phoneInput);
-        const isValidPhoneNumber = iti.isValidNumber();
+      // Add +1 prefix if not already present
+      var phoneNumberToSend = formattedPhoneNumber.startsWith('+1') ? formattedPhoneNumber : `+1${formattedPhoneNumber}`;
+    } else {
+      // If phone number is empty, send an empty string
+      var phoneNumberToSend = '';
+    }
 
-        if (!isValidPhoneNumber) {
-          alert('Please enter a valid phone number.');
+    const url = '/.netlify/functions/formHandlerTM'; // Point to your serverless function
+
+    const data = {
+      email: email,
+      phone_number: phoneNumberToSend // Send the modified phone number
+    };
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
+
+    // Increment submission attempts
+    submissionAttempts++;
+
+    // Track every form submission attempt
+    sa_event("form_submission_attempt");
+
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        const errorResponse = await response.json(); // Parse the response body as JSON
+
+        // --- START: Server-Side Validation Check (Looking for 'validation_type' from server) ---
+        if (response.status === 400 && errorResponse.validation_type) {
+
+          // Fire analytics event based on failure type
+          if (errorResponse.validation_type === 'EMAIL_FAILED') {
+            sa_event("form_submission_lookup_emailfail"); // <--- ANALYTICS EVENT
+            alert('Sorry, the email address you entered is invalid. Please check the details and try again.');
+
+          } else if (errorResponse.validation_type === 'PHONE_STRIPPED') {
+            // This case is unlikely to be triggered as a 400, but included for event tracking:
+            sa_event("form_submission_lookup_phonefail"); // <--- ANALYTICS EVENT
+            alert('Warning: Phone number could not be validated and was excluded. Please check and re-submit.');
+          }
+
+          // CRITICAL FIX: Lift the lock immediately so the user can fix the form and retry.
           isSubmitting = false;
+
           validationFailures++;
-          if (validationFailures >= 4) {
+          if (validationFailures >= 3) {
             redirectToFallback();
             return;
           }
-          return;
+          return; // Stop execution if validation failed
         }
-        phoneNumberToSend = iti.getNumber();
+        // --- END: Server-Side Validation Check ---
+
+        // If the error isn't a specific validation failure (e.g., general 500 error), throw it.
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
       }
 
-      const pii_email = email.toLowerCase().trim();
-      const pii_phone = phoneNumberToSend.replace(/\D/g, '');
+      // SUCCESS PATH
+      console.log('Email submitted successfully');
 
-      const url = event.target.action;
+      // Track successful form submission
+      sa_event("form_submission_successful");
 
-      const data = {
-        email: email,
-        phone_number: phoneNumberToSend
-      };
+      //fb lead
+      fbq('track', 'Lead');
 
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      };
+      // Redirect to the external URL after successful form submission
+      window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184059'; // Replace with your desired external URL
+    } catch (error) {
+      console.error('An error occurred:', error.message);
 
-      submissionAttempts++;
-      if (typeof sa_event === 'function') sa_event("form_submission_attempt");
+      // On network failure or unhandled exception, lift the lock to allow retry
+      isSubmitting = false;
 
-      try {
-        const response = await fetch(url, options);
-
-        if (!response.ok) {
-          const errorResponse = await response.json().catch(() => ({ message: 'No message available' }));
-
-          isSubmitting = false;
-
-          if (response.status === 400 && errorResponse.validation_type) {
-            validationFailures++;
-            if (validationFailures >= 4) {
-              redirectToFallback();
-            }
-            return;
-          }
-
-          throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponse.message}`);
-        }
-
-        console.log('Email submitted successfully');
-        if (typeof sa_event === 'function') sa_event("form_submission_successful");
-        if (typeof fbq === 'function') fbq('track', 'Lead');
-
-        try {
-          if (typeof flux !== 'undefined' && typeof flux.track === 'function') {
-            flux.track("cevent", { "num": "3" });
-          }
-        } catch (trackingError) {
-          console.error("FunnelFlux tracking failed:", trackingError);
-        }
-
-        window.location.href = `https://ff.casinomary.com/action/1?pii_email=${encodeURIComponent(pii_email)}&pii_phone=${encodeURIComponent(pii_phone)}`;
-      } catch (error) {
-        console.error('An error occurred during submission:', error.message);
-
-        isSubmitting = false;
-
-        if (submissionAttempts >= 3) {
-          redirectToFallback();
-        }
+      // If submission attempts exceed 2, redirect
+      if (submissionAttempts >= 4) {
+        redirectToFallback();
       }
     }
+  }
 
-    function redirectToFallback() {
-      window.location.href = 'https://ff.casinomary.com/action/1';
-      if (typeof sa_event === 'function') sa_event("form_fallback_redirect");
-      if (typeof fbq === 'function') fbq('trackCustom', 'form_fallback_redirect');
-    }
-  </script>
 
+  function redirectToFallback() {
+    window.location.href = 'https://offers.jackpotcitycasino.com/en-ca/jpc/wave/blazingbison/vid/?s=bfp23700&a=bfpadid184059'; // Replace with your fallback page URL
+    // Track fallback redirect event
+    sa_event("form_fallback_redirect");
+    // Custom Facebook event for fallback redirect
+    fbq('trackCustom', 'form_fallback_redirect');
+  }
+</script>
+  
 </body>
 
 </html>
